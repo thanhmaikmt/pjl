@@ -1,0 +1,124 @@
+<title>Coupled Oscillation Simulation</title>
+<body>
+<hr>
+<applet code=CoupledOsc.class archive=coupled.jar width=600 height=50>
+Sorry, you need a Java-enabled browser to see the simulation.
+<param name=pause value=10>
+</applet>
+<hr>
+<script type="text/javascript"><!--
+google_ad_client = "pub-1974179407250396";
+google_ad_width = 728;
+google_ad_height = 90;
+google_ad_format = "728x90_as";
+google_ad_type = "text_image";
+google_ad_channel ="";
+//--></script>
+<script type="text/javascript"
+  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+<hr>
+This java applet is a simulation that demonstrates the motion of
+oscillators coupled by springs.  The oscillators (the "loads")
+are arranged in
+a line connected by springs to each other and to supports on the
+left and right ends.  The mass of each load and the stiffness (spring
+constant) of
+each spring can be adjusted.
+<p>
+At the top of the applet on the left you will see the string of
+oscillators in motion.  By default, the number of loads is set to 5.
+To move the loads, click on one of them, drag it
+slightly to one side and then release it.
+<p>
+Below the string you will see a graph showing each
+normal mode's contribution to the motion.  
+There are two sets of terms; on top are the magnitude terms, which
+shows the amplitude of each normal mode, and on
+the bottom are the phase terms.  Low-frequency modes are on the
+left and high-frequency modes are on the right.
+<p>
+If you move the mouse over one of the modes, it will turn
+yellow, and the motion of the corresponding mode will be
+drawn underneath the line of oscillators in yellow (unless it's too small to see).  So if you move the mouse
+over all the modes, you can see each of the terms individually.
+<p>
+(One thing to keep in mind when looking at the magnitude of
+each mode is that the scale is not linear.
+If it were linear, it would look like the higher-frequency modes all had
+zero magnitude because their contribution is so small.
+For small magnitudes, the scale is logarithmic; then about 1/4 of the
+way up the scale it switches to linear.  The same is true for negative
+magnitudes.)
+<p>
+You can modify the motion of the string in one of two ways.  You can
+click on it directly, or you can modify the normal modes.
+<p>
+The <b>Setup popup</b> allows you to view some predefined interesting
+cases.  The first two choices, <b>5 masses</b> and <b>2 masses</b>
+are very simple.  The next two demonstrate weak coupling; in both
+cases, you will see that the load on
+the right will oscillate for a while, and then stop; meanwhile the one on
+the left will oscillate, and then will stop while the right one oscillates,
+etc.  This is because the two active modes
+have frequencies that are very close, causing beats to occur.  Another
+way to look at it is that energy is slowly transfered from the left load
+to the right and then back again.
+<p>
+The <b>Mouse popup</b> controls what happens when you click on the string.
+The default setting is <b>Pull string</b>, which causes the load you click on
+to be pulled to either side.
+If you set the popup to <b>Move load</b>, you can edit the position
+of a single load without disturbing the others (until you release
+the mouse button).
+<p>
+If you set it to <b>Modify masses</b>,
+you can modify the mass of one of the loads by clicking on it and
+dragging the mouse up or down.  The size of the load will be changed
+to match its mass.
+If you set it to <b>Modify springs</b>, you can modify the spring constant
+of one of the springs by clicking and dragging up or down.
+Springs with a high spring constant have a reddish color.
+<p>
+The <b>Reset Positions</b> button allows you to reset the positions
+of all the loads to equilibrium.
+<p>
+The <b>Reset Masses</b> button allows you to reset the masses of
+all the loads to
+the default.
+The <b>Reset Springs</b> button allows you to reset the springs to
+the same spring constant.
+<p>
+The <b>Stopped</b> checkbox allows you to stop or start the simulation.
+<p>
+Occasionally two loads will collide, or one of the loads will hit the
+edge.  If this happens, the loads involved will turn red briefly,
+and the normal modes will be changed to match the new motion of the
+string.  By default, the loads will collide inelastically, causing
+them to move at the same velocity until they are pulled apart by
+springs.  The <b>Elastic Collisions</b> checkbox allows you to change
+this so that they collide elastically.
+<p>
+When the <b>Lissajous Figures</b> checkbox is checked, and there are two
+loads (or two
+active modes), then the amplitudes of these modes (their normal coordinates)
+will be plotted, producing a Lissajous figure.  This makes the most sense
+for cases of weak coupling.
+<p>
+The <b>Simulation Speed</b> slider controls how fast the simulation will
+proceed.
+<p>
+The <b>Damping</b> slider controls how much damping there is.  Damping is
+a force that slows the string down.  It is proportional to the speed of
+the string, so high-frequency modes are damped more than lower ones.
+<p>
+The <b>Number of Loads</b> slider will adjust the number of loads on the
+string.  This can be set as low as one.  If you reduce the number of
+loads then you also reduce the number of normal modes.
+<p>
+<a href="coupled.zip">Zip archive of this applet.</a>
+<hr>
+<a href="/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

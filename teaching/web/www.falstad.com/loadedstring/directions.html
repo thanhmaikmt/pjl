@@ -1,0 +1,145 @@
+<title>Loaded String Simulation Directions</title>
+<body>
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<p>
+This java applet is a simulation that demonstrates <a href="http://hyperphysics.phy-astr.gsu.edu/hbase/waves/string.html">waves on a vibrating string</a>.
+A loaded string is a very light (massless) string with a number of small
+masses attached to it at equal intervals along the string.  As the number of
+masses increases, the behavior of the loaded string more closely approximates
+the behavior of a real string where the mass is distributed continuously
+along its length.
+<p>
+A loaded string with <i>n</i> loads has <i>n</i> normal modes of oscillation.
+The first mode
+is called the fundamental, and involves the entire string vibrating up
+and down at a frequency determined by the string's length, tension, and
+mass.  The other modes are called harmonics, and involve parts of the
+string (called nodes) standing still while the rest of the string vibrates.
+<p>
+The frequency of the harmonics is some multiple of the fundamental
+frequency.  With a real (continuous) string, the frequency of the
+second harmonic is twice the frequency of the fundamental, and the
+third harmonic is three times the fundamental, and so on.  With a
+loaded string with a finite number of masses, that's not quite correct,
+but it's reasonably close, at least for the first few harmonics.
+<p>
+When a string is vibrating, more than one mode is typically present at once,
+but the fundamental is typically the loudest.
+<p>
+<p>
+At the top of the applet on the left you will see the string.
+By default, the number of loads is set to 60.
+You won't see any loads on the string,
+because if the number of loads is more than 39, the applet does not show
+them, to avoid clutter.
+<p>
+To set the string in motion, click "Center Pluck" or
+"Fundamental".
+If you click "Fundamental" then the string will vibrate at the
+fundamental frequency.
+If you click "Center Pluck", the string will be plucked in the center;
+this will cause some of the harmonics to be excited as well, although
+the fundamental will still dominate.
+If you click "Clear", the string will be at rest again.
+<p>
+Below the string you will see a graph showing each
+normal mode's contribution to the string's vibration.
+There are two sets of terms; on top are the magnitude terms, which
+shows the amplitude of each normal mode, and on
+the bottom are the phase terms.  The fundamental is on the left and
+higher harmonics are on the right.  Since the higher harmonics oscillate
+at a higher frequency than the fundamental, the phase terms will move
+faster on the right.
+<p>
+If you move the mouse over one of the harmonics, it will turn
+yellow, and the corresponding harmonic will be
+drawn on top of the string in yellow (unless it's too small to see).  So if you move the mouse
+over all the harmonics, you can see each of the terms individually.
+<p>
+You can modify the string in one of two ways.  You can
+click on it directly; in this case,
+it will be plucked at that point.  Or, you can modify the normal modes.
+<p>
+The "Mouse" popup controls what happens when you click on the string.
+The default setting is "Pluck string", which causes the string to be plucked
+where you click.  If you set the popup to "Shape string", you can edit
+the shape of the string directly.
+<p>
+The "Display" popup can be used to display some additional information.
+By default it is set to "Display Phases", which shows the magnitudes
+and phases of the harmonics.
+If you set it to "Display Phase Cosines", you will see the cosines of
+the phases rather than the phases themselves.  If you set it to
+"Display Phasors", it will show phasors for the first three modes.
+If you set it to "Display Modes", it will display graphs of the
+first twelve active modes.
+<p>
+If you set it to "Display Left+Right",
+it will decompose the wave on the string into two components, one
+travelling
+left and one travelling right.  The wave on the string is called a standing
+wave because it is not moving in any direction.  But if
+you add up the displacements of the travelling waves at each load,
+you get the standing wave.  Notice that the travelling waves always
+have equal and opposite displacements at the edges because they have to
+add up to zero there.
+<p>
+The travelling waves will often have a fixed shape, but in some cases
+they will change shape slightly as they move.  Part of this is damping,
+but even without damping there may be a shape change.  The shape change is
+caused by the fact that not all the harmonics move at the same speed
+along the string.
+The lower modes move at about the same speed but the higher modes
+move slower.
+This is called dispersion.  If the string were continuous, with the
+mass distributed evenly along its entire length, there would be no
+dispersion.  But the mass is localized at a fixed number of points
+(at the loads), so the string is dispersive.  To see an example of this,
+turn off damping, turn on "Display Left+Right", and turn up one of
+the middle harmonics and one of the highest harmonics (by "turn up"
+I mean set the magnitude of that harmonic to the maximum).  Notice that
+the travelling waves are changing shape as they move.  If you increase
+the number of loads without changing anything else, this effect will
+be reduced.  (Dispersion will still be present, but you will need to
+select higher modes to see it.)
+<p>
+The "Stopped" checkbox allows you to stop or start the simulation.
+<p>
+The "Driving Force" checkbox allows you to push the string with a
+periodic driving force that acts at the center of the string.
+The magnitude of the force is shown with an arrow that oscillates
+back and forth.  The frequency of the driving force's oscillation can
+be controlled with the "Force Frequency" slider.  The driving force
+won't accomplish very much unless the force frequency is close to the string's
+resonance frequency (the fundamental).  To set it there, click the
+"Resonance Frequency" button.
+<p>
+The "Sound" checkbox allows you to hear the sound the string would
+make.  To make this more realistic, move the damping slider to the middle.
+<p>
+The "Log View" checkbox uses a logarithmic scale to show the
+magnitudes of each harmonic.
+<p>
+The "Simulation Speed" slider controls how fast the simulation will
+proceed.
+<p>
+The "Damping" slider controls how much damping there is.  Damping is
+a force that slows the string down.  The default
+setting is fairly low so you may want to set this higher in order to
+get more realistic behavior.
+<p>
+The "Number of Loads" slider will adjust the number of loads on the
+string.  This can be set as low as one.  If you change the number of
+loads then you also change the number of normal modes.
+<p>
+The "Tension" slider will adjust the tension.  Lowering the tension
+will reduce the frequency of the string's vibration but will increase
+the amplitude.
+<p>
+<a href="index.html">Click here to go to the applet.</a>
+<hr>
+<a href="http://www.falstad.com/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="http://www.falstad.com/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

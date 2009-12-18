@@ -1,0 +1,194 @@
+<title>3-D Magnetostatic Field Directions</title>
+<body>
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<p>
+This applet is a magnetostatics
+demonstration which displays the
+magnetic field in a number of situations.
+You can select from a number of fields and see how
+particles move in the field if it is treated as either a velocity field
+(where the particles move along the field lines) or an actual force
+field (where the particles move as if they were little magnets).
+This helps you visualize the field.  You can also view the vector potential
+(A).
+<p>
+When you start the applet, you will see 500 particles moving in the
+field of a current line.  By default the
+particles are treating the field as a <i>velocity</i> field, which means
+that the magnetic field vectors determine how fast the particles are
+moving and in
+what direction.  In this case, the particles follow the field lines
+around the current line.   Of course in real life, particles do not
+follow the field lines; magnetized particles will align themselves with
+the field lines and then move closer to the source of the field,
+whereas moving charged particles are accelerated in a direction
+perpendicular to the field (and their velocity).
+<p>
+The <b>Field Selection</b> popup will allow you to select a
+vector field.  The choices are:
+<ul>
+<li><b>current line</b>: This is the field of an infinitely long
+line of current.
+<li><b>current line double</b>: This is two lines of current
+moving in the same direction.
+<li><b>cur line double + ext</b>: This is two lines of current
+moving in the same direction, plus a uniform external field.
+<li><b>current line dipole</b>: This is two lines of current
+moving in opposite directions.
+<li><b>cur line dipole + ext</b>: This is two lines of current
+moving in opposite directions, plus a uniform external field.
+(In fluid dynamics this field is called the
+<a href="http://www.fluid.tue.nl/users/jos/VDG/lamb-dip.html">Lamb
+dipole</a>.)
+<li><b>uniform field</b>:
+A uniform magnetic field; the direction is adjustable by modifying
+the two angles theta and phi.
+<li><b>moving charge</b>:
+The field of a moving point charge.
+<li><b>fast charge</b>:
+The field of a point charge moving close to the speed of light.
+The ratio between the speed of the particle and the speed of light
+is adjustable.
+<li><b>moving charge double</b>:
+The field of two moving point charges.
+<li><b>moving charge dipole</b>:
+The field of two point charges moving in opposite directions.
+<li><b>current loop</b>:
+Current moving in a circular loop.  This field is equivalent to that
+of a flat disc magnet; the <A href="http://physics.mtsu.edu/~phys232/Lectures/L12-L16/L17/Magnetic_Poles/magnetic_poles.html">north pole</a> is at the top
+by default.
+<li><b>loop pair</b>:
+Current moving in two circular loops (or two flat disc magnets).
+The size of the loops and the separation are both adjustable.
+Also you can introduce a vertical offset between the two loops.
+<li><b>loop pair opposing</b>:
+Two circular loops with current moving in
+opposite directions.  (Or two opposing flat disc magnets.)
+<li><b>loop pair stacked</b>:
+Current moving in two stacked circular loops.  (Or two stacked disc
+magnets.)
+<li><b>loop pair stacked, opp.</b>:
+Two stacked circular loops with current moving in
+opposite directions.  (Or two stacked disc
+magnets with their north poles pushed together.)
+<li><b>concentric loops</b>:
+Two concentric circular loops with the current moving in
+opposite directions.  The field is the same as that of a flat
+ring magnet.
+<li><b>solenoid</b>:
+A coil of wire with current running through it.  (In real life the coil
+would need to be attached to something in order to have current running
+through it, of course.)
+The diameter of the coil, the height, and the number of turns are
+adjustable.  The field is the same as that of a magnetic rod
+(assuming a large number of turns).
+<li><b>toroidal solenoid</b>:
+A coil of wire wrapped around a torus (donut).  Outside the torus,
+the field is fairly weak.
+<li><b>horseshoe electromagnet</b>:
+A coil of wire wrapped around half a torus.
+<li><b>square loop</b>:
+Current moving in a square.
+<li><b>corner</b>:
+Current rounding a corner.
+<li><b>magnetic sphere</b>:
+The field of a magnetized sphere, with the north pole at the top.
+This is similar to the earth's magnetic field, except upside down,
+because the earth's north pole (even the "magnetic north" as opposed
+to the geographic north)
+is actually its magnetic south pole.
+See <a href="http://www.execpc.com/~rhoadley/magpole.htm">this page</a>
+and <a
+href="http://physics.mtsu.edu/~phys232/Lectures/L12-L16/L17/Magnetic_Poles/magnetic_poles.html">this page</a>.
+<li><b>monopole attempt</b>:
+This is a simulation of what would happen if you tried to make a
+magnetic monopole (a magnet with only a north pole and no south pole)
+by taking a bunch of square magnets and forcing them into a cube with
+their south poles in the center.  Instead of getting a monopole,
+you would find that the gaps between the magnets would act as south poles,
+and the field there would be much stronger than on the faces of the
+magnets.  If you could force them together perfectly with no gaps,
+there would be no field at all anywhere because all the currents would
+cancel out.  (This field is so slow to compute that we display field vectors
+by default instead of particles.)
+</ul>
+<p>
+The <b>Display</b> popup will allow you to select how the field
+is displayed:
+<ul>
+<li><b>Display: Particles (Vel.)</b> means particles will move through
+the field, with the magnetic field vectors (B) determining their velocity.
+Note that the particles are only a educational device
+intended to show what the field looks like;
+in real life, particles would not move in this manner.
+<li><b>Display: Particles (A Field, Vel.)</b> means particles will move,
+with the <A
+href="http://scienceworld.wolfram.com/physics/MagneticVectorPotential.html">vector
+potential</a> (A) determining their velocity.
+<li><b>Display: Field Vectors</b> shows you the field vectors at an array
+of locations.
+<li><b>Display: Field Vectors (A)</b> shows you the vector potential
+at an array of locations.
+<li><b>Display: Field Lines</b> shows you the field lines.  The
+<b>Line Density</b> slider controls how many lines to draw.  The
+color indicates the field strength.
+<li><b>Display: Parts (Magnetic)</b> means that magnetized particles
+(little current loops) will move through the field in a realistic fashion.
+Particles are displayed as little arrows; their north
+pole is at the head of the arrow and the south pole is at the tail.  (So,
+the arrow represents the magnetic moment vector.)  They align
+themselves with the field lines and then move closer to the
+source of the field.  In the case of a uniform field; they don't move;
+they just align themselves with it.
+A fair amount of damping is used so that the particles don't
+oscillate very much if they are out of alignment with the field.
+<li><b>Display: Mag View Film</b> simulates
+the behavior of
+<a href="http://www.wondermagnet.com/dev/viewingfilm.html">magnetic
+viewing film</a>.  This requires slicing to be on.
+</ul>
+<p>
+The <b>Mouse</b> popup controls what happens when you click on the box.
+If you set it to <b>Adjust Angle</b> or <b>Adjust Zoom</b>, you can
+adjust the orientation or size of the 3-d view by clicking and
+dragging on the box.
+<p>
+The <b>Slice</b> popup allows you to look at planar slices of the box
+rather than looking at the contents of the entire box.
+If the popup is set to <b>No Slicing</b>, you view the entire
+box.  Otherwise you will see the box sliced in one of three
+directions.  The location of the slice can be adjusted by dragging
+the line running along the sides of box near the slice.
+<p>
+The <b>Stopped</b> checkbox will stop the particles.
+<p>
+The <b>Reverse</b> checkbox will reverse the direction of all the
+field vectors.
+<p>
+The <b>Reset</b> button can be used to reset the positions of
+all the particles to random values.
+<p>
+The <b>Field Strength</b> slider makes the field stronger or weaker,
+and also adjusts the brightness of the field vectors if you
+have <b>Display: Field Vectors</b> selected.
+<p>
+The <b>Vector Density</b> slider controls the number of vectors present
+if you have <b>Display: Field Vectors</b> selected.
+It controls the resolution of the viewing paper if you have
+<b>Display: Mag View Film</b> selected.
+<p>
+The <b>Number of Particles</b> slider allows you to reduce the number
+of particles, which can be useful if you want to watch the behavior of
+just a few of them.  Also it might speed things up if you have fewer
+particles.
+<p>
+A few additional field-specific sliders may be present,
+depending on the field you have selected.
+<p>
+<a href="index.html">Click here to go to the applet.</a>
+<hr>
+<a href="/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

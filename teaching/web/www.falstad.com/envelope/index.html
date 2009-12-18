@@ -1,0 +1,47 @@
+<title>Acorn Envelope Simulation</title>
+<body>
+<hr>
+<applet code=Envelope.class archive=envelope.jar width=600 height=50>
+Sorry, you need a Java-enabled browser to see the simulation.
+<param name=pause value=10>
+</applet>
+<hr>
+This applet plays a variety of cool, old-time-videogame-like sounds.  To
+start, click the <b>Sound on</b> checkbox and then select one of the presets.
+<p>
+The intent is to loosely emulate the pitch envelopes from the
+<a href="http://www.nvg.ntnu.no/bbc/">Acorn BBC microcomputer</a>,
+but most people haven't
+heard of that nowadays (still not sure why I was given one for work, especially
+in the US).  So here is a brief description of how envelopes work.
+<p>
+The pitch changes in steps; the length of time a step takes
+is adjustable using the
+<b>Step Length</b> slider.  At each step, the pitch changes by the
+value specified in the <b>Step Size 1</b> slider.  The starting pitch
+is 89, which is middle C, and the pitch can go as low as 0 (about 72 Hz)
+to 255 (about 2890 Hz), and it wraps around if it is incremented above
+255 or below 0.  A pitch difference of 48 equals an octave.
+<p>
+After some number of steps (specified by the <b>Step Count 1</b> slider),
+we finish section 1 and start section 2, where the <b>Step Size 2</b> and
+<b>Step Count 2</b> sliders control the size and number of steps.
+Then we go to section 3, and when that is finished we go back to section 1.
+If the step count for a specific section is 0, then we just skip that section.
+<p>
+Just play around with the sliders and you'll figure it out.
+<p>
+The sound is output using a pulse waveform.  The <b>Pulse Width</b> slider
+controls the pulse width.
+<p>
+2/7/09: v1.1 fixed to work on java 2.
+<p>
+<a href="Envelope.java">The source.</a>
+<p>
+<a href="/mathphysics.html">More applets.</a>
+<hr>
+<a href="/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="/index.html"><img src="/me_small.gif"></a>
+<a href="http://www.openwave.com/"><img src="/softcom_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

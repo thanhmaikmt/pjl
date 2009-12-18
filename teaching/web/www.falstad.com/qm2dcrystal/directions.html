@@ -1,0 +1,90 @@
+<title>Quantum Mechanics: 2-Dimensional Crystal Applet</title>
+<body>
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<p>
+This java applet is a quantum mechanics simulation that shows the
+behavior of a particle in a two-dimensional
+<a href="http://en.wikipedia.org/wiki/Crystal_structure">crystal</a>
+(or periodic potential).
+<p>
+At the top of the applet you will see a graph of the particle's wave
+function.  By default, the potential is an array of rectangular
+<a href="http://en.wikipedia.org/wiki/Finite_potential_well">square
+wells</a>; the gray lines indicate the positions of the wells.  The
+brightness at a particular point indicates the probability of the
+particle being found at that point, and the color indicates phase.
+Only a part of the wave function is shown; the actual wave function
+extends to infinity.
+<p>
+Below the particle's position
+you will see its <a href="http://en.wikipedia.org/wiki/Electronic_band_structure">band
+structure</a>, displayed as a dispersion curve; this is a graph of energy versus
+the <a href="http://en.wikipedia.org/wiki/Crystal_momentum">crystal momentum</a>
+k, with the energy bands shown as gray in the
+background.  The particle's energy is shown as a red horizontal line.
+<p>
+Below the dispersion curve is a graph of the
+<a href="http://en.wikipedia.org/wiki/Reciprocal_lattice">reciprocal
+lattice</a>, or "k-space".  The energy at each point is shown by the
+background color; black is low energy, green is high energy, yellow
+is higher energy.  Also, the white lines indicate contours of equal
+energy.  The red line indicates all points with the same energy as the
+particle's current energy.  The colored dots correspond to the
+vertical colored lines in the dispersion graph.
+<p>
+To view a state, click on either the
+dispersion curve or the k-space graph.
+<p>
+You may select a different potential from the Potential menu
+at the top right.  You can also adjust the parameters of the potential
+(like the width of the wells) using the sliders on the right.
+Whenever you change the potential, it takes some time to calculate the
+band structure.  The band structure will keep changing for maybe 10 seconds
+or so (depending on the speed of your computer) until it is fully calculated.
+<p>
+Between each graph is a horizontal line which may be dragged up and down
+to adjust the size of each graph.
+<p>
+The <b>Ground State</b> button selects the ground state wave function.
+<p>
+The <b>Stopped</b> checkbox stops the evolution of the wave function.
+<p>
+The <b>Simulation Speed</b> slider changes the speed of the wave
+function evolution.
+<p>
+The <b>Particle Mass</b> slider changes the mass of the particle.
+<p>
+The <b># of Wells Shown</b> slider changes the number of wells
+displayed.  There are an infinite number of wells extending off to the
+edges of the position graph, but the applet shows a finite number of them.
+<p>
+The <b>Energy Scale</b> slider lets you display more of the energy
+spectrum on the dispersion curve by adjusting the scale used to graph
+energy.
+<p>
+The <b>Contour Count</b> slider lets you adjust the density of the
+contour lines in k-space.
+<p>
+The <b>Cell Height</b> slider lets you adjust the height of the
+primitive cells.  By default, the cell height is the same as the cell
+width.  If you change this slider, you break that symmetry.  Note the
+difference between this slider and the <b>Well Height</b> slider.
+<b>Well Height</b> allows you to change the amount of vertical space a
+well takes up within a primitive cell.  <b>Cell Height</b> changes the
+size of a primitive cell.
+<p>
+The <b>View Menu</b> has the following items:
+<ul>
+<li><b>Energy</b>: show the energy/potential graph
+<li><b>Position</b>: show the position graph (on by default)
+<li><b>Dispersion</b>: show the dispersion graph (on by default)
+<li><b>Reciprocal Lattice</b>: show the k-space graph (on by default)
+</ul>
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<hr>
+<a href="http://www.falstad.com/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="http://www.falstad.com/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

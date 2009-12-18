@@ -1,0 +1,233 @@
+<title>Oscillating Membrane Simulation Directions</title>
+<body>
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<p>
+This java applet is a simulation that demonstrates wave motion
+in a perfectly elastic <a
+href="http://hyperphysics.phy-astr.gsu.edu/hbase/music/recmem.html">rectangular
+membrane</a> (like a drum head, except rectangular instead of round),
+showing its various vibrational modes.
+<p>
+An ideal continuous membrane has an infinite number of modes of oscillation,
+each with its own frequency.  The lowest-frequency mode is called the
+fundamental, and involves the entire membrane vibrating up and down
+at a frequency determined by the membrane's size, tension, and mass.
+The other modes involve parts of the
+membrane (called nodal lines) standing still while the rest of the membrane
+vibrates.  When a membrane is vibrating, more than one mode is typically
+present at once.
+<p>
+<p>
+At the top of the applet on the left you will see the membrane.
+To set it in motion, click <b>Fundamental</b>.
+If you click <b>Clear</b>, it will be at rest again.
+<p>
+Below the membrane you will see a graph showing each
+normal mode's contribution to the membrane's vibration.
+The modes are laid out in the following order:
+<p>
+<table border>
+<tr>
+<td align=center>1,1</td>
+<td align=center>2,1</td>
+<td align=center>3,1</td>
+<td align=center>...</td>
+</tr>
+<tr>
+<td align=center>1,2</td>
+<td align=center>2,2</td>
+<td align=center>3,2</td>
+<td align=center>...</td>
+</tr>
+<tr>
+<td align=center>1,3</td>
+<td align=center>2,3</td>
+<td align=center>3,3</td>
+<td align=center>...</td>
+</tr>
+<tr>
+<td align=center>...</td>
+<td align=center>...</td>
+<td align=center>...</td>
+<td align=center>...</td>
+</tr>
+</table>
+<p>
+where <i>m,n</i> refers to the mode having a shape proportional to
+sin(<i>mx</i>)sin(<i>ny</i>), where x ranges from 0 to pi.  So, mode 1,1 has one "bump" and does not have
+any nodal lines.  Mode 3,2 has six bumps (3 in the x direction and
+2 in the y direction), so it has two nodal lines crossing the x axis
+and one nodal line crossing the y axis.  In general, mode <i>m,n</i>
+has <i>m</i>*<i>n</i> bumps, <i>m</i>-1 nodal lines crossing the x axis,
+and <i>n</i>-1 nodal lines crossing the y axis.
+<p>
+Normally the edges of the membrane are fixed.
+If the <b>Fixed Edges</b> checkbox is turned off, then the edges are
+free to vibrate, and this causes a new set of modes to be available:
+<p>
+<table border>
+<tr>
+<td align=center></td>
+<td align=center>1,0</td>
+<td align=center>2,0</td>
+<td align=center>...</td>
+</tr>
+<tr>
+<td align=center>0,1</td>
+<td align=center>1,1</td>
+<td align=center>2,1</td>
+<td align=center>...</td>
+</tr>
+<tr>
+<td align=center>0,2</td>
+<td align=center>1,2</td>
+<td align=center>2,2</td>
+<td align=center>...</td>
+</tr>
+<tr>
+<td align=center>...</td>
+<td align=center>...</td>
+<td align=center>...</td>
+<td align=center>...</td>
+</tr>
+</table>
+<p>
+where <i>m,n</i> refers to the mode having a shape proportional to
+cos(<i>mx</i>)cos(<i>ny</i>).  Modes 0,<i>n</i> are constant in the x direction and
+modes <i>m</i>,0 are constant in the y direction.  The slot for 0,0 is
+left empty because this is simply a constant factor added to the height
+of the membrane.  This constant is always 0 in this applet.
+<p>
+Each element of the grid has a color which indicates the presence or
+absence of the mode it represents.  Black means the mode is not present;
+green means the mode is present with a positive coefficient, and red means
+it is present with a negative coefficient.  So in this example,
+mode 1,2 has a positive coefficient, mode 3,1 has a negative one,
+and the rest of the modes are absent:
+<p>
+<img src="grid.gif">
+<p>
+In addition, each mode may have a phase shift, which indicates that its
+oscillatory cycle leads or lags the others.  This is indicated by
+a blue line.  In this example, mode 1,3 has a blue line about 1/3 of
+the way across the width of the box, which means a phase shift of
+about 1/3 the maximum possible.  The maximum is pi*2, so this shift is
+pi*2/3.  Mode 2,2 is also present but does not have a phase shift.
+<p>
+<img src="grid2.gif">
+<p>
+A phase shift is normally hard to detect.  If the applet is stopped,
+then by altering the phase of a mode you can see the mode oscillate
+up and down.  If the applet is running it is much harder to tell,
+except in a case which will be explained later.
+<p>
+You can add or remove a mode by clicking on it.  If you click and drag
+up and down you can fine-tune the magnitude of the mode.  If you drag
+left and right you can alter the phase shift.
+<p>
+<p>
+You can modify the membrane in one of two ways.  You can
+modify the normal modes.  Or you can
+click on it directly and drag the mouse up or down;
+it will be "poked" at that point.
+<p>
+The <b>Mouse</b> popup controls what happens when you click on the membrane.
+The default setting is <b>Poke membrane</b>, which causes the membrane to be
+deformed at the point where you click.
+If you set the popup to <b>Shape membrane</b>, you can edit
+the displacement of each individual point.
+<p>
+If you set it to <b>Adjust view angle</b> or <b>Adjust view zoom</b>, you can
+adjust the orientation or size of the 3-d view.
+And if you set it to <b>Show mode</b>, and then click on one of the modes
+in the frequency grid, it will show the shape of that mode.
+<p>
+The <b>Display</b> popup can be used to control whether the 3-d or 2-d
+view is shown.  By default it is set to <b>Display 3-d Only</b>.  To show a
+2-d representation, you can select <b>Display 2d Only</b> or <b>Display 3d+2d</b>.
+The 2-d representation often gives you a clearer picture of what is
+going on.  Also the <b>Mouse = Shape membrane</b> popup menu item can be
+used to alter multiple points on the membrane at once by drawing
+on the 2-d representation.
+<p>
+The <b>3d View</b> popup can be used to control the look of the 3-d view.
+By default it is set to <b>Solid</b>, but you can also see a wireframe
+view by selecting one of the other options.
+<p>
+The <b>Stopped</b> checkbox can be used to stop the motion of the membrane
+for a moment.
+<p>
+The <b>Show Frequencies</b> checkbox can be used to show or hide
+the frequency grid.  By default, it is shown.
+<p>
+The <b>Color</b> checkbox can be used to turn off color.  This may
+look better and/or it may make the applet run faster.
+<p>
+The <b>Simulation Speed</b> slider controls how fast the simulation will
+proceed.
+<p>
+The <b>Damping</b> slider controls how much damping there is.  Damping is
+a force that slows the membrane down.  High harmonics are damped more than lower ones.
+The default
+setting is set to zero, so you may want to set this higher in order to
+get more realistic behavior.
+<p>
+The <b>Brightness</b> slider controls the brightness, just like on a
+TV set.  This can be used to view faint waves more easily.
+<p>
+The <b>Resolution</b> slider will adjust the fineness of the
+rendering.  This can be set lower to speed up the applet.
+<p>
+The <b>Aspect Ratio</b> slider will adjust the width of the membrane.
+<p>
+<p>
+Normally each mode has a different frequency.  However in some cases,
+several modes can have the same frequency.  This is called
+degeneracy.  The presence or absence of degeneracy
+depends on the aspect ratio of the membrane, which is its width relative
+to its length.  This is controlled by the <b>Aspect Ratio slider</b>.
+By default it is equal to one, which means the membrane is square.
+In this case, all the <i>m</i>,<i>n</i> modes are degenerate, because
+they have the same frequency
+as the <i>n</i>,<i>m</i> modes.
+If the aspect ratio is not equal to one,
+there usually is no degeneracy.  There may be some if the aspect ratio
+is equal to an integer or a simple fraction.  The aspect ratio slider
+ranges from 1/2 to 3, so in either of those cases there will be some
+degeneracy.
+<p>
+When two or more modes have the same frequency, each one is shown in
+yellow, like so:
+<p>
+<img src="grid3.gif">
+<p>
+The interesting thing about degenerate modes is that if you combine
+them, you get a new mode that oscillates with simple harmonic motion,
+just like any other mode.  Since both modes are oscillating at the
+same rate, you can't tell them apart.  If one of the modes has a phase
+shift relative to the other one, then the membrane will change shape
+at a rate equal to the frequency of the modes.
+<p>
+The frequencies are proportional to:
+<p>
+<img src="freq.gif">
+<p>
+where <i>L<sub>x</sub></i> is the length of the membrane in the x
+direction and 
+<i>L<sub>y</sub></i> is the length of the membrane in the y
+direction.  So in the example grid shown above, modes (9,2)
+have the same frequency as (2,9), (6,7), and (7,6), so all modes are
+shown in yellow.  This makes sense if the membrane
+is square.  In this case, <i>L<sub>x</sub></i> = <i>L<sub>y</sub></i>,
+and 2<sup>2</sup> + 9<sup>2</sup> =
+6<sup>2</sup> + 7<sup>2</sup> =
+7<sup>2</sup> + 6<sup>2</sup> =
+9<sup>2</sup> + 2<sup>2</sup> = 85.
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<hr>
+<a href="http://www.falstad.com/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="http://www.falstad.com/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

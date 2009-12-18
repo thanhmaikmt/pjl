@@ -1,0 +1,150 @@
+<title>Quantum Mechanics: 1-Dimensional Radiative Transitions Applet</title>
+<body>
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<p>
+This java applet is a quantum mechanics simulation that shows the
+interaction of classical electromagnetic radiation with
+a particle, in one dimension.  This applet will make more sense
+if you have already used the <a href="/qm1d/">Quantum States</a> applet.
+<p>
+At the top of the applet you will see a graph of the potential, along
+with horizontal lines showing the unperturbed energy levels.  By default
+it is an infinite square well (zero everywhere inside, infinite at the
+edges).  The electric field will cause the floor of the well to move
+slightly; you will be able to see this movement better if you turn
+up the radiation intensity.
+<p>
+Below the potential graph you will see an arrow showing the direction and
+magnitude of the electric field, and the current caused by the
+particle's motion.  (The particle is assumed to be positively charged,
+and the current is assumed to be proportional to
+d&lt;x&gt;/dt.)
+Below that you will see the probability distribution of
+the particle's position.  At the bottom of the screen is
+a set of phasors showing the current particle state.
+<p>
+Underneath
+the phasors is 
+set of circles showing possible final states; the blue color indicates
+the transition rate to that state (assuming the correct
+frequency is chosen).  The darker the blue color,
+the faster the transition; transitions which are extremely slow or
+forbidden by selection rules are shown as black.
+<p>
+Between each graph is a horizontal line which may be dragged up and down
+to adjust the size of each graph.
+<p>
+When the applet starts up, there is an incoming wave which is at
+the right frequency (the Bohr frequency)
+to transition the particle from the ground state to the first excited
+state.  Once it reaches the first excited state, it transitions back
+to the ground state, and so on.
+<p>
+To view another transition, double-click the appropriate state
+phasor to put the particle in that state.  Then click the final
+state underneath it.  This will start an incoming wave with the right
+frequency to make that transition.  The initial and final states will
+be shown in purple.
+<p>
+If you transition from a lower state to a higher state, that is called
+absorption; the particle will absorb energy from the incoming wave.
+In that case the current will be in phase with the electric field,
+which would cause the wave to weaken somewhat in real life (but not in
+this simulation).
+<p>
+If you transition from a higher state to a lower state, that is called
+stimulated emission; the particle will lose energy.  In that case the
+current will be out of phase with the electric field,
+which would cause the wave to get stronger (energy will be radiated away).
+<p>
+In order to simulate spontaneous emission, we need to quantize the
+electromagnetic field.  Since the wave in this applet is treated classically,
+we can't do spontaneous emission.
+<p>
+The <b>Setup Popup</b> allows you to select a predefined potential.  The
+choices are:
+<ul>
+<li><b>Infinite Well</b>: this is the "particle in a box"; the particle
+is confined between two walls of infinite potential.
+<li><b>Coupled Well Pair</b>: this is two square wells with a
+wall between them.
+<li><b>Harmonic Oscillator</b>: this is a harmonic oscillator
+potential.  This potential is unusual because the energy levels
+are evenly spaced.  So when transitioning from the ground state
+to the first excited state, the particle will keep going into the
+second excited state and then third excited state, etc., because the
+Bohr frequency for the first two states is also the Bohr frequency
+for the next two states.  The effect of this is that the particle will
+stay in a coherent state where it moves from side to side
+without changing shape, and will
+will keep acquiring more and
+more energy, just like a classical particle in a forced harmonic oscillator
+at resonance.  (After a while the particle will go too far to the sides
+and will become deformed; that is an artifact of this applet and would
+not happen in a real harmonic oscillator.)
+</ul>
+<p>
+The <b>Clear</b> button clears out all states.
+<p>
+The <b>Rescale Graphs</b> button changes the scale of all the graphs
+so that everything is as large as possible.  Normally, the scale is
+adjusted only when necessary, so click this button if the wave functions
+are too small to see clearly.
+<p>
+The <b>Stop Radiation</b> button stops the incoming wave.  The wave
+will start again when you select a final state or adjust the
+frequency slider.
+<p>
+The <b>Reverse Phase</b> button reverses the phase of the incoming
+wave, which also reverses the direction of energy flow.
+<p>
+The <b>Stopped</b> checkbox stops the simulation temporarily.
+<p>
+The <b>Simulation Speed</b> slider changes the speed of the wave
+function evolution.
+<p>
+The <b>Radiation Intensity</b> slider changes the intensity
+of the incoming radiation.  When the radiation is more intense,
+transitions will proceed more quickly, but they might be
+"messier" because of secondary transitions that would otherwise
+be too weak to have an effect.
+<p>
+The <b>Radiation Frequency</b> slider changes the frequency
+of the incoming radiation.  Normally this is set automatically
+by choosing the initial and final state, but it can also be set
+manually.  If you modify this at all, then you will not get exact
+resonance and transitions will be much less likely to happen.
+<p>
+The <b>Resolution</b> slider changes the resolution of the applet.
+The higher the resolution, the more accurate the wave functions and
+energy levels will be.
+<p>
+The <b>View Menu</b> has the following items:
+<ul>
+<li><b>Position</b>: show the position graph (on by default)
+<li><b>Momentum</b>: show the momentum graph
+<li><b>Parity</b>: show a graph of parity.
+<li><b>Probability Current</b>: show the probability current.  This is
+zero for stationary states.  For states that are not stationary, the
+probability current is positive where the wave function is moving
+to the right and negative where it is moving to the left.
+<li><b>Expectation Values</b>: show expectation values as red lines
+<li><b>Uncertainties</b>: show uncertainties as blue lines to the
+left and right of the expectation value.  The distance from the blue
+lines to the red line is the uncertainty.  This is not available on
+the probability current graph, because that is not an observable.
+<li><b>Wave Function</b>: display the wave function in one of four
+ways: as a probability (magnitude squared), as a probability with the
+phase shown using colors, as real and imaginary parts graphed
+separately, or as a magnitude with the phase shown using colors.
+</ul>
+<p>
+If you like this applet you may be interested in the book <a href="http://www.kfunigraz.ac.at/imawww/vqm/">Visual Quantum Mechanics</a>.
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<hr>
+<a href="http://www.falstad.com/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="http://www.falstad.com/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

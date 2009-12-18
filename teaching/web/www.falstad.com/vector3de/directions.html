@@ -1,0 +1,206 @@
+<title>3-D Electrostatic Field Applet Directions</title>
+<body>
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<p>
+This applet is an electrostatics demonstration which displays the
+electric field in a number of situations.
+You can select from a number of fields and see how
+particles move in the field if it is treated as either a velocity field
+(where the particles move along the field lines) or an actual force
+field (where the particles move as if they were charged particles).
+This helps you visualize the field.
+<p>
+When you start the applet, you will see 500 particles moving in a
+point charge field.  By default the
+particles are treating the field as a <i>velocity</i> field, which means
+that the field vectors determine how fast the particles are moving and in
+what direction.  In this case, the particles just move toward the center.
+The velocity of all the particles at a certain point
+on the grid is always the same.  If the field is a <i>force</i> field, then the
+field vectors determine the acceleration of the particles, but their velocity
+may vary depending on where they started.
+<p>
+The <b>Field Selection</b> popup will allow you to select a
+vector field.  The choices are:
+<ul>
+<li><b>point charge</b>:
+This is the field of a single point of charge.  The <b>Reverse</b>
+checkbox will change the sign of the charge.
+<li><b>point charge double</b>:
+Two point charges, with an adjustable separation between them.
+<li><b>dipole</b>:
+Two points with opposite charges, with an adjustable separation between them.
+<li><b>quadrupole</b>:
+Two positive charges and two negative charges.
+<li><b>charged line</b>:
+Charge evenly distributed along an infinitely long line.
+<li><b>line charge double</b>:
+Two charged lines.
+<li><b>dipole lines</b>:
+Two lines of opposite charge.
+<li><b>quad lines</b>:
+Two positive lines and two negative lines.
+<li><b>finite line</b>:
+A charged line of finite length.  The length is adjustable.
+<li><b>finite line pair</b>:
+Two charged lines of finite length.
+<li><b>finite line dipole</b>:
+Two oppositely charged lines of finite length.
+<li><b>conducting plate</b>:
+A conducting plate, finite in the x direction but infinitely long
+in the y direction.  The plate size (in the x direction) is adjustable.
+<li><b>charged plate</b>:
+An evenly charged plate, finite in the x direction but infinitely long
+in the y direction.  The plate size (in the x direction) is adjustable.
+<li><b>charged plate pair</b>:
+Two evenly charged plates with opposite charges.
+The size and separation of the two sheets are adjustable.
+<li><b>infinite plane</b>:
+An infinite plane, evenly charged.
+<li><b>conducting sphere + pt</b>:
+A conducting sphere near a point charge.  The size of the sphere,
+the separation between it and the point charge, and the potential of
+the sphere are all adjustable.  By default the sphere is grounded.
+<li><b>charged sphere + pt</b>:
+A charged sphere near a point charge.  This is provided to show
+the difference between a charged sphere and a conducting sphere.
+(The main difference is that the electric field lines are
+always perpendicular to the surface of the conducting sphere,
+whereas this is not true with a charged sphere.  This is easier
+to see with a Y Slice.)
+By default the sphere has no charge, but this can be adjusted to a
+positive or negative value.
+<li><b>cyl + line charge</b>:
+A conducting cylinder near a line charge.
+<li><b>conducting sphere in field</b>:
+A grounded conducting sphere in a uniform external field.
+<li><b>dielec sphere in field E</b>:
+This is the electric field of a dielectric sphere in a uniform
+external field.  The size of the sphere and the dielectric strength
+are adjustable.  A <a
+href="http://whatis.techtarget.com/definition/0,,sid9_gci211945,00.html">dielectric</a> is an insulating material whose
+atoms are polarized in response to an external field; this causes
+the field to be weaker inside the dielectric.
+<li><b>dielec sphere in field D</b>:
+This is the
+<A href="http://scienceworld.wolfram.com/physics/D.html">electric
+displacement vector</a>
+of a dielectric sphere in a uniform
+external field.  The size of the sphere and the dielectric strength
+are adjustable.
+<li><b>cylinder in field</b>:
+A grounded conducting cylinder in a uniform external field.
+<li><b>dielec cyl in field E</b>:
+This is the electric field of a dielectric cylinder in a uniform
+external field.  The size of the cylinder and the dielectric strength
+are adjustable.
+<li><b>dielec cyl in field D</b>:
+This is the electric displacement vector of a dielectric cylinder
+in a uniform external field.  The size of the cylinder
+and the dielectric strength are adjustable.
+<li><b>dielec boundary E</b>:
+This is the electric field of a point charge near a dielectric
+boundary.  The point charge is located outside of the dielectric by
+default; so the dielectric is the area below the boundary plane.  The
+location of the point charge and the dielectric strength are adjustable.
+<li><b>dielec boundary D</b>:
+This is the electric displacement vector of a point charge near a
+dielectric boundary.
+The location of the point charge and the dielectric strength are adjustable.
+<li><b>conducting plane + pt</b>:
+This is the electric field of a point charge near a conducting
+boundary.
+<li><b>fast charge</b>:
+This is the electric field of a point charge moving at a rate comparable to
+the speed of light.  This causes the field to be distorted.
+The ratio between the speed of the particle and the speed of light
+is adjustable.
+<li><b>charged ring</b>:
+This is an evenly charged ring.  The size of the ring is adjustable.
+<li><b>charged ring pair</b>:
+This is two evenly charged rings.
+<li><b>charged ring dipole</b>:
+Two oppositely charged rings
+<li><b>slotted conducting plane</b>:
+This is a grounded conducting plane with a rectangular slot cut in it.
+The plane is placed in a uniform external field.  The slot is infinitely
+long, but finitely wide, and the width is adjustable.
+<li><b>conducting planes w/ gap</b>:
+Two infinite conducting planes, one at positive potential and one at negative
+potential, with a gap between them.
+</ul>
+<p>
+The <b>Display</b> popup will allow you to select how the field
+is displayed:
+<ul>
+<li><b>Display: Particles (Vel.)</b> means particles will move through
+the field, with the field vectors determining their velocity.
+Note that the particles are only a educational device
+intended to show what the field looks like;
+in real life, particles would not move in this manner.
+<li><b>Display: Particles (Force)</b> means charged particles will move
+through the field, and the field vectors determine their acceleration.
+<li><b>Display: Field Vectors</b> shows you the field vectors at an array
+of locations.
+<li><b>Display: Field Lines</b> shows you the field lines.  The
+<b>Line Density</b> slider controls how many lines to draw.  The
+color indicates the field strength.
+<li><b>Display: Equipotentials</b> shows you equipotential surfaces.
+By default slicing is turned on because the equipotentials are easier
+to see that way, and you can see more than one at a time.  Red means
+negative potential, green means positive, gray means ground.  If you
+turn slicing off, you can only see one equipotential at a time;
+the <b>Potential</b> slider allows you to determine which one to
+view.  If the slider is set too high or too low then the corresponding
+equipotential surface may not be visible or may not exist, so just
+play around with the slider a bit if you don't see anything.
+</ul>
+<p>
+The <b>Mouse</b> popup controls what happens when you click on the box.
+If you set it to <b>Adjust Angle</b> or <b>Adjust Zoom</b>, you can
+adjust the orientation or size of the 3-d view by clicking and
+dragging on the box.
+<p>
+The <b>Slice</b> popup allows you to look at planar slices of the box
+rather than looking at the contents of the entire box.
+If the popup is set to <b>No Slicing</b>, you view the entire
+box.  Otherwise you will see the box sliced in one of three
+directions.  The location of the slice can be adjusted by dragging
+the line running along the sides of box near the slice.
+<p>
+The <b>Stopped</b> checkbox will stop the particles.
+<p>
+The <b>Reverse</b> checkbox will reverse the direction of all the
+field vectors.
+<p>
+The <b>Reset</b> button can be used to reset the positions of
+all the particles to random values.
+<p>
+The <b>Kick</b> button can be used to give all the particles a
+random acceleration in some direction. 
+This is only allowed if the particle movement is set
+to "Force".  It can be useful if none of the particles are moving,
+or if they are all moving in the same direction.
+<p>
+The <b>Field Strength</b> slider makes the field stronger or weaker,
+and also adjusts the brightness of the field vectors if you
+have <b>Display: Field Vectors</b> selected.
+<p>
+The <b>Vector Density</b> slider controls the number of vectors present
+if you have <b>Display: Field Vectors</b> selected.
+<p>
+The <b>Number of Particles</b> slider allows you to reduce the number
+of particles, which can be useful if you want to watch the behavior of
+just a few of them.  Also it might speed things up if you have fewer
+particles.
+<p>
+A few additional field-specific sliders may be present,
+depending on the field you have selected.
+<p>
+<a href="index.html">Click here to go to the applet.</a>
+<hr>
+<a href="/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

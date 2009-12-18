@@ -1,0 +1,134 @@
+<title>Circular Membrane Applet Directions</title>
+<body>
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<p>
+This java applet is a simulation that demonstrates wave motion
+in a perfectly elastic <a
+href="http://hyperphysics.phy-astr.gsu.edu/hbase/music/cirmem.html">circular</a> <a href="http://www.kettering.edu/~drussell/Demos/MembraneCircle/Circle.html">membrane</a> (like a drum head).
+<p>
+An ideal continuous membrane has an infinite number of vibrational modes,
+each with its own frequency.  The lowest-frequency mode is called the
+fundamental, and involves the entire membrane vibrating up and down
+at a frequency determined by the membrane's size, tension, and mass.
+The other modes involve parts of the
+membrane (called nodal lines) standing still while the rest of the membrane
+vibrates.  When a membrane is vibrating, more than one mode is typically
+present at once.
+<p>
+<p>
+At the top of the applet on the left you will see the membrane.
+To set it in motion, click <b>Fundamental</b>.
+If you click <b>Clear</b>, it will be at rest again.
+<p>
+Below the membrane you will see a graph showing each
+normal mode's contribution to the membrane's vibration.
+The modes are laid out in the following order:
+<p>
+<table border>
+<tr>
+<td align=center>0,1</td>
+<td align=center>1,1a</td>
+<td align=center>1,1b</td>
+<td align=center>2,1a</td>
+<td align=center>2,1b</td>
+<td align=center>...</td>
+</tr>
+<tr>
+<td align=center>0,2</td>
+<td align=center>1,2a</td>
+<td align=center>1,2b</td>
+<td align=center>2,2a</td>
+<td align=center>2,2b</td>
+<td align=center>...</td>
+</tr>
+<tr>
+<td align=center>...</td>
+<td align=center>...</td>
+<td align=center>...</td>
+<td align=center>...</td>
+<td align=center>...</td>
+<td align=center>...</td>
+</tr>
+</table>
+<p>
+where <i>m,n</i> refers to the mode with <i>m</i> nodal diameters
+and <i>n</i> nodal circles. Each mode with nonzero <i>m</i> is
+doubly degenerate; the difference between the two modes is a rotation.
+By combining the two degenerate modes in different proportions
+you can rotate the mode arbitrarily; by combining the two modes
+with different phases you can get the nodal diameters to rotate
+with time.
+<p>
+Each element of the grid has a color which indicates the presence or
+absence of the mode it represents.  Black means the mode is not present;
+green means the mode is present with a positive coefficient, and red means
+it is present with a negative coefficient.
+<p>
+In addition, each mode may have a phase shift, which indicates that its
+oscillatory cycle leads or lags the others.  This is indicated by
+a blue line.
+<p>
+You can add or remove a mode by clicking on it.  If you click and drag
+up and down you can fine-tune the magnitude of the mode.  If you drag
+left and right you can alter the phase shift.
+<p>
+<p>
+The <b>Mouse</b> popup controls what happens when you click on the
+membrane.  If you set it to <b>Poke membrane</b>, the membrane will
+be poked at the point where you click, affecting the entire
+membrane.  If you set the popup to <b>Strike membrane</b>, the membrane will
+be struck at the point where you click, affecting only a small area
+surrounding that point.
+<p>
+If you set it to <b>Adjust view angle</b> or <b>Adjust view zoom</b>, you can
+adjust the orientation or size of the 3-d view.
+<p>
+The <b>Display</b> popup can be used to control whether the 3-d or 2-d
+view is shown.  By default it is set to <b>Display 3-d Only</b>.  To show a
+2-d representation, you can select <b>Display 2d Only</b> or <b>Display 3d+2d</b>.
+The 2-d representation often gives you a clearer picture of what is
+going on.
+<p>
+The <b>3d View</b> popup can be used to control the look of the 3-d view.
+By default it is set to <b>Solid</b>, but you can also see a wireframe
+view by selecting one of the other options.
+<p>
+The <b>Stopped</b> checkbox can be used to stop the motion of the membrane
+for a moment.
+<p>
+The <b>Show Frequencies</b> checkbox can be used to show or hide
+the frequency grid.  By default, it is shown.
+<p>
+The <b>Color</b> checkbox can be used to turn off color.  This may
+look better and/or it may make the applet run faster.
+<p>
+The <b>Sound</b> checkbox allows you to hear the sound the membrane
+would make.  High frequencies (above 4000Hz) will not be heard.  This
+checkbox is only present if you have Java 2 installed.
+<p>
+The <b>Simulation Speed</b> slider controls how fast the simulation will
+proceed.
+<p>
+The <b>Damping</b> slider controls how much damping there is.  Damping is
+a force that slows the membrane down.  High harmonics are damped more than lower ones.
+The default
+setting is set to zero, so you may want to set this higher in order to
+get more realistic behavior.
+<p>
+The <b>Brightness</b> slider controls the brightness, just like on a
+TV set.  This can be used to view faint waves more easily.
+<p>
+The <b>Resolution</b> slider will adjust the fineness of the
+rendering.  This can be set lower to speed up the applet.
+<p>
+The <b>Base Frequency</b> slider will adjust the fundamental frequency of the
+membrane, when the Sound checkbox is on.  Normally this would be
+determined by the tension, size, and mass of the membrane.
+<hr>
+<a href="index.html">Back to the applet</a>.
+<hr>
+<a href="http://www.falstad.com/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="http://www.falstad.com/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

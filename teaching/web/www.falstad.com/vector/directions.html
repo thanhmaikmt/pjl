@@ -1,0 +1,134 @@
+<title>Vector Field Applet Directions</title>
+<body>
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<p>
+This java applet demonstrates various properties of
+vector fields.
+You can select from a number of <a href="http://www-math.mit.edu/~djk/18_022/chapter06/contents.html">vector fields</a> and see how
+particles move in the field if it is treated as either a velocity
+or a force field.  This helps you visualize the field.  Also you
+can see the values of the divergence and curl of the field.
+<p>
+When you start the applet, you will see 500 particles moving in the
+<tt>"1/r single line"</tt> field, which is a field that attracts
+particles to the center.  By default the
+particles are treating the field as a <i>velocity</i> field, which means
+that the field vectors determine how fast the particles are moving and in
+what direction.  In this case, the particles just move toward the center
+and fall in.  The velocity of all the particles at a certain point
+on the grid is always the same.  If the field is treated as a <i>force</i>
+field, then the
+field vectors determine the acceleration of the particles, but their velocity
+may vary depending on where they started.
+<p>
+If the vector field is a gradient field then
+you will see the particles moving on a surface determined by the
+potential function associated with the field.  They will roll downhill
+on the surface.
+<p>
+If the vector field is not a gradient field, then you will just see
+a 2-dimensional view of the particles moving around in a grid.
+<p>
+The <b>Setup</b> popup will allow you to select a
+vector field.  <a href="functions.html">Here is a list of possible vector
+fields.</a>
+<p>
+The <b>Color</b> popup will allow you to select what the
+color of the floor means.  Generally the floor color will indicate
+the value of some quantity at that point, where green means positive,
+gray means zero, and red means negative.  Here are the possibilities:
+<ul>
+<li><b>Field Magnitude</b> means the floor indicates the strength of the
+field.  It will be green if the field is strong and gray if it is weak
+or not present.
+<li><b>Potential</b> means the floor indicates the value of the potential
+function, if any.
+<li><b>None</b> means the floor is gray.
+<li><b>Divergence</b> means the floor indicates the <a href="http://www-math.mit.edu/~djk/18_022/chapter07/contents.html">divergence</a> of
+the field.
+<li><b>Curl Z</b> means the floor indicates the Z component of the
+field's <a href="http://www-math.mit.edu/~djk/18_022/chapter08/contents.html">curl</a>.  (The curl can't have any other components because the
+field vectors are always in the x-y plane, and the curl must be
+perpendicular to the field vectors.)  Green means positive curl
+(counter-clockwise rotation) and red means negative curl (clockwise).
+</ul>
+<p>
+The <b>Floor</b> popup allows you to select whether grid lines,
+equipotentials, or streamlines are drawn on the floor, or none of the above.
+<p>
+The <b>Flat View</b> checkbox allows you to select a two-dimensional
+view of the vector field rather than showing the particles on a
+potential surface.  This is done automatically when viewing vector fields
+which are not gradient fields, when viewing field vectors or curl
+detectors, or when taking a line or surface integral.
+<p>
+The <b>Display</b> popup will allow you to select how
+the particles will move:
+<ul>
+<li><b>Display: Particles (Vel.)</b> means particles will move through
+the field, with the field vectors determining their velocity.
+<li><b>Display: Particles (Force)</b> means particles will move through
+the field, and the field vectors determine their acceleration.
+<li><b>Display: Field Vectors</b> shows you the field vectors at an array
+of locations.
+<li><b>Display: None</b> doesn't show any particles or field vectors.
+<li><b>Display: Curl Detectors</b> means the field will be treated as a velocity
+field, but the particles will be little plus signs instead of dots,
+so you can see if the field is making them rotate.  This can be used
+to determine if the vector field has curl.
+</ul>
+<p>
+The <b>Mouse</b> popup controls what happens when you click on the view.
+If you set it to <b>Adjust Angle</b> or <b>Adjust Zoom</b>, you can
+adjust the orientation or size of the 3-d view by clicking and
+dragging.
+<p>
+If you select <b>Line Integral</b> from the mouse popup, you can perform
+a line integral by clicking and dragging out a rectangular area.  This will
+show the circulation around that area.  It should be proportional to the
+total curl inside, by <A
+href="http://www-math.mit.edu/~djk/18_022/chapter10/section01.html">Green's
+theorem</a>.
+<p>
+If you select <b>Surface Integral</b> from the mouse popup, you can perform
+a surface integral by clicking and dragging out a rectangular area.  This will
+show the flux through the bounds of that area.  It should be
+proportional to the total divergence inside, by
+the <A href="http://www-math.mit.edu/~djk/18_022/chapter10/section03.html">divergence theorem</a>.
+<p>
+The <b>Stopped</b> checkbox will stop the particles.
+<p>
+The <b>Reverse</b> checkbox will reverse the direction of all the
+field vectors.
+<p>
+The <b>Reset</b> button can be used to reset the positions of
+all the particles to random values.
+<p>
+The <b>Kick</b> button can be used to give all the particles a
+random acceleration in some direction. 
+This is only allowed if the particle movement is set
+to "Force".  It can be useful if none of the particles are moving,
+or if they are all moving in the same direction.
+<p>
+The <b>Field Strength</b> slider makes the field stronger or weaker,
+and also adjusts the brightness of the field vectors if you
+have <b>Display: Field Vectors</b> selected.
+<p>
+The <b>Vector Density</b> slider controls the number of vectors present
+if you have <b>Display: Field Vectors</b> selected.
+<p>
+The <b>Number of Particles</b> slider allows you to reduce the number
+of particles, which can be useful if you want to watch the behavior of
+just a few of them.  Also it might speed things up if you have fewer
+particles.
+<p>
+A few additional field-specific sliders may be present,
+depending on the field you have selected.
+<p>
+<a href="index.html">Click here to go to the applet.</a>
+<hr>
+<a href="http://www.falstad.com/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="http://www.falstad.com/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

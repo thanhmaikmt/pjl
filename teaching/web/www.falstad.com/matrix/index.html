@@ -1,0 +1,131 @@
+<title>Matrix Simulation</title>
+<body>
+<hr>
+<applet code=Matrix.class archive=matrix.jar width=600 height=400>
+Sorry, you need a Java-enabled browser to see the simulation.
+</applet>
+<hr>
+This java applet is a simulation that demonstrates some properties of
+<a href="http://hverrill.net/pages~helena/linalg/linalg.html">matrices</a>
+and how they can be used to describe a linear transformation in
+two dimensions.
+<p>
+The applet shows two vectors, one red and one blue.  The red vector
+is the first column of a matrix (shown on the right side of the
+screen).  The blue vector is the second column.
+<p>
+Since the red vector is the first column of the matrix, it is equal to
+the image of the (1,0) vector under the transformation described
+by the matrix.  The blue vector is the image of the (0,1) vector.
+When the applet starts up, the matrix is simply the identity matrix,
+so the red vector is (1,0) and the blue vector is (0,1).
+<p>
+The applet also shows a big green Z with a line under it and a green
+box around it.  This is just a simple design that shows the action
+of the matrix.  The applet transforms the design using the matrix
+before drawing it.  As the matrix changes, the image of the design
+changes.  The Z doesn't have any significance other than the fact that
+it is simple to draw and it is asymmetrical, so you can tell if it's
+backwards.
+<p>
+To change the matrix, move one of the two vectors by clicking on the
+arrowhead and dragging it.  Alternatively you can click and drag anywhere
+on the grid to rotate the two vectors or modify their lengths.  This will
+move the vectors around, which will change the matrix.  This causes
+the design to change.  Since the matrix is a linear transformation,
+all the lines in the design will remain straight, and the Z will always
+be centered at the origin.
+<p>
+As you move the mouse around the grid you may see a gray arrow pointing
+from the mouse position to a purple dot.  (Or you may just see a
+purple dot.)  This shows the image of the point under the mouse,
+when multiplied by the matrix.  For example if you move the mouse to
+(1,0) (which is where the red arrow originally points) you will
+see a purple dot under the red arrowhead.  That means that the image
+of (1,0) is the same as where the red arrow is pointing.  Also if you
+move the mouse around where the green square originally was, or where
+the green Z was, you will
+see the purple dot move around the present location of the green square or Z.
+<p>
+If you want to change the elements of the matrix to a certain set of values,
+you can
+just drag the red and blue vectors, since the red vector is the first
+column and the blue vector is the second column.  For
+example if you want to set
+the matrix to:
+<pre>
+  0  1
+  1  2
+</pre>
+then you just drag the red vector to (0,1), and drag the blue vector
+to (1,2).
+<p>
+To reset the matrix to the identity matrix, you can click the "Identity"
+button.  To replace the matrix with its transpose (which means that
+you interchange the upper right and lower left elements), click
+"Transpose".  To invert the matrix, click "Invert"; this only works
+if the matrix is invertible, which is only true when the determinant
+is nonzero.
+<p>
+To rotate the vectors 30 degrees clockwise or counter-clockwise
+(which involves multiplying
+the matrix by a 30-degree rotation matrix) click "Rotate CW" or
+"Rotate CCW".
+<p>
+To reflect the vectors across the X axis click "Reflect X".
+To reflect the vectors across the Y axis click "Reflect Y".
+<p>
+Below the matrix you will see some additional information displayed about it.
+"det M" is the determinant of the matrix.  "tr M" is the trace.
+And lambda1 and lambda2 are the two eigenvalues.  Notice that the
+sum of the two eigenvalues is the trace, and the product of them is
+the determinant.
+<p>
+You may see an orange and/or a yellow vector drawn on the grid.  These
+are the two eigenvectors.  The yellow one is associated with lambda1 and
+the orange one is associated with lambda2.  When you move the mouse to
+where an eigenvector is pointing (or any point along the same line as
+the eigenvector), you will see that the purple dot (the image of that point)
+is co-linear with the eigenvector.  That means that the image of that
+point is simply that point multiplied by the eigenvalue.  If the
+eigenvalue is zero or very small then the image will be at or near the
+origin.  If the eigenvalue is negative then the image will be on the
+other side of the grid, through the origin.  If the eigenvalue is
+positive but less than one, then the image will be closer to the origin
+but still along the same line; if it is greater than one then it will
+be farther away.
+<p>
+If you do not see one or both of the yellow and orange vectors,
+there may be one of several
+reasons.  If the matrix is set to the identity matrix (or a scalar multiple),
+then no eigenvectors are shown because there are no two unique
+eigenvectors; any vector is an eigenvector.
+If the eigenvalues are complex, then the eigenvectors are complex too,
+so we can't show them on a simple 2-d grid.  If the two eigenvalues
+are the same, then there may only be one eigenvector in some cases.
+For example, this matrix has only one eigenvector:
+<pre>
+  2  0
+  2  2
+</pre>
+In other cases, there should be two eigenvectors, but you may not be able
+to see one or both of them because the red or blue vectors may be drawn on
+top of them.  The eigenvectors always have a length of 1, so if the
+red and/or blue vectors also have a length of 1, then you may not be able to
+see or or both of them.  To fix this, change the length of the red
+and blue vectors slightly.
+<p>
+You may notice dark blue and dark red dots moving around on the grid.  The
+dark red dot is the image of (1,0) under the inverse of the
+matrix.  And the dark blue dot is the image of (0,1) under the
+inverse.  So if you move the mouse to the dark red dot, you will see
+a purple dot at (1,0).  And if you click the "Invert" button, you will
+see the red vector move to where the dark red dot is, and vice versa.
+<hr>
+<a href="Matrix.java">The source.</a>
+<hr>
+<a href="/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="/index.html"><img src="/me_small.gif"></a>
+<a href="http://www.openwave.com/"><img src="/softcom_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

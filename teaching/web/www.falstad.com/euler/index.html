@@ -1,0 +1,39 @@
+<title>Euler's Formula Applet</title>
+<body>
+<hr>
+<applet code=Euler.class archive=euler.jar width=600 height=50>
+Sorry, you need a Java-enabled browser to see the simulation.
+<param name=pause value=10>
+</applet>
+<hr>
+This applet is a graphical demonstration of <A
+href="http://en.wikipedia.org/wiki/Euler's_Formula">Euler's formula</a>:
+<blockquote>
+<i>e<sup>ix</sup></i> = cos <i>x</i> + <i>i</i> sin <i>x</i>
+</blockquote>
+We can generalize this to complex numbers:
+<blockquote>
+<i>e<sup>z</sup></i> = <i>e<sup>x</sup></i> (cos <i>y</i> + <i>i</i> sin <i>y</i>)
+</blockquote>
+where <i>z</i> = <i>x</i> + <i>i y</i>.  In the applet,
+<i>z</i> is shown as a green dot on the complex plane.
+<i>e<sup>z</sup></i> is shown as a red dot.  The unit circle is
+shown in gray.  <i>z</i> goes from -<i>&pi;</i> to <i>&pi;</i> and back again,
+which causes <i>e<sup>z</sup></i> to go around the unit circle.
+<p>
+<i>e<sup>z</sup></i> can be evaluated using a <a href="http://en.wikipedia.org/wiki/Exponential_function#Formal_definition">power series</a>; the terms
+of this series are shown in alternating shades of blue, starting with
+1 (the blue line from the origin to 1), and then <i>z</i> (the light
+blue line from 1 to 1+<i>z</i>), and then <i>z<sup>2</sup></i>/2, and so on.
+<p>
+You can select another value of <i>e<sup>z</sup></i> by clicking
+anywhere with the mouse.  If you want to select another value of
+<i>z</i> with the mouse, change the popup menu from "Mouse = Select
+exp(z)" to "Mouse = Select z".
+<hr>
+<A href="Euler.java">The source.</a>
+<hr>
+<a href="/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

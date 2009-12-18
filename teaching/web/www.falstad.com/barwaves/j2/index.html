@@ -1,0 +1,69 @@
+<title>Bar Waves Applet</title>
+<body>
+<hr>
+<!-- MS IE (Microsoft Internet Explorer) will use outer object -->
+<OBJECT classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93" WIDTH = 600 HEIGHT = 50
+  codebase="http://java.sun.com/products/plugin/1.3/jinstall-13-win32.cab#Version=1,3,0,0">
+  <param name="code" value="BarWaves.class">
+  <param name="archive" value="barwaves.jar">
+  <param name="pause" value="10">
+  <!--[if !IE]> Mozilla/Netscape and others will use inner object -->
+    <object classid="java:BarWaves.class" 
+            archive="barwaves.jar" 
+	    code="BarWaves.class"
+            width="600" height="50" >                    
+            <strong>
+              This browser does not have a Java Plug-in.
+              <br />
+              <a href="http://java.sun.com/products/plugin/downloads/index.html">
+              Get the latest Java Plug-in here.
+              </a>
+            </strong>
+    </object> 
+  <!-- <![endif]-->
+</object>
+<hr>
+If you get a message "need java2 for this applet" or the
+applet doesn't load, then you 
+can use the <a href="/barwaves/">Java 1 version of this applet</a>
+(but the sound
+won't be as good).  If you don't have Java 2 I recommend
+you go get the <a target="_blank"
+href="/cgi-bin/go.pl?http://java.sun.com/getjava/">Java plug-in</a>
+if you are on Windows.  If you have an older browser like IE5, the
+Java plug-in is faster anyway.  But the latest Microsoft VM (in IE6) seems to
+be slightly faster than the Java plug-in so you might not want to use the
+plug-in
+all the time, since most applets out there do not require Java 2
+features.  The plug-in can be enabled and disabled as needed in the
+IE configuration.
+<hr>
+This java applet is a simulation that demonstrates
+standing <a target="_blank" href="http://www.du.edu/~jcalvert/waves/mechwave.htm">flexural waves in a bar</a>.
+<p>
+At the top of the applet on the left you will see the bar.
+To set the bar in motion, click on it and drag around to deform it,
+or click "Fundamental".
+<p>
+Below the bar you will see a graph showing each
+normal mode's contribution to the bar's vibration.
+There are two sets of indicators; on top are the magnitude indicators, which
+shows the amplitude of each normal mode.  These can be
+adjusted with the mouse, or you could double-click on one to isolate
+a particular mode.
+<p>
+The setup menu in the upper right has other variants of the bar (with
+different boundary conditions) for you to try.
+<p>
+<a target="_blank" href="directions.html">Full Directions.</a>
+<p>
+<a href="BarWaves.java">The source.</a>
+<p>
+<a href="http://www.falstad.com/mathphysics.html">More applets.</a>
+<p>
+<a href="barwaves.zip">Zip archive of this applet.</a>
+<hr>
+<a href="http://www.falstad.com/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="http://www.falstad.com/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

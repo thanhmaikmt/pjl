@@ -1,0 +1,98 @@
+<title>Sound Wave Interference Applet</title>
+<link rel="SHORTCUT ICON" href="favicon.ico">
+<body>
+<hr>
+<!-- MS IE (Microsoft Internet Explorer) will use outer object -->
+<OBJECT classid="clsid:8AD9C840-044E-11D1-B3E9-00805F499D93" WIDTH = 600 HEIGHT = 40
+  codebase="http://java.sun.com/products/plugin/1.3/jinstall-13-win32.cab#Version=1,3,0,0">
+  <param name="code" value="Interference.class">
+  <param name="archive" value="interference.jar">
+  <!--[if !IE]> Mozilla/Netscape and others will use inner object -->
+    <object classid="java:Interference.class"
+            archive="interference.jar" 
+            width="600" height="40" >                    
+            <strong>
+              This browser does not have a Java Plug-in.
+              <br />
+              <a href="http://java.sun.com/products/plugin/downloads/index.html">
+              Get the latest Java Plug-in here.
+              </a>
+              <p>
+If you are on a platform that does not support the Java plugin, but your
+browser does support Java, <a href="index_ap.html">try this page</a>.
+            </strong>
+    </object>
+  <!-- <![endif]-->
+</object>
+<hr>
+If you get a message "need java2 for this applet" then I
+recommend you go get the <a target="_blank"
+href="/cgi-bin/go.pl?http://java.sun.com/getjava/">Java plug-in</a>
+if you are on Windows.  This applet only works on java 2 because you
+can't get half-decent sound without it.
+<hr>
+This java applet demonstrates interference between two sources of
+sound waves.  You need two speakers (or <a target="_blank"
+href="http://hyperphysics.phy-astr.gsu.edu/hbase/sound/reflec2.html#c2">one speaker and a wall</a>)
+and a sound card (preferably stereo).
+<p>
+Measure or estimate the distance between your speakers and set the <b>Speaker
+Separation</b> slider accordingly.  (Uncheck the <b>Metric Units</b>
+checkbox if you want.)  Then turn on the <b>Sound</b>
+checkbox.  The applet will play a sine wave out of both speakers,
+which will create an interference pattern hopefully quite similar to
+the one shown.  The speakers are shown as blue dots.  Plug one ear
+and move your head around the room (at speaker level) to see if you
+can pick up the variations
+in sound intensity.  They should roughly match the interference pattern,
+although there may be many differences because of reflections off
+walls and objects; also this applet uses a simplistic point source model
+for the speakers, which will not match reality very well.
+<p>
+If you have a stereo sound card, then check the <b>Stereo</b>
+checkbox.  You can use the <b>Balance</b> slider to verify that the
+stereo is working.  With stereo turned on, you can adjust the relative
+phase of the two speakers.  By default, the speakers are 180 degrees
+out of phase, so the sound intensity will be low right between them.
+<p>
+Note that if you have a subwoofer, then low frequencies will be coming
+out of the subwoofer rather than the main speakers, so the interference
+pattern won't match your experience.
+<p>
+You can measure distances on the view by clicking the mouse and
+dragging.
+<p>
+You can also view the interference pattern between <a target="_blank"
+href="http://hyperphysics.phy-astr.gsu.edu/hbase/sound/reflec2.html#c2">one speaker and a wall</a>
+by setting the <b>Speaker Separation</b> to twice the distance between
+the speaker and the wall.  Uncheck the <b>Stereo</b> checkbox or set
+the <b>Phase Difference</b> to zero.  Imagine the wall being drawn
+vertically down the middle of the screen.
+<p>
+It is also interesting to move the speakers right next to each other and
+then set the phase difference to 180 degrees.
+<p>
+<script type="text/javascript"><!--
+google_ad_client = "pub-1974179407250396";
+google_ad_width = 728;
+google_ad_height = 90;
+google_ad_format = "728x90_as";
+google_ad_type = "text_image";
+google_ad_channel ="";
+//--></script>
+<script type="text/javascript"
+  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+<p>
+<a href="Interference.java">The source.</a>
+<p>
+<a href="http://www.falstad.com/mathphysics.html">More applets.</a>
+<p>
+<a href="interference.zip">Zip archive of this applet.</a>
+<p>
+<A href="index_de.html">Deutsche Version.</a>
+<hr>
+<a href="http://www.falstad.com/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="http://www.falstad.com/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

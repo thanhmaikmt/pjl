@@ -1,0 +1,138 @@
+<title>Hydrogen Atom Directions</title>
+<body>
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<p>
+This java applet displays the wave functions (orbitals) of
+electrons
+in the hydrogenic atom (which is a theoretical simplification of the
+hydrogen atom).
+<p>
+At the top of the screen, you will see a cross section of the potential,
+with the energy levels indicated as gray lines.  The red line is
+the expectation value for energy.
+<p>
+Below that, you will see the 4f<sub>z<sup>3</sup></sub>
+orbital.  You can
+select other orbitals using the popup menus in the upper
+right.  The display is brighter where the wave function's probability
+density is larger; the color indicates its phase.  Rotate the view
+by clicking on the wave function and
+dragging.
+<p>
+This applet displays real orbitals (as typically used in chemistry)
+by default; to display complex orbitals (as typically used in physics)
+select <b>Complex Orbitals</b> from the popup menu in the top upper right.
+<p>
+From the same popup menu, you may also request to view
+<b>Combinations</b> of real or complex orbitals.  If you do so,
+at the bottom
+of the screen you will find
+a set of phasors showing the magnitude and phase of some of the possible
+states.  You may select a single state by picking one of the phasors at the
+bottom and double-clicking on it.  Or, you may click on the phasor and
+drag its value to modify the magnitude and phase.  In this way, you can
+create a combination of states.
+<p>
+If you select <b>Multiple Bases (n=2,l=1)</b> from the menu
+in the top right, you will see four rows of three states each; each row
+is a possible basis for the set of states with n=2 and l=1.  The top row
+is the standard basis where states are eigenstates of the L<sub>z</sub>
+operator.  The next two rows have eigenstates of L<sub>x</sub> and
+L<sub>y</sub>.  The last row is a set of real orbitals.
+<p>
+The other <b>Multiple Bases</b> options work similarly.  The
+<b>Hybrid Bases</b> option allows you to view groups of hybrid orbitals.
+<p>
+The <b>Slice popup</b> allows you to look at planar slices of the atom
+rather than looking at the entire atom in 3-d.  If the popup is set
+to <b>No Slicing</b>, you view the entire atom.  Otherwise you will see
+a box sliced in one of three
+directions.  The location of the slice can be adjusted by dragging
+the line running along the sides of box near the slice.
+<p>
+<b>Note:</b> many of the following items are only present and enabled
+when viewing combinations of orbitals.
+<p>
+The <b>Mouse popup</b> controls what happens when the mouse is
+clicked and dragged.  If the popup is set to <b>Mouse = Adjust View</b>,
+then the mouse controls the orientation of the view.  If it is set
+to <b>Mouse = Rotate X</b>, then the mouse will allow you to rotate
+the orbital about the x axis.  This is different than rotating the view;
+the state of the electron will be changed to one with a different
+orientation.  The point of this is to demonstrate that the standard basis
+functions are sufficient to create an orbital of arbitrary
+orientation.  Similarly for the other <b>Mouse = Rotate</b> items.
+<p>
+The <b>Stopped</b> checkbox stops the evolution of the wave function.
+<p>
+The <b>Clear</b> button clears out all states.
+<P>
+The <b>Normalize</b> button normalizes the set of electron
+states.  (By default, the states are not shown normalized because the
+interface is easier to use if they are not.  They are normalized internally
+when calculating the wave functions, however.)
+<p>
+The <b>Maximize</b> button changes the magnitude of the
+electron states so that they are all as large as possible.  This makes
+them easier to see when looking at the phasors.  (It
+won't change the wave function at all
+because the states are normalized internally.)
+<p>
+The <b>Simulation Speed</b> slider changes the speed of the wave
+function evolution.
+<p>
+The <b>Brightness</b> slider controls the brightness, just like on a
+TV set.  This can be used to view faint areas more easily.  This is
+automatically adjusted when changing orbitals.
+<p>
+The <b>Image Resolution</b> slider controls the resolution of the
+box image.  Higher resolution images are slower.
+<p>
+The <b>Scale</b> slider controls the zoom factor.  This is
+automatically adjusted when changing orbitals.
+<p>
+The <b>View Menu</b> has the following items:
+<ul>
+<li><b>Energy</b>: show the energy/potential graph (on by default)
+<li><b>Position</b>: show the position distribution (can't be turned off)
+<li><b>Angular Momentum</b>: show the angular momentum graphs for
+the x, y, and z axes.  The expectation values are shown as a red line.
+<li><b>Angular Momentum^2</b>: show the graphs for the
+L<sub>x</sub><sup>2</sup>,
+L<sub>y</sub><sup>2</sup>, and
+L<sub>z</sub><sup>2</sup> operators.  If you look closely you can
+verify that the expectation values of all three operators add up
+to l(l+1).
+<li><b>Radial Distribution</b>: shows a graph
+of <i>r</i><sup>2</sup><i>R</i><sub><i>nl</i></sub><sup>2</sup>.
+The tick marks at the bottom of the graph indicate multiples of the
+Bohr radius (52.9 picometers).
+<li><b>Phase as Color</b>: use color to indicate the phase
+of the wave function (on by default).
+</ul>
+<p>
+The <b>Options Menu</b> has the following items:
+<ul>
+<li><b>Show Cubic f Orbitals</b>: show the cubic set of f orbitals
+(l=3) rather than the general set.  This only works when viewing
+real orbitals.
+<li><b>Show Dimensions</b>: show the width of the view in picometers.
+<li><b>Show Axes</b>: show the x, y, and z axes.
+<li><b>Auto Scale</b>: automatically set the scale slider when
+changing orbitals.
+<li><b>Animated Scaling</b>: change the scale slider in steps,
+to emphasize the size difference between the various orbitals.
+</ul>
+<p>
+The <b>Samples Menu</b> allows you to select the number of samples
+used when calculating the view of the wave function.  A larger number of samples
+will result in more accurate display, especially for
+large <i>n</i>, but it will be slower.
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<hr>
+<a href="/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

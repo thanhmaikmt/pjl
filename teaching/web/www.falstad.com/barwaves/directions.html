@@ -1,0 +1,129 @@
+<title>Bar Waves Applet Directions</title>
+<body>
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<p>
+This java applet is a simulation that demonstrates
+standing <a target="_blank" href="http://www.du.edu/~jcalvert/waves/mechwave.htm">flexural waves in a bar</a>.
+<p>
+At the top of the applet on the left you will see the bar.
+To set the bar in motion, click on it and drag around to deform it,
+or click "Fundamental".  If you click "Clear", the bar will be at rest
+again.  (The vertical motion of the bar is greatly exaggerated so you
+can see it clearly.)
+<p>
+Below the bar you will see a graph showing each
+normal mode's contribution to the bar's vibration.
+There are two sets of indicators; on top are the magnitude indicators, which
+shows the amplitude of each normal mode, and on the bottom are the
+phase indicators.  The fundamental is on the left and the higher modes
+are on the right.  Since the higher modes oscillate
+at a higher frequency than the fundamental, the phase terms will move
+faster on the right.
+<p>
+If you move the mouse over one of the modes, it will turn
+yellow, and the corresponding mode will be
+drawn on top of the bar in yellow (unless it's too small to see).  So
+if you move the mouse
+over all the modes, you can see each of the terms individually.
+<p>
+(One thing to keep in mind when looking at the magnitude of
+each mode is that the scale is not linear.
+If it were linear, it would look like the higher modes all had
+zero magnitude because their contribution is so small.
+For small magnitudes, the scale is logarithmic; then about 1/4 of the
+way up the scale it switches to linear.  The same is true for negative
+magnitudes.  There is a horizontal gray line drawn at the point where the
+scale switches.)
+<p>
+You can modify the bar in one of two ways.  You can
+click on it directly to deform it, or you can modify the normal modes.
+<p>
+The <b>Setup popup</b> can be used to view some interesting cases.  The
+choices are:
+<ul>
+<li><b>bar, free</b>: this is a bar with free ends.
+<li><b>bar, hinged</b>: this is a bar with hinged ends, so it can
+rotate but not move at the ends.  This is a bar with simply supported
+edges.
+<li><b>bar, clamped</b>: this is a bar with clamped ends, so it can't
+move or rotate at the ends.
+<li><b>bar, clamped/free</b>: this is a bar clamped at the left end and
+free at the right end, similar to one tine of a tuning fork.
+<li><b>bar, hinged/clamped</b>: this is a bar hinged at the left end
+and clamped at the right end.
+<li><b>string, pinned</b>: this is a perfectly flexible string under tension,
+pinned at both ends.
+<li><b>string, pinned/free</b>: this is a perfectly flexible string under
+tension, fixed at the left end and pinned to a moveable support at the
+right end so it can move up and down while still remaining under
+tension.
+<li><b>string, free/free</b>: this is a string pinned to a moveable
+support at both ends.
+<li><b>stiff string, pinned</b>: this is a string with adjustable
+stiffness, pinned at both ends.
+<li><b>stiff string, clamped</b>: this is a string with adjustable
+stiffness, clamped at both ends.
+</ul>
+<p>
+The <b>Mouse popup</b> controls what happens when you click on the bar.
+The default setting is <b>Shape bar</b>, where you can edit
+the shape of the bar directly.  If you set it to <b>Apply static force</b>,
+then a force will be applied to the bar at the point you click.  (If the
+bar has free edges, then it will not be allowed to translate or
+rotate as the force is applied.)
+<p>
+The <b>Display popup</b> can be used to display some additional information.
+By default it is set to "Display Phases", which shows the magnitudes
+and phases of the modes.
+If you set it to "Display Phase Cosines", you will see the cosines of
+the phases rather than the phases
+themselves.  If you set it to "Display Modes", it will display graphs of the
+first twelve active modes.
+<p>
+The <b>Stopped checkbox</b> allows you to stop or start the simulation.
+<p>
+The <b>Sound checkbox</b> allows you to hear the sound the bar would
+make.  Every time you disturb the bar, it will play the noise made
+by the bar (but only for one second).  Any frequency over 4000 Hz
+will not be heard
+because Java cannot
+play sounds with frequencies that high.  (Unless you try the
+<a href="j2/">Java 2 version</a>.)
+<p>
+By turning on the sound checkbox and varying the parameters, you
+can make a variety of different realistic sounds.  For example with the
+<b>bar, free</b> setup, click on the bar to make a notch in it, making
+it as deep as possible, and then release the mouse.  This will make a
+sound like a metal bar being struck with a hard mallet.  A narrow notch
+will make a sharper
+sound, and a wide notch (especially a curved one) will make a duller
+sound.  A notch on the end will make a sharper sound as well, because
+higher modes will be more involved.
+<p>
+Varying the base frequency will simulate bars of different lengths.
+If the fundamental frequency is around 1000 Hz, then striking the bar
+near the center will make a sound like a bell
+or <a href="http://www.wikipedia.org/wiki/Glockenspiel">glockenspiel</a>.
+Varying the
+damping will also change the character of the sound.
+<p>
+The <b>Simulation Speed</b> slider controls how fast the simulation will
+proceed.
+<p>
+The <b>Damping</b> slider controls how much damping there is.  Damping is
+a force that slows the bar down.  High modes
+are damped more than lower ones.
+<p>
+The <b>Resolution</b> slider will adjust the accuracy of the
+simulation.  The higher the resolution, the slower the applet may go,
+but the more accurate the mode frequencies and shapes will be.
+<p>
+The <b>Base Frequency</b> slider adjusts the frequency of the fundamental.
+<p>
+<a href="index.html">Click here to go to the applet.</a>
+<hr>
+<a href="http://www.falstad.com/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="http://www.falstad.com/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

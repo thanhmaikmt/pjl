@@ -1,0 +1,101 @@
+<title>Quantum Mechanics: 1-Dimensional Particle States Applet</title>
+<body>
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<p>
+This java applet is a quantum mechanics simulation that shows the
+behavior of a particle in a <a href="http://en.wikipedia.org/wiki/Particle_in_a_one-dimensional_lattice_%28periodic_potential%29">one-dimensional crystal</a> (or lattice, or periodic
+potential).  Periodic potentials are used to model electron behavior
+in a crystal.
+<p>
+At the top of the applet you will see a graph of the potential, along
+with horizontal bands showing the energy levels.  By default, the potential
+is an array of square wells (the
+<A href="http://en.wikipedia.org/wiki/Particle_in_a_one-dimensional_lattice_%28periodic_potential%29">Kronig-Penney model</a>).  Below that you will
+see the probability distribution of
+the particle's position.  Below the particle's position
+you will see its <a href="http://en.wikipedia.org/wiki/Electronic_band_structure">band
+structure</a>, displayed as a dispersion curve; this is a graph of energy versus
+the <a href="http://en.wikipedia.org/wiki/Crystal_momentum">crystal momentum</a>
+k, with the energy bands shown as gray in the
+background.  The particle's energy is shown as a red horizontal line.
+<p>
+To view a state, click on one of the energy bands in either the
+potential graph or the dispersion curve.
+<p>
+You may select a different potential from the Setup menu
+at the top right.  You can also adjust the parameters of the potential
+(like the width of the wells) using the sliders on the right.
+<p>
+Between each graph is a horizontal line which may be dragged up and down
+to adjust the size of each graph.
+<p>
+<p>
+The <b>Setup Popup</b> allows you to select a predefined potential.  The
+choices are:
+<ul>
+<li><b>Finite Wells</b>: this is an array of square wells
+(the Kronig-Penney model).  The width of the
+wells are adjustable.
+<li><b>Well Pairs</b>: this is an array of pairs of wells.  You can
+adjust the separation between each pair of wells, and the width and
+depth of each
+well.
+<li><b>Coupled Well Pairs</b>: these are square wells with an adjustable
+wall between them.
+<li><b>Harmonic</b>: this is an array of harmonic oscillators.
+<li><b>Coulomb-Like</b>: this is vaguely similar to a coulomb potential,
+except that it has finite depth.
+<li><b>Free Particle</b>: this is a constant zero potential.
+<li><b>Sinusoidal</b>: here, the potential function is a sine wave.
+</ul>
+<p>
+The <b>Mouse Popup</b> determines what happens when the mouse is
+clicked.  The choices are:
+<ul>
+<li><b>Set Eigenstate</b>: if you click on the energy or
+dispersion graph, then the particle will be put in an energy eigenstate.
+<li><b>Edit Function</b>: this allows you to edit the potential energy
+graph by clicking and dragging with the mouse.  By doing this, you can
+define a custom potential.
+</ul>
+<p>
+The <b>Ground State</b> button selects the ground state wave function.
+<p>
+The <b>Stopped</b> checkbox stops the evolution of the wave function.
+<p>
+The <b>Simulation Speed</b> slider changes the speed of the wave
+function evolution.
+<p>
+The <b>Particle Mass</b> slider changes the mass of the particle.
+<p>
+The <b># of Wells Shown</b> slider changes the number of wells
+displayed.  There are an infinite number of wells extending off to the
+left and right, but the applet shows a finite number of them.
+<p>
+The <b>Energy Scale</b> slider lets you display more of the energy
+spectrum by adjusting the scale used to graph energy.
+<p>
+The <b>View Menu</b> has the following items:
+<ul>
+<li><b>Energy</b>: show the energy/potential graph (on by default)
+<li><b>Position</b>: show the position graph (on by default)
+<li><b>Momentum</b>: show the momentum graph
+<li><b>Bloch Function</b>: show the
+<a href="http://en.wikipedia.org/wiki/Bloch_wave">Bloch function (u)</a>.
+<li><b>Dispersion</b>: show the dispersion graph (on by default)
+<li><b>Wave Function</b>: display the wave function in one of four
+ways: as a probability (magnitude squared), as a probability with the
+phase shown using colors, as real and imaginary parts graphed
+separately, or as a magnitude with the phase shown using colors.
+</ul>
+<p>
+The <b>Zones Menu</b> allows you to specify which zone scheme to use
+when displaying the dispersion curve.
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<hr>
+<a href="http://www.falstad.com/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="http://www.falstad.com/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>
