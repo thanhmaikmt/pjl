@@ -1,0 +1,168 @@
+<title>2-D Electrostatic Field Applet Directions</title>
+<body>
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<p>
+This applet is an electrostatics demonstration which displays the
+electric field in a number of situations.
+You can select from a number of fields and see how
+particles move in the field if it is treated as either a velocity field
+(where the particles move along the field lines) or an actual force
+field (where the particles move as if they were charged particles).
+This helps you visualize the field.
+<p>
+When you start the applet, you will see 500 particles moving in the
+<tt>"charged line"</tt> field, which is a field that attracts
+particles to the center.  By default the
+particles are treating the field as a <i>velocity</i> field, which means
+that the field vectors determine how fast the particles are moving and in
+what direction.  In this case, the particles just move toward the center
+and fall in.  The velocity of all the particles at a certain point
+on the grid is always the same.  If the field is treated as a <i>force</i>
+field, then the
+field vectors determine the acceleration of the particles, but their velocity
+may vary depending on where they started.
+<p>
+The <b>Setup</b> popup will allow you to select a
+vector field.  The choices are:
+<ul>
+<li><b>charged line</b>:
+Charge evenly distributed along an infinitely long line through the
+center of the x-y plane.
+<li><b>line charge double</b>:
+Two charged lines.
+<li><b>dipole lines</b>:
+Two lines of opposite charge.
+<li><b>quad lines</b>:
+Two positive lines and two negative lines.
+<li><b>point charge</b>:
+This is the field of a single point of charge.  This is a
+two-dimensional cross section of a three-dimensional field.  In three
+dimensions, the divergence is zero except where the charge is located; but in
+this cross section, the divergence is positive everywhere (except at the
+origin, where it is negative).
+<li><b>point charge double</b>:
+Two point charges, with an adjustable separation between them.
+<li><b>dipole</b>:
+Two points with opposite charges, with an adjustable separation between them.
+<li><b>quadrupole</b>:
+Two positive charges and two negative charges.
+<li><b>conducting plate</b>:
+A conducting plate.  The plate size is adjustable.
+<li><b>charged plate</b>:
+An evenly charged plate.  The plate size is adjustable.
+<li><b>charged plate pair</b>:
+Two evenly charged plates.  The size and separation of the two sheets are adjustable.
+<li><b>charged plate dipole</b>:
+Two evenly charged plates with opposite charges.
+The size and separation of the two sheets are adjustable.
+<li><b>infinite plane</b>:
+An infinite plane, evenly charged.
+<li><b>conducting cylinder</b>:
+A conducting cylinder with adjustable potential.
+<li><b>cyl + line charge</b>:
+A conducting cylinder near a line charge.
+<li><b>cylinder in field</b>:
+A grounded conducting cylinder in a uniform external field.
+<li><b>dielec cyl in field</b>:
+This is the electric field of a dielectric cylinder in a uniform
+external field.  The size of the cylinder and the dielectric strength
+are adjustable.
+<li><b>slotted conducting plane</b>:
+This is a grounded conducting plane with a rectangular slot cut in it.
+The plane is placed in a uniform external field.  The width of the slot
+is adjustable.
+<li><b>conducting planes w/ gap</b>:
+Two infinite conducting planes, one at positive potential and one at negative
+potential, with a gap between them.
+</ul>
+<p>
+The <b>Color</b> popup will allow you to select what the
+color of the floor means.  Generally the floor color will indicate
+the value of some quantity at that point, where green means positive,
+gray means zero, and red means negative.  Here are the possibilities:
+<ul>
+<li><b>Field Magnitude</b> means the floor indicates the strength of the
+field.  It will be green if the field is strong and gray if it is weak
+or not present.
+<li><b>Potential</b> means the floor indicates the value of the potential
+function, if any.
+<li><b>None</b> means the floor is gray.
+<li><b>Charge</b> means the floor indicates the <a href="http://www-math.mit.edu/~djk/18_022/chapter07/contents.html">divergence</a> of
+the field, which is equal to the charge density.
+</ul>
+<p>
+The <b>Floor</b> popup allows you to select whether grid lines,
+equipotentials, or field lines are drawn on the floor, or none of the above.
+<p>
+The <b>Flat View</b> checkbox allows you to select a two-dimensional
+view of the vector field rather than showing the particles on a
+potential surface.  This is done automatically when viewing field vectors
+or when taking a line or surface integral.
+<p>
+The <b>Display</b> popup will allow you to select how
+the particles will move:
+<ul>
+<li><b>Display: Particles (Vel.)</b> means particles will move through
+the field, with the field vectors determining their velocity.
+<li><b>Display: Particles (Force)</b> means particles will move through
+the field, and the field vectors determine their acceleration.
+<li><b>Display: Field Vectors</b> shows you the field vectors at an array
+of locations.
+<li><b>Display: None</b> doesn't show any particles or field vectors.
+</ul>
+<p>
+The <b>Mouse</b> popup controls what happens when you click on the view.
+If you set it to <b>Adjust Angle</b> or <b>Adjust Zoom</b>, you can
+adjust the orientation or size of the 3-d view by clicking and
+dragging.
+<p>
+If you select <b>Line Integral</b> from the mouse popup, you can perform
+a line integral by clicking and dragging out a rectangular area.  This will
+show the circulation around that area.  It should be zero, by
+<a href="http://hyperphysics.phy-astr.gsu.edu/hbase/electric/maxeq2.html#c3">Faraday's law</a>,
+since this is a static field.
+<p>
+If you select <b>Surface Integral</b> from the mouse popup, you can perform
+a surface integral by clicking and dragging out a rectangular area.  This will
+show the flux through the bounds of that area.  It should be
+proportional to the total charge inside, by
+<a
+href="http://hyperphysics.phy-astr.gsu.edu/hbase/electric/gaulaw.html">Gauss's
+Law</a>.
+<p>
+The <b>Stopped</b> checkbox will stop the particles.
+<p>
+The <b>Reverse</b> checkbox will reverse the direction of all the
+field vectors.
+<p>
+The <b>Reset</b> button can be used to reset the positions of
+all the particles to random values.
+<p>
+The <b>Kick</b> button can be used to give all the particles a
+random acceleration in some direction. 
+This is only allowed if the particle movement is set
+to "Force".  It can be useful if none of the particles are moving,
+or if they are all moving in the same direction.
+<p>
+The <b>Field Strength</b> slider makes the field stronger or weaker,
+and also adjusts the brightness of the field vectors if you
+have <b>Display: Field Vectors</b> selected.
+<p>
+The <b>Vector Density</b> slider controls the number of vectors present
+if you have <b>Display: Field Vectors</b> selected.
+<p>
+The <b>Number of Particles</b> slider allows you to reduce the number
+of particles, which can be useful if you want to watch the behavior of
+just a few of them.  Also it might speed things up if you have fewer
+particles.
+<p>
+A few additional field-specific sliders may be present,
+depending on the field you have selected.
+<p>
+<a href="index.html">Click here to go to the applet.</a>
+<hr>
+<a href="http://www.falstad.com/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="http://www.falstad.com/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

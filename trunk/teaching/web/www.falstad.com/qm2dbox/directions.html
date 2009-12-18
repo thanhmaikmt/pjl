@@ -1,0 +1,156 @@
+<title>Quantum Mechanics: 2-Dimensional Rectangular Box Directions</title>
+<body>
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<p>
+This java applet is a quantum mechanics simulation that shows the
+behavior of a particle in a two dimensional rectangular
+square well ("particle in a box").
+<p>
+At the top of the screen, you will see a cross section of the potential
+well, with the energy levels indicated as gray lines.  The red line is
+the expectation value for energy.
+<p>
+In the center of the applet, you will see a plot of the wave
+function.  The brightness indicates the magnitude and
+the color indicates the phase.  The red lines indicate the
+expectation value for the X and Y coordinates.
+<p>
+At the bottom
+of the screen is
+a set of phasors showing the magnitude and phase of some of the possible
+states.
+<p>
+You may select a single state by picking one of the phasors at the
+bottom and double-clicking on it.  Or, you may click on the phasor and
+drag its value to modify the magnitude and phase.  In this way, you can
+create a combination of states.  When you move the mouse over a state,
+it is highlighted in yellow, and other states with the same energy
+are also highlighted.
+<p>
+Between each graph is a horizontal line which may be dragged up and down
+to adjust the size of each graph.
+<p>
+<p>
+The <b>Mouse Popup</b> determines what happens when the mouse is
+clicked.  The choices are:
+<ul>
+<li><b>Set Eigenstate</b>: if you click on the energy, position, or
+momentum graph, then the particle will be put in an eigenstate of that
+observable.  So if you click on the energy graph, the particle will be
+placed in a stationary state.  If you click on the position graph,
+the particle will be localized at that point (but will quickly spread
+out).  If you click on the momentum graph, the particle will have the
+selected momentum.
+<p>
+Clicking on the position graph will cause the particle to be localized
+as much as possible, which will often give unsatisfactory results because
+the momentum spectrum will be so spread out.  To
+localize the particle with a little more uncertainty, use
+<b>Create Gaussian</b> to create a more spread-out distribution.
+<p>
+<li><b>Create Gaussian</b>: this allows you to create a gaussian distribution
+on either the position or momentum graph.  Click on the graph to locate
+the center of the gaussian.  After clicking, drag the mouse to select
+the size of the distribution.
+<li><b>Gaussian w/ Momentum</b>: this allows you to create a gaussian
+distribution
+on the position graph, with some initial momentum.  Click on the graph
+to locate
+the center of the gaussian.  The size of the gaussian will be the same
+size as the last time you used <b>Create Gaussian</b>.  After clicking,
+drag the mouse to select the initial momentum.  Note that if you
+drag too far, the gaussian may not be formed properly.
+<li><b>Create Square</b>: this allows you to create a square on the
+position graph.
+<li><b>Create Circle</b>: this allows you to create a circle
+(actually an oval) on the position graph.
+</ul>
+<p>
+The <b>Clear</b> button clears out all states.
+<P>
+The <b>Normalize</b> button normalizes the set of particle
+states.  (By default, the states are not shown normalized because the
+interface is easier to use if they are not.  They are normalized internally
+when calculating the wave functions, however.)
+<p>
+The <b>Maximize</b> button changes the magnitude of the
+particle states so that they are all as large as possible.  This makes
+them easier to see.  (It won't change the wave function at all
+because the states are normalized internally.)
+<p>
+The <b>Ground State</b> button selects the ground state wave function.
+<p>
+The <b>Stopped</b> checkbox stops the evolution of the wave function.
+<p>
+The <b>Alternate Rendering</b> checkbox is used to speed up
+rendering, but it actually slows things down on some machines.
+(Internally, it uses the MemoryImageSource class instead of drawing
+a bunch of rectangles.)  It should be set to the proper setting by
+default, but try selecting or unselecting it to see if it speeds
+things up.
+<p>
+The <b>Simulation Speed</b> slider changes the speed of the wave
+function evolution.
+<p>
+The <b>Brightness</b> slider controls the brightness, just like on a
+TV set.
+<p>
+The <b>Resolution</b> slider changes the resolution of the applet.
+<p>
+The <b>Momentum Zoom</b> slider allows you to zoom in on the momentum
+graph to get a better view of the central portion.
+<p>
+The <b>Phasor Count</b> slider allows you to select how many
+state phasors to display.
+<p>
+The <b>Aspect Ratio</b> slider will adjust the width of the box.  By
+default, the box is square.
+<p>
+The <b>View Menu</b> has the following items:
+<ul>
+<li><b>Energy</b>: show the energy/potential graph (on by default)
+<li><b>Position</b>: show the position graph (can't be turned off)
+<li><b>Momentum</b>: show the momentum graph
+<li><b>State Phasors</b>: show the set of state phasors (on by default)
+<li><b>Expectation Values</b>: show expectation values as red lines
+<li><b>Uncertainties</b>: show uncertainties as blue lines to the
+left and right of the expectation value.  The distance from the blue
+lines to the red line is the uncertainty.
+<li><b>Wave Function</b>: display the wave function in one of three
+ways: as a probability (magnitude squared), as a probability with the
+phase shown using colors, or as a magnitude with the phase shown using colors.
+</ul>
+<p>
+The <b>Measure Menu</b> has the following item:
+<ul>
+<li><b>Measure Energy</b>: take a measurement of the energy by
+picking a random set of states with the same energy
+(using the state coefficients to determine
+probability) and putting the particle in those states.
+</ul>
+<p>
+The <b>Options Menu</b> has the following items:
+<ul>
+<li><b>Always Normalize</b>: always normalize the state coefficients.
+<li><b>Always Maximize</b>: always maximize the state coefficients.
+<p>
+If neither one of these items is selected, then the applet will
+maximize the state coefficients whenever major changes are made,
+and leave them alone otherwise.
+</ul>
+<p>
+On the right side of the phasor panel, you will see a phasor all by
+itself.  This phasor tells you when the
+<a href="http://www.optics.rochester.edu:8080/users/stroud/animations/swgaussian.html">fractional
+revivals</a> are coming.  This phasor is only present if the aspect
+ratio is square.
+<p>
+If you like this applet you may be interested in the book <a href="http://www.kfunigraz.ac.at/imawww/vqm/">Visual Quantum Mechanics</a>.
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<hr>
+<a href="http://www.falstad.com/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="http://www.falstad.com/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

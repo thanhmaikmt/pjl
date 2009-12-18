@@ -1,0 +1,178 @@
+<title>Box Modes Simulation Directions</title>
+<body bgcolor="#505050" text="#ffd000" vlink="#ffa000"
+      link="#ffff80" alink="#ffffff" >
+<hr>
+<a href="index.html">This java applet</a>
+demonstrates standing sound waves
+in a 3-d rectangular box.
+<p>
+At the top of the applet on the left you will see the box,
+oscillating in its fundamental mode.
+Below the box you will see a series of grids showing each
+normal mode's contribution to the vibration.
+In each grid, the modes are laid out in the following order:
+<p>
+<table border>
+<tr>
+<td align=center>0,0,p</td>
+<td align=center>1,0,p</td>
+<td align=center>2,0,p</td>
+<td align=center>...</td>
+</tr>
+<tr>
+<td align=center>0,1,p</td>
+<td align=center>1,1,p</td>
+<td align=center>2,1,p</td>
+<td align=center>...</td>
+</tr>
+<tr>
+<td align=center>0,2,p</td>
+<td align=center>1,2,p</td>
+<td align=center>2,2,p</td>
+<td align=center>...</td>
+</tr>
+<tr>
+<td align=center>...</td>
+<td align=center>...</td>
+<td align=center>...</td>
+<td align=center>...</td>
+</tr>
+</table>
+<p>
+and each grid has a different value of p, as shown below:
+<p>
+<table>
+<tr>
+<td align=center>p=0</td>
+<td align=center>p=1</td>
+<td align=center>p=2</td>
+<td align=center>p=3</td>
+</tr>
+<tr>
+<td align=center>p=4</td>
+<td align=center>p=5</td>
+<td align=center>p=6</td>
+<td align=center>p=7</td>
+</tr>
+</table>
+<p>
+So for example, the top left corner in the top left grid is the
+0,0,0 mode, and the top left corner in the bottom right grid is the
+0,0,7 mode.
+<p>
+The notation <i>m,n,p</i> refers to the mode having an acoustic pressure
+proportional to
+cos(<i>mx</i>)cos(<i>ny</i>)cos(<i>pz</i>), where x ranges from 0 to pi.
+<p>
+Each element of the grid has a color which indicates the presence or
+absence of the mode it represents.  Black means the mode is not present;
+green means the mode is present with a positive coefficient, and red means
+it is present with a negative coefficient.  So in this example,
+mode 0,1,0 has a positive coefficient, mode 2,0,0 has a negative one,
+and the rest of the modes are absent:
+<p>
+<img src="grid.gif">
+<p>
+In addition, each mode may have a phase shift, which indicates that its
+oscillatory cycle leads or lags the others.  This is indicated by
+a blue line.  In this example, mode 0,2 has a blue line about 1/3 of
+the way across the width of the box, which means a phase shift of
+about 1/3 the maximum possible.  The maximum is pi*2, so this shift is
+pi*2/3.  Mode 1,1 is also present but does not have a phase shift.
+<p>
+<img src="grid2.gif">
+<p>
+A phase shift is normally hard to detect.  If the applet is stopped,
+then by altering the phase of a mode you can see the mode oscillate.
+If the applet is running it is much harder to tell,
+except in a case which will be explained later.
+<p>
+You can add or remove a mode by clicking on it.  If you click and drag
+up and down you can fine-tune the magnitude of the mode.  If you drag
+left and right you can alter the phase shift.
+<p>
+For performance reasons, only 10 modes can be active at a time.
+<p>
+<p>
+The <b>Mouse</b> popup controls what happens when you click on the box.
+If you set it to <b>Adjust view angle</b> or <b>Adjust view zoom</b>, you can
+adjust the orientation or size of the 3-d view by clicking and
+dragging on the box.
+<p>
+The <b>Stopped</b> checkbox can be used to stop the oscillation
+for a moment.
+<p>
+The <b>Show Frequencies</b> checkbox can be used to show or hide
+the spectrum of mode frequencies.  Each mode is represented on
+the spectrum by a vertical line.  Higher frequencies are on the right.
+In some cases, multiple modes will have the same frequency.  This is
+called degeneracy.  When that happens, the line for that frequency
+will be taller than normal.  The more modes have the same frequency,
+the taller the line.
+<p>
+The <b>Alternate Rendering</b> checkbox is used to speed up
+rendering, but it actually slows things down on some machines.
+Also for large windows and low resolutions it is usually slower.
+(Internally, it uses the MemoryImageSource class instead of drawing
+a bunch of rectangles.)
+<p>
+The <b>Simulation Speed</b> slider controls how fast the simulation runs.
+<p>
+The <b>Brightness slider</b> can be used just like the brightness on
+a TV, to brighten dim areas of the box.
+<p>
+The <b>Image Resolution slider</b> can be used to generate a higher
+quality image.  If you move it to the right, it will increase the
+resolution of the image, but it will also slow things down,
+so be careful.
+<p>
+The <b>Width</b> and <b>Height</b> sliders will adjust the width or height
+of the box.  This changes the frequency spectrum.  The depth can't be
+changed.
+<p>
+<p>
+Normally each mode has a different frequency.  However in some cases,
+several modes can have the same frequency.  This is called
+degeneracy.  The presence or absence of degeneracy
+depends on the dimensions of the box.
+By default the width, height, and depth are equal, which means it is
+a cube.
+In this case, all the <i>m</i>,<i>n</i>,<i>p</i> modes are degenerate, because
+they have the same frequency
+as the <i>n</i>,<i>m</i>,<i>p</i> modes, and the <i>m</i>,<i>p</i>,<i>n</i>
+modes, and the <i>p</i>,<i>n</i>,<i>m</i> modes, and so on.
+If the width, height, and depth are not all equal,
+there usually is no degeneracy.  There may be some if two or more of
+the dimensions
+have a ratio equal to an integer or a simple fraction.
+The width and height slider
+ranges from 1/2 to 3, so if either slider is set to one of those extremes,
+there will be degeneracy.
+<p>
+When two or more modes have the same frequency, each one is shown in
+yellow, like so:
+<p>
+<img src="grid3.gif">
+<p>
+The interesting thing about degenerate modes is that if you combine
+them, you get a new mode that oscillates with simple harmonic motion,
+just like any other mode.  Since both modes are oscillating at the
+same rate, you can't tell them apart.  If one of the modes has a phase
+shift relative to the other one, then the wave will change shape
+at a rate equal to the frequency of the modes.
+<p>
+The frequencies are proportional to:
+<p>
+<img src="freq.gif">
+<p>
+where <i>L<sub>x</sub></i> is the width of the box,
+<i>L<sub>y</sub></i> is the height, and 
+<i>L<sub>y</sub></i> is the depth.
+<hr>
+<a href="index.html">Back to the applet</a>.
+<hr>
+<a href="/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="/index.html"><img src="/me_small.gif"></a>
+<a href="http://www.openwave.com/"><img src="/softcom_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

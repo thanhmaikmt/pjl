@@ -1,0 +1,160 @@
+<title>Quantum Mechanics: 2-Dimensional Harmonic Oscillator Directions</title>
+<body>
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<p>
+This java applet is a quantum mechanics simulation that shows the
+behavior of a particle in a two dimensional harmonic oscillator.
+<p>
+At the top of the screen, you will see a cross section of the potential,
+with the energy levels indicated as gray lines.  The red line is
+the expectation value for energy.
+<p>
+In the center of the applet, you will see the probability distribution of
+the particle's position.  The color indicates the phase.  At the bottom
+of the screen is
+a set of phasors showing the magnitude and phase of some of the possible
+states.
+<p>
+You may select a single state by picking one of the phasors at the
+bottom and double-clicking on it.  Or, you may click on the phasor and
+drag its value to modify the magnitude and phase.  In this way, you can
+create a combination of states.  When you move the mouse over a state,
+it is highlighted in yellow, and other states with the same energy
+are also highlighted.
+<p>
+You may create a gaussian wave packet by clicking and dragging on
+the position graph.
+<p>
+Between each graph is a horizontal line which may be dragged up and down
+to adjust the size of each graph.
+<p>
+<p>
+The <b>Mouse Popup</b> determines what happens when the mouse is
+clicked.  The choices are:
+<ul>
+<li><b>Create Gaussian</b>: this allows you to create a gaussian distribution
+on either the position or momentum graph.  Click on the graph to locate
+the center of the gaussian.  After clicking, drag the mouse to select
+the size of the distribution.
+<li><b>Gaussian w/ Momentum</b>: this allows you to create a gaussian
+distribution
+on the position graph, with some initial momentum.  Click on the graph
+to locate
+the center of the gaussian.  The size of the gaussian will be the same
+size as the last time you used <b>Create Gaussian</b>.  After clicking,
+drag the mouse to select the initial momentum.  Note that if you
+drag too far, the gaussian may not be formed properly.
+<li><b>Rotate Function</b>: this allows you to rotate the wave
+function with the mouse.  This changes the state of the particle to a
+new state which is at a different orientation.  States with nx+ny > 13
+cannot be rotated; this may cause a high-energy particle's position
+distribution to abruptly change shape when you attempt to rotate it.
+Also, if the aspect ratio is not set to 1, then rotation won't work.
+<li><b>Translate Function</b>: this allows you to move the wave
+function around with the mouse.  If you take a stationary state and
+translate it slightly, then it will oscillate about its original
+position.  If you move a state too close to the edge of the screen,
+then it may not translate properly.
+<li><b>Scale Function</b>: this allows you to resize the wave
+function around with the mouse.  If you take a stationary state and
+scale it slightly, then it will oscillate about its original
+size.  If you try to scale a state too large or too small,
+then it may not work properly.
+</ul>
+<p>
+The <b>Clear</b> button clears out all states.
+<P>
+The <b>Normalize</b> button normalizes the set of particle
+states.  (By default, the states are not shown normalized because the
+interface is easier to use if they are not.  They are normalized internally
+when calculating the wave functions, however.)
+<p>
+The <b>Maximize</b> button changes the magnitude of the
+particle states so that they are all as large as possible.  This makes
+them easier to see.  (It won't change the wave function at all
+because the states are normalized internally.)
+<p>
+The <b>Ground State</b> button selects the ground state wave function.
+<p>
+The <b>Stopped</b> checkbox stops the evolution of the wave function.
+<p>
+The <b>Alternate Rendering</b> checkbox is used to speed up
+rendering, but it actually slows things down on some machines.
+(Internally, it uses the MemoryImageSource class instead of drawing
+a bunch of rectangles.)  It should be set to the proper setting by
+default, but try selecting or unselecting it to see if it speeds
+things up.
+<p>
+The <b>Simulation Speed</b> slider changes the speed of the wave
+function evolution.
+<p>
+The <b>Brightness</b> slider controls the brightness, just like on a
+TV set.
+<p>
+The <b>Resolution</b> slider changes the resolution of the applet.  There
+are only two possible resolutions.
+<p>
+The <b>Aspect Ratio</b> slider will adjust the strength of the
+"spring constant" in the x direction as compared to the y direction.
+<p>
+The <b>View Menu</b> has the following items:
+<ul>
+<li><b>Energy</b>: show the energy/potential graph (on by default)
+<li><b>Position</b>: show the position graph (can't be turned off)
+<li><b>Linear Momentum</b>: show the linear momentum graph
+<li><b>Angular Momentum</b>: show the angular momentum graph.  This is
+only available if the aspect ratio is 1.  States with nx+ny > 13 do not
+appear on the angular momentum graph.
+<li><b>Rectangular State</b>: show the set of rectangular state
+phasors (on by default)
+<li><b>Angular State</b>: show the set of angular state
+phasors, allowing you to pick states by angular momentum.  This is only
+available if the aspect ratio is 1.
+<li><b>Expectation Values</b>: show expectation values as red lines
+<li><b>Uncertainties</b>: show uncertainties as blue lines to the
+left and right of the expectation value.  The distance from the blue
+lines to the red line is the uncertainty.
+<li><b>Wave Function</b>: display the wave function in one of three
+ways: as a probability (magnitude squared), as a probability with the
+phase shown using colors, or as a magnitude with the phase shown using colors.
+</ul>
+<p>
+The <b>Measure Menu</b> has the following items:
+<ul>
+<li><b>Measure Energy</b>: take a measurement of the energy by
+picking a random set of states with the same energy
+(using the state coefficients to determine
+probability) and putting the particle in those states.
+<li><b>Measure Angular Momentum</b>: take a measurement of the angular
+momentum,
+picking a random set of states with the same m
+(using the state coefficients to determine
+probability) and putting the particle in those states.  Only
+works if the aspect ratio is 1.
+</ul>
+<p>
+The <b>Options Menu</b> has the following items:
+<ul>
+<li><b>Always Normalize</b>: always normalize the state coefficients.
+<li><b>Always Maximize</b>: always maximize the state coefficients.
+<p>
+If neither one of these items is selected, then the applet will
+maximize the state coefficients whenever major changes are made,
+and leave them alone otherwise.
+</ul>
+<p>
+On the right side of the phasor panel, you will see a phasor all by
+itself.  This phasor's rotation has the same period as the
+oscillation of the wave function.  Create a gaussian to see this.  It
+is only present if the aspect
+ratio is square.
+<p>
+If you like this applet you may be interested in the book <a href="http://www.kfunigraz.ac.at/imawww/vqm/">Visual Quantum Mechanics</a>.
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<hr>
+<a href="http://www.falstad.com/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="http://www.falstad.com/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

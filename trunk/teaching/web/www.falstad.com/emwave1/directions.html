@@ -1,0 +1,241 @@
+<title>Electrodynamics Applet (TE) Directions</title>
+<body>
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<p>
+<table><tr><td valign=top>
+
+This java applet is a simulation that demonstrates
+electromagnetic waves in two dimensions.
+<p>
+When the applet starts up you will see a
+line (called the "source") emitting red and green plane
+waves.  The color indicates the magnetic field; 
+green areas are positive (towards you) and the red areas are
+negative (away from you).  (In this applet, the magnetic field is
+always perpendicular to the plane of the screen.)
+<p>
+In addition to the red and green color, you will see arrows which
+indicate the direction of the electric field (which is always in the
+plane of the screen).
+<p>
+Conductors will show up as gray.  They may also show yellow or white arrows,
+indicating current, and a yellow or blue color,
+indicating charge.  (Yellow means positive charge, and blue means
+negative charge.)
+<p>
+These are electromagnetic waves, so in real life they would
+be moving at the speed of light.
+<p>
+This is the TE version of the applet.  There is also a
+<a href="/emwave2/">TM version</a>.
+<hr>
+<p>
+The <b>Setup popup</b> can be used to view some interesting
+pre-defined experiments.  Once an experiment is selected,
+you may modify it all you want.  The choices are:
+<ul>
+<li><b>Plane Wave</b>: this demonstrates a simple plane wave source.
+<li><b>Intersecting Planes</b>: this demonstrates two plane waves intersecting
+at right angles.
+<li><b>Reflection At Conductor</b>: this shows wave packets being
+reflected by a perfect conductor.
+<li><b>Oscillating Dipole</b>: this shows an oscillating electric dipole
+radiator.
+<li><b>Half Wave Antenna</b>: this shows a linear antenna whose length is
+equal to half the wavelength of the radiation it is emitting.
+<li><b>Full Wave Antenna (End-Driven)</b>: this shows a linear antenna whose
+length is
+equal to the wavelength of the radiation it is emitting.  It is driven at
+one end (the yellow end).
+<li><b>Full Wave Antenna (Center-Driven)</b>: this shows a linear antenna whose
+length is
+equal to the wavelength of the radiation it is emitting.  It is driven in
+the center.
+<li><b>Current Loop</b>: this shows a loop of wire with an oscillating
+current.
+<li><b>Big TE01 Mode</b>: this creates a small perfectly conducting cavity
+with a standing wave inside it.  The electric field is 90 degrees out
+of phase with the magnetic field.  The field in the cavity is oscillating in
+its TE01 mode.
+<li><b>Big TE10 Mode</b>: this creates a small cavity with a TE10 mode.
+<li><b>Big TE10+TE01 Mode</b>: this creates a small cavity with TE10
+and TE01 modes superposed.
+<li><b>Big TE10+TE01i Mode</b>: this creates a small cavity with TE10 mode
+and TE01 modes superposed out of phase.
+<li><b>Big TE11 Mode</b>: this creates a small cavity with a TE11 mode.
+<li><b>TE10 Modes</b>: this creates a set of small superconducting cavities
+with TE10 standing waves inside them.
+<li><b>TEn0 Modes</b>: this creates a set of small superconducting cavities
+with TE10, TE20, TE30, and TE40 standing waves inside them.  (If the
+resolution is set higher then more cavities are present with higher modes.)
+<li><b>TEn1 Modes</b>: this creates a set of small superconducting cavities
+with TE11 and TE21 standing waves.
+<li><b>TEnn Modes</b>: this creates a set of small superconducting cavities
+with various TE modes inside them.
+<li><b>Waveguides</b>:
+This creates a series of <a target="_blank" href="http://www.ee.surrey.ac.uk/Personal/D.Jefferies/wguide.html">waveguides</a> of different widths.
+<li><b>Capacitor</b>: this shows a small cavity with a capacitor connecting
+the two sides.
+<li><b>Resonant Cavities 1</b>:
+This creates a series of rectangular cavities being driven by
+a plane wave from above.  As you change the frequency you will
+see the response of each cavity change.  Each cavity has a different
+resonant frequency so it will respond differently.  After changing
+the frequency you may want to wait a bit for things to settle down
+(or turn the simulation speed way up).
+<li><b>Single Slit</b>: this demonstrates <a target="_blank" href="http://homepages.tig.com.au/~flavios/diffrac.htm">diffraction</a> of waves
+travelling through a slit.
+<li><b>Double Slit</b>: this demonstrates diffraction of waves
+travelling through a double slit.
+<li><b>Triple Slit</b>.
+<li><b>Obstacle</b>: this demonstrates diffraction of waves
+travelling around an obstacle.
+<li><b>Half Plane</b>: this demonstrates diffraction of waves
+around the edge of a plane.
+<li><b>Lloyd's Mirror</b>:
+This shows an interferometer which consists of a point source
+close to a mirror (at the bottom of the window).
+The waves coming from the source interfere with the waves coming
+from its mirror image.
+</ul>
+<p>
+The <b>Source popup</b> controls the wave sources (oscillating
+currents).  It has the
+following settings:
+<ul>
+<li>
+<b>No Sources</b>: there will be no sources of wave motion.
+<li><b>1 Plane Src</b>: there will be a single plane source of waves.  The
+source consists of an oscillating current that does not vary along the
+length of the source.  The
+ends of the plane source can be dragged anywhere on the screen with the
+mouse.
+<li><b>2 Plane Src</b>: there will be two plane sources.
+<li><b>1 Plane Src (Packets)</b>: the plane source will emit wave packets
+periodically.
+<li><b>1 Antenna Src</b>: there will be a single antenna emitting waves.
+The antenna is driven at the yellow end.  The current at the white end
+is zero.
+<li><b>2 Antenna Src</b>: there will be two antennas emitting waves.
+<li><b>1 Loop Src</b>: there will be a current loop emitting waves.
+<li><b>1 Loop Src (Packets)</b>: there will be a current loop emitting wave
+packets periodically.
+</ul>
+<p>
+The <b>Mouse popup</b> controls what happens when the mouse is
+clicked.  The following settings are possible:
+<ul>
+<li><b>Mouse = Add Perf. Conductor</b>:
+Clicking on a
+point will create a perfect conductor there.  Clicking on
+an existing conductor will erase it.
+<li><b>Mouse = Clear</b>:
+Clicking on a point will remove whatever is there.
+</ul>
+<p>
+The <b>Show</b> popup determines which fields or other quantities to
+display, and how to display them.
+<ul>
+<li><b>Show Electric Field (E)</b>: Show the electric field as arrows.
+<li><b>Show E lines</b>: Show the electric field as lines.  The
+color of the lines go from dark green to light green and
+then to white as the field gets stronger.  The density of the
+lines is kept fairly constant, so in order to determine the
+field strength you need to look at the color of the lines
+rather than how far apart they are.
+<li><b>Show Magnetic Field (B)</b>: Show the magnetic field
+as green (positive, toward you) or red (negative, away from you).
+<li><b>Show Current (rho)</b>: Show the charge density as
+yellow (positive) or blue (negative).
+<li><b>Show Current (j)</b>: Show the current density as arrows.
+<li><b>Show E/B</b>: Show both the electric field arrows and the
+magnetic field.
+<li><b>Show E lines/B</b>: Show both electric field lines and the
+magnetic field.
+<li><b>Show E/B/rho/j</b>: In space, show both the electric field arrows
+and the magnetic field;
+in conductors, show the current density and charge.
+<li><b>Show E lines/B/rho/j</b>: In space, show both the electric field lines
+and the magnetic field;
+in conductors, show the current density and charge.
+<li><b>Show E/rho</b>: Show the electric field and charge.
+<li><b>Show E lines/rho</b>: Show the electric field lines and charge.
+<li><b>Show E/B/j</b>: Show the electric field, magnetic field, and current.
+<li><b>Show E lines/B/j</b>: Show the electric field lines, magnetic field, and current.
+<li><b>Show Poynting Vector</b>: Show the <a target="_blank" href="http://scienceworld.wolfram.com/physics/PoyntingVector.html">Poynting vector</a>, which
+indicates the direction of energy transfer.  For waves, it
+is in the direction of wave motion.
+<li><b>Show Energy Density</b>: Show the <A target="_blank" href="http://scienceworld.wolfram.com/physics/EnergyDensity.html">energy density</a> as
+shades of yellow.
+<li><b>Show Poynting/Energy</b>: Show both the energy density and
+the Poynting vector.
+<li><b>Show Disp Current</b>: Show the <a target="_blank" href="http://scienceworld.wolfram.com/physics/DisplacementCurrent.html">displacement current</a>.
+<li><b>Show Disp + j</b>: Show the displacement and conduction
+currents.
+<li><b>Show Disp + j/B</b>: Show the displacement and conduction
+currents and magnetic field.
+</ul>
+<p>
+The <b>Clear Fields</b> button magically clears out any fields but does not
+remove any currents, sources, or materials.  The <b>Clear All</b> button
+clears out everything.
+<p>
+The <b>Stopped</b> checkbox stops the applet, in case you want to
+take a closer look at something, or if you want to work on something
+with the mouse without worrying about it changing out from under you.
+<p>
+The <b>Simulation Speed</b> slider controls how far the waves move
+between frames.  If you slide this to the left, the applet will go
+faster but the motion will be choppier.
+<p>
+The <b>Resolution</b> slider allows you to speed up or slow down the
+applet by adjusting the resolution; a higher resolution is slower
+but looks better.
+<p>
+The <b>Brightness</b> slider controls the brightness, just like on a
+TV set.  This can be used to view faint waves more easily.
+<p>
+The <b>E Field Brightness</b> slider controls the relative brightness of the
+electric field.
+</ul>
+</td>
+<td><img src="/blank.gif" hspace=20></td>
+<td valign=top>
+
+<script type="text/javascript"><!--
+google_ad_client = "pub-1974179407250396";
+google_ad_width = 160;
+google_ad_height = 600;
+google_ad_format = "160x600_as";
+google_ad_type = "text_image";
+google_ad_channel ="";
+//--></script>
+<script type="text/javascript"
+  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+<br>
+<img src="/blank.gif" vspace=100>
+<br>
+<script type="text/javascript"><!--
+google_ad_client = "pub-1974179407250396";
+google_ad_width = 160;
+google_ad_height = 600;
+google_ad_format = "160x600_as";
+google_ad_type = "text_image";
+google_ad_channel ="";
+//--></script>
+<script type="text/javascript"
+  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+
+</td>
+</tr>
+</table>
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<hr>
+<a href="http://www.falstad.com/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="http://www.falstad.com/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

@@ -1,0 +1,535 @@
+<title>Ripple Tank Applet Directions</title>
+<body>
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<p>
+This java applet is a simulation that demonstrates
+scalar waves
+in two dimensions.  Wave motion crops up in many different areas in
+physics; water waves, sound, and light are three examples.
+<p>
+When the applet starts up you will see a
+blue circle (called the "source") emitting red and green circular waves.
+The green areas are positive and the red areas are negative.  So, if you
+prefer to think of the waves as sound waves, the green areas would be
+areas of high
+pressure, and the red areas would be low pressure.  The source might be
+a speaker of some sort.
+<p>
+The first thing to do when starting up the applet is to adjust the
+settings for your computer.  Slide the "Resolution" slider to
+the right as far as you can
+without slowing things down too much.  Or you could slide it to the left
+if things are already too slow.
+Another thing to try, if the simulation is too
+slow, is to slide the "Simulation Speed" button to the right.  That won't
+improve the framerate (it will slow it down slightly, in fact) but it
+will get the waves moving faster.  Or you could make the window smaller.
+The applet runs slower when the window is large.
+<p>
+Now you can start playing with the applet.  You can drag the source
+around wherever you want.  Also you can create new waves (areas of
+high pressure) by clicking anywhere.  There is a popup menu that
+controls what the mouse does.  By default it is set to
+"Mouse = Edit Wave".  If you change it to "Edit Walls", then you can
+use the mouse to put obstacles in the wave's path.
+<hr>
+<p>
+The <b>Setup popup</b> can be used to view some interesting
+pre-defined experiments.  Once an experiment is selected,
+you may modify it all you want.  The choices are:
+<ul>
+<li><b>Single Source</b>: this is just a single source emitting circular waves.
+<li><b>Two Sources</b>: this is just two sources emitting circular waves,
+creating an interference pattern between them.
+<li><b>Four Sources</b>.
+<li><b>Single Slit</b>: this demonstrates <a href="http://homepages.tig.com.au/~flavios/diffrac.htm">diffraction</a> of waves
+travelling through a slit.
+<li><b>Double Slit</b>: this demonstrates diffraction of waves
+travelling through a double slit.
+<li><b>Triple Slit</b>.
+<li><b>Obstacle</b>: this demonstrates diffraction of waves
+travelling around an obstacle.
+<li><b>Half Plane</b>: this demonstrates diffraction of waves
+around the edge of a plane.
+<li><b>Dipole Source</b>: this demonstrates an acoustic <a
+href="http://www.kettering.edu/~drussell/Demos/rad2/mdq.html">dipole source</a> consisting of
+two sources out of phase.
+<li><b>Lateral Quadrupole</b>: this demonstrates an acoustic <a
+href="http://www.kettering.edu/~drussell/Demos/rad2/mdq.html">quadrupole
+source</a> consisting of
+four sources arranged in a square.
+<li><b>Linear Quadrupole</b>: this demonstrates an acoustic <a
+href="http://www.kettering.edu/~drussell/Demos/rad2/mdq.html">quadrupole
+source</a> consisting of
+four sources arranged in a line.
+<li><b>Hexapole</b>.
+<li><b>Octupole</b>.
+<li><b>12-Pole</b>.
+<li><b>Plane Wave</b>: this demonstrates a simple plane wave source.
+<li><b>Intersecting Planes</b>: this demonstrates two plane waves intersecting
+at right angles.
+<li><b><A
+href="http://glossary.its.bldrdoc.gov/fs-1037/dir-027/_3979.htm">Phased
+Array 1</a></b>: this is a group of point
+sources arranged in a line, where the relative phases of each point
+is different.  This causes the radiation to be pointed
+downwards.  The angle can be adjusted with the <b>Phase Difference</b>
+slider.
+<li><b>Phased Array 2</a></b>: this is a group of point
+sources arranged in a line, where the relative phases of each source
+causes the radiation to be directed at a single point.  The location
+of the point can be adjusted with the <b>Phase Difference</b>
+slider.
+<li><b>Phased Array 3</a></b>: this is a group of point
+sources arranged in a line, where the relative phases of each source
+causes the radiation to act as if it is coming from a point source
+to the left of the screen.  The location
+of the virtual point source can be adjusted with the <b>Phase Difference</b>
+slider.
+<li><b>Doppler Effect 1</b>: this shows a moving source, thereby demonstrating
+the <a href="http://www.kettering.edu/~drussell/Demos/doppler/doppler.html">Doppler effect</a>.
+<li><b>Doppler Effect 2</b>: this shows waves being reflected by a
+moving obstacle.  The horizontal obstacle on the right is moving up
+and down.  (The divider in the middle is just there to make the
+effect more clear.)  When the obstacle is moving up, the reflected
+waves have a higher frequency than the source.  When it's moving down,
+the reflections have a lower frequency.
+<li><b>Sonic Boom</b>: this shows a source moving faster than the
+speed of wave propagation, creating a 
+<a href="http://www.kettering.edu/~drussell/Demos/doppler/doppler.html">shock
+wave</a> behind it.
+<li><b>Big 1x1 Mode</b>: this creates a small box
+with a <a href="http://www.erichusby.com/9lesson4d-problems.htm">standing wave</a>
+in its normal mode of oscillation.  
+The inside of the box 
+changes color with a simple time dependence with
+no left-right or up-down motion.
+<li><b>1x1 Modes</b>: this creates several small boxes of different
+sizes in their
+fundamental modes.  If you cut out the right side of one of the
+boxes and turn up the brightness you can see waves coming out of the
+box at its resonant frequency.
+<li><b>1xN Modes</b>: this creates several small boxes in other
+normal modes.
+<li><b>NxN Modes</b>: this creates several small boxes in other
+normal modes.
+<li><b>1xN Mode Combos</b>: this creates several small boxes,
+each of which has a combination of two random 1xN modes.
+<li><b>NxN Mode Combos</b>: this creates several small boxes,
+each of which has a combination of two random NxN modes.
+<li><b>0x1 Acoustic Modes</b>: this creates several small boxes of
+different sizes in their fundamental modes.  The <b>Fixed Edges</b>
+checkbox is off, which causes the waves to act like acoustic waves.
+<li><b>0xN Acoustic Modes</b>: this creates several small boxes in
+other acoustic normal modes.  The mode frequencies are all multiples
+of the fundamental, so you will see all the modes sync up periodically.
+(This is not the case with the <b>1xN Modes</b> example above.)
+<li><b>NxN Acoustic Modes</b>: this creates several small boxes in
+other acoustic normal modes.
+<li><b>Coupled Cavities</b>: this creates pairs of boxes with a small
+interconnection between them.  This causes the oscillation energy
+to move back and forth between the two boxes.
+<li><b>Beats</b>: this creates two sources close together with
+different frequencies.  Because the frequencies are close but not
+exactly the same, you will see black lines of interference or <a href="http://www.kettering.edu/~drussell/Demos/superposition/superposition.html">"beats"</a>.
+<li><b>Slow Medium</b>: in this demonstration, the area below the blue
+line has a different refractive index, so that waves move slower through
+that area.  As a result, waves hitting the the blue region will be partially
+<a href="http://www.sasked.gov.sk.ca/docs/physics/u2b12phy.html">reflected</a> and partially transmitted.
+Waves travel through the blue region at half the speed as they
+travel through the black region, so the blue region has a refractive
+index of 2.  As a comparison, most common types of glass have
+a refractive index anywhere from 1.46 to 1.96.
+<li><b>Refraction</b>: this creates a blue region similar to the
+last setup, but shows short pulses hitting it at an angle so you can
+see the waves being reflected and refracted.
+<li><b>Internal Reflection</b>: this creates a blue region similar to the
+last setup, but shows short pulses hitting it at an angle from inside
+the blue region.  The angle is such that none of the main part
+of the wave is transmitted; this is called total internal reflection.
+You will see some activity in the blue area; this is partly because the
+top part of the wave is rounded instead of being a plane, so that
+it hits the interface at a different angle (it goes up from the
+source instead of diagonally).  This part is transmitted, but the
+plane part going diagonally is reflected.  But, even for the part of
+the wave that is reflected, you will a portion of the wave
+travelling along the interface between the blue and black area;
+but it will not propagate into the black area.
+<li><b>Anti-Reflective Coating</b>: this creates a blue region similar
+to the last setup, but with an
+<a href="http://www.rdmag.com/basics/0107basmb.asp">anti-reflective
+coating</a> which eliminates
+reflections.  (There will be some initial reflections when the source
+is first turned on because of
+high-frequency components in the initial wavefront.)  If you increase
+the frequency of the source, you will see reflections because the
+wavelength of the source no longer matches the thickness of the coating.
+<li><b>Zone Plate (Even)</b>:
+This creates a <A href="http://members.rogers.com/penate/zoneplate.html"
+>zone plate</a>, which uses diffraction to focus light.
+<li><b>Zone Plate (Odd)</b>:
+This creates another zone plate which is similar to the previous one,
+but has opaque areas made
+transparent and vice versa.  It also focuses light.
+<li><b>Circle</b>:
+This creates a circular area with a source at the center.
+Pulses will travel outward and will then be reflected back
+to the center.
+<li><b>Ellipse</b>:
+This creates a circular area with a source at one focus.
+Pulses will converge at the other focus.
+<li><b>Resonant Cavities 1</b>:
+This creates a series of rectangular cavities being driven by
+a plane wave from above.  As you change the frequency you will
+see the response of each cavity change.  Each cavity has a different
+resonant frequency so it will respond differently.  After changing
+the frequency you may want to wait a bit for things to settle down
+(or turn the simulation speed way up).
+<li><b>Resonant Cavities 2</b>:
+This creates a series of smaller rectangular cavities.
+<li><b>Room Resonance</b>:
+This shows acousting standing waves in a series of rooms being
+driven by the same frequency, but at different positions.  The brightness
+is turned way down so you only see waves in the rooms that resonate.  As
+you can see, three of the rooms resonate but the fourth does not, because the
+source is not located in the right place (there aren't
+any modes with the right frequency that have antinodes at the source
+location).  By varying the frequency you can see different resonance
+behavior.  (You may want to turn the simulation
+speed up so you get faster results as you experiment.)
+<li><b>Waveguides 1</b>:
+This creates a series of waveguides of different widths.
+Narrower waveguides, like at the left end of the screen,
+have higher cutoff frequencies; the leftmost waveguide has a
+cutoff frequency that is higher than the source, so there is no
+wave motion in it.  You can fix this by turning the <b>Source
+Frequency</b> slider up.
+<p>
+Notice that the waves seem to be moving faster in thinner
+waveguides.  They appear to be moving faster than waves normally
+move in the applet.  This is because the phase velocity is faster in
+thinner waveguides; but the signal velocity is actually slower than normal,
+as you
+can verify by clicking the <b>Clear Waves</b> button and watching the
+wave move down the guide for the first time.
+<p>
+Since the waveguides are being driven by a plane wave, only the TE01
+mode is present.  (See the <a href="/embox/guide.html">waveguide applet</a>
+for another way to view waveguide modes.)
+<p>
+<li><b>Waveguides 2</b>:
+This is just the same set of waveguides with a lower frequency, showing
+that more of the guides are driven below cutoff.
+<li><b>Waveguides 3</b>:
+This is a set of identical waveguides being driven by small holes at
+different locations.  This causes different sets of modes to be excited
+in different proportions.  When the guide is being driven near the center,
+the TE01 mode is dominant, but when it is driven near the edge, the
+TE02 mode is more prevalent.  The frequency is low enough so that all
+other modes are cut off.  You can fix this by turning the frequency up.
+By turning the frequency down, you can cut off the TE02 mode as well.
+<li><b>Waveguides 4</b>:
+This is a set of <i>acoustic</i> waveguides being driven at various locations.
+<li><b>Waveguides 5</b>:
+This is a set of identical waveguides with various modes present.
+The first waveguide contains the TE01 mode; the second contains the
+TE02 mode; the third contains both; the fourth contains the TE03 mode;
+the fifth contains TE01 and TE03; the sixth contains TE02 and TE03.
+(There may not be room on your screen for all these modes if
+your resolution is not set high enough.)
+<p>
+Notice that the higher modes (TE02 and especially TE03) seem to be moving
+faster.  This is because the phase velocity of TE02 and TE03 is greater
+than that of TE01.
+Their signal velocities are slower, though, which is why it takes
+the TE03 wave so long to make it down to the end of the waveguide.
+Also if you turn off the source (by setting the source 
+popup to "No Sources") it will take quite a while for the TE03 mode
+to stop.
+<p>
+<li><b>Parabolic Mirror 1</b>:
+This shows a parabola with a source at the focus.  The parabola
+direct the waves upward as plane waves (except at the edges where
+the waves don't look planar; if we extended the parabola further
+it would fix this).
+<li><b>Parabolic Mirror 2</b>:
+This shows a parabola with plane waves coming from above.
+They converge at the focus.
+<li><b>Sound Duct</b>:
+This shows a duct with sound waves travelling through it.
+When they get to the end, they are partially reflected,
+even through there is nothing there for them to bounce off of.
+This shows that waves are reflected by any discontinuity, not just
+by walls.
+<li><b>Baffled Piston</b>:
+This shows the sound radiation from a <a
+href="http://www.kettering.edu/~drussell/Demos/BaffledPiston/BaffledPiston.html">baffled
+piston</a>, which is a simple model of a boxed loudspeaker.
+<li><b>Low-Pass Filter 1, 2</b>:
+This shows an acoustic <A href="http://www.kettering.edu/~drussell/GMI-Acoustics/Filters.html#lowpass">low-pass filter</a>.  Low-frequency waves
+travel through it more easily than high-frequency waves, as you
+can verify by comparing <b>Low-Pass Filter 1</b> with <b>Low-Pass
+Filter 2</b>.  (These two setups are the same except for the frequency.)
+However there are a few higher frequencies which will pass easily.
+If you follow the link you can take a look at the <A
+href="http://www.kettering.edu/~drussell/GMI-Acoustics/Filters.html#lowpass">frequency response curve</a>.
+<li><b>High-Pass Filter 1, 2</b>:
+This shows an acoustic high-pass filter.
+High-frequency waves travel through it more easily than low-frequency waves,
+as you
+can verify by comparing <b>High-Pass Filter 1</b> with <b>High-Pass
+Filter 2</b>.
+<li><b>Band-Stop Filter 1, 2, 3</b>:
+This shows an acoustic band-stop filter, which blocks out a
+range of frequencies.  There are three versions of this setup; one at
+a low frequency, one high, and one at the blocked frequency.
+<li><b>Planar convex lens</b>:
+This shows a lens made out of a glasslike material.  It focuses
+plane waves.  Unfortunately the lens is pretty small compared to
+the wavelength of light so it won't focus the light as well as it
+would in real life.  This lens is only a dozen or so wavelengths
+wide.  The range of
+visible light wavelengths is 400 to 700 nanometers, so obviously
+a real lens is much larger compared to a wavelength and so will
+focus better without running into diffraction effects.
+<li><b>Biconvex lens</b>:
+This shows another lens.  It takes line
+coming from a point source and focuses it at another point.
+<li><b>Planar Concave Lens</b>:
+This shows a lens that takes plane waves and spreads them out.
+<li><b>Circular Prism</b>:
+This shows a round prism made out of a dense material.
+<li><b>Right-Angle Prism</b>:
+This shows a prism that takes waves travelling down and points them
+to the right.
+<li><b>Porro Prism</b>:
+This shows a prism that takes waves travelling down and points them up.
+Obviously in real life it would do this at light speed.
+<li><b>Scattering</b>:
+This shows a plane wave being scattered by a point particle.
+<li><b>Lloyd's Mirror</b>:
+This shows an interferometer which consists of a point source
+close to a mirror (at the bottom of the window).
+The waves coming from the source interfere with the waves coming
+from its mirror image.
+<li><b>Temperature Gradient 1</b>:
+This shows refraction of a wave due to a
+<a href="http://www.kettering.edu/~drussell/Demos/refract/refract.html">temperature gradient</a>.
+The blue area represents cool air, where sound waves move more slowly.
+This causes the waves to bend downwards.
+<li><b>Temperature Gradient 2</b>:
+This shows refraction of a wave due to a different type of
+<a href="http://www.kettering.edu/~drussell/Demos/refract/refract.html">temperature gradient</a>.
+The blue area represents cool air, where sound waves move more slowly.
+This causes the waves to bend upwards.
+A similar effect is responsible for <A href="http://www.islandnet.com/~see/weather/elements/mirage1.htm">mirages</a>.
+<li><b>Dispersion</b>:
+This demonstrates <a href="http://physics.usask.ca/~hirose/ep225/animation/dispersion/anim-dispersion.html">dispersion</a>,
+which is an effect that causes waves to move at different speeds
+depending on their frequency.  This effect is unavoidable because
+of the finite differencing method used to design this applet.
+Note that the low-frequency waves on the left move faster than the
+high-frequency waves on the right.  The waves are moving through a
+slow medium to illustrate the effect better, but dispersion occurs
+even without a medium in this applet.
+<p>
+Usually the effect is not noticeable, unless you are using sources of
+two different frequencies.  However, if you use the mouse to edit the
+wave function (using the <b>Edit Wave</b> setting on the Mouse popup),
+the changes you make will have sharp edges and other high-frequency
+components.  As a result, you will create a wave that spreads out
+quite a bit as it propagates; there will be an initial wavefront that
+quickly travels to the edges of the screen, but there will be a bunch of
+high-frequency noise left behind which will hang around for a while
+(you can see it better if you turn the brightness up).  This
+would not happen in a nondispersive medium or in a medium where high-frequency
+waves are faster than low-frequency waves.
+</ul>
+<p>
+The <b>Source popup</b> controls the wave sources.  It has the
+following settings:
+<ul>
+<li>
+<b>No Sources</b>: there will be no source of new wave motion except
+for waves you create with the mouse.
+<li>
+<b>1 Src, 1 Freq</b>: there will
+be a single source of sinusoidal waves at a single frequency
+(set using the <b>Source Frequency</b> slider).  This source can be
+dragged anywhere on the screen with the mouse.
+<li>
+<b>1 Src, 2 Freq</b>: the source will be emitting
+two waves, at separate frequencies.  The first frequency is set
+using the <b>Source Frequency</b> slider, and the second frequency
+is set using <b>2nd Frequency</b>.
+<li><b>2 Src, 1 Freq</b>: two sources will be created,
+both at the same frequency.  But you can select the phase difference
+using the <b>Phase Difference</b> slider.  If the slider is all the
+way to the left, the sources will be in phase; if it is all the
+way to the right, the sources will be 180 degrees out of phase.
+(The top one will be green while the bottom one is red, and vice versa.)
+<li><b>2 Src, 2 Freq</b>: the two sources will be at
+different frequencies.  The <b>Source 2 Frequency</b> slider can be
+used to set the second one's frequency.
+<li><b>3 Src, 1 Freq</b> or <b>4 Src, 1 Freq</b>:
+3 or 4 sources will be created, all at the same frequency.
+<li><b>1 Src, 1 Freq (Square)</b>: the source will emit
+a square wave.  This works best at low freqencies; at high frequencies
+it is hard to tell it from a sine wave.
+<li><b>1 Src, 1 Freq (Pulse)</b>: the source will emit
+green pulses periodically.
+<li><b>1 Moving Src</b>: the source will move, thereby demonstrating
+the <a href="http://www.ncsa.uiuc.edu/Cyberia/Bima/doppler.html">Doppler effect</a>.  The speed can be controlled with the
+<b>Source Speed</b> slider.
+<li><b>x Plane Src, y Freq</b>: the source(s) will emit <a href="http://www.its.bldrdoc.gov/fs-1037/dir-027/_4031.htm">plane waves</a>
+rather than circular waves.  The location and direction of the
+plane wave can be modified by dragging one or both of the two
+blue circles.  If the blue circles are located at the edge of
+the screen, the plane is extended offscreen; otherwise it is not.
+If it is not extended offscreen it is finite
+and so is not a true plane wave, strictly speaking.
+<li><b>1 Plane 1 Freq (Pulse)</b>: the source will emit
+plane wave pulses.
+</ul>
+<p>
+The <b>Mouse popup</b> controls what happens when the mouse is
+clicked.  If the popup is set to <b>Mouse = Edit Wave</b>, then a
+green or red area is drawn on the screen.  When the mouse is
+released, this will create a circular wave centered at that point.
+<p>
+If the popup is set to <b>Mouse = Edit Wall</b>, then clicking on a
+point will create a wall there which will reflect waves.  Clicking on
+a wall will erase it.
+<p>
+If the popup is set to <b>Mouse = Edit Medium</b>, then clicking on a
+point will create (or remove) an area which has a higher refractive index
+than the surrounding area, so that waves will move slower through it.
+This area will be shown in blue.
+<p>
+If the popup is set to <b>Mouse = Hold Wave</b>, then if you click on
+a point and hold the mouse down, it will create a green
+area on the screen which will persist as long as the mouse is down.
+This will cause the surrounding area to also be green.  For sound waves,
+this is like adding air at that point;
+it puts more pressure on the surrounding area.  If you click on a
+green area instead, it will turn it red.
+<p>
+The <b>Clear Waves</b> button clears out any waves but does not
+remove any walls or sources.  The <b>Clear Walls</b> button
+clears out walls without clearing out waves.
+<p>
+The <b>Add Border</b> button add walls all around the edge of the
+screen, so the waves will be reflected at the edges of the screen.
+If you don't put walls up, then the waves will just drift off
+the edge of the screen.
+These walls can be removed with the Clear Walls button;
+or you can remove some of them with the mouse, if you set the
+mouse popup to "Mouse = Edit Walls".
+<p>
+The <b>Import/Export</b> button will let you save and load your own
+creations.  Java security restrictions prevent the applet from saving
+a file directly on your computer.  Instead, to save a setup, click
+this button, copy the selected text, and paste it into another file.
+To load it again later, click <b>Import/Export</b> again and paste the
+saved information into the window, and then click <b>Import</b>.
+<p>
+The <b>Stopped</b> checkbox stops the applet, in case you want to
+take a closer look at something, or if you want to work on something
+with the mouse without worrying about it changing out from under you.
+<p>
+The <b>Fixed Edges</b> checkbox determines what happens when the
+wave hits a wall.  To simulate sound waves, this should
+<i>not</i> be checked.  To simulate electromagnetic waves or waves in a
+membrane, this <i>should</i> be checked.  If this box is unchecked, waves
+will be reflected with no phase change (so, green wavefronts will
+still be green when reflected).  If it is checked, waves will be reflected
+negatively (green wavefronts will be red when reflected).
+Different types of waves have different boundary conditions when they
+hit an obstacle, and that's what determines the <A href="http://www.courses.fas.harvard.edu/~scia49/demonstrations/Reflections.html">behavior</a> when a
+wave is reflected.
+<p>
+A good example to illustrate this is a string.  If you have a <a href="http://www.courses.fas.harvard.edu/~scia49/demonstrations/Reflections.html">string
+under tension, fixed at either end</a>, then waves going in one direction
+along the string will be reflected negatively when it hits the end of
+the string, because the
+two wavefronts (incident and reflected) have to add up to zero at
+the end of the string.  If the end of the string is allowed to move
+freely up and down, then a wave will be reflected positively when
+it hits the end of the string, because the wavefronts no longer have
+to add up to zero at the edge.  A similar argument applies to the
+two-dimensional case.
+<p>
+The <b>3-D View</b> checkbox gives you a 3-D view.  You can rotate the
+view by dragging the mouse, but you can't modify the waves or walls in
+this mode.  The brightness slider will adjust the height of the waves.
+<p>
+The <b>Simulation Speed</b> slider controls how far the waves move
+between frames.  If you slide this to the left, the applet will go
+faster but the motion will be choppier.
+<p>
+The <b>Resolution</b> slider allows you to speed up or slow down the
+applet by adjusting the resolution; a higher resolution is slower
+but looks better.
+<p>
+The <b>Brightness</b> slider controls the brightness, just like on a
+TV set.  This can be used to view faint waves more easily.
+<p>
+Now a list of some of the many types of waves simulated by this
+applet.  (Actually the applet only simulates two basic types of waves,
+but you can <i>interpret</i> the waves as being many different types.)
+<ul>
+<li><b><a href="http://www.mehs.educ.state.ak.us/portfolios/israel/classes/documents/sound.html">Sound waves</a></b> are longitudinal waves in air or other fluids.
+The green areas are high pressure, and the red areas are low pressure.
+To simulate sound waves, the "Fixed Edges" checkbox should be unchecked.
+<p>
+On my computer, at the default settings,
+a wave takes about four seconds to travel across the screen.
+In real life, at typical temperatures, sound waves travel about
+340 meters/second or about 1100 feet/sec (760 mph).
+<p>
+<li><b>Compression waves</b> are longitudinal waves in solids.
+These are similar to sound waves.  This applet does not properly
+simulate the dispersive effects that would occur in a real solid.
+(In this applet, low frequency waves go faster than high frequency
+waves, whereas in a solid it is the opposite.)
+The green areas are high compression, and the red areas are low compression.
+The "Fixed Edges" checkbox should be unchecked.
+<p>
+<li><b><A href="http://www.seafriends.org.nz/oceano/waves.htm">Water waves</a></b>
+are actually far more complicated than the
+simplified wave model used by this applet.  But if we keep the
+amplitude of the waves small, we can
+pretend that the waves represent water waves.
+The green areas are where the water is high,
+and the red areas are where it is low.
+To simulate water waves, the "Fixed Edges" checkbox should be unchecked,
+because there are no constraints on what the water level should be at the
+edge of the water.
+<p>
+<li>A <b>membrane</b> is a thin elastic substance under tension,
+like a sheet or a square drum head.  The green areas are where the sheet
+is higher than the edges, and the red areas are where the sheet is
+lower.  The edges are at a fixed level,
+so the "Fixed Edges" checkbox must be checked.
+<p>
+<li><b><A href="http://www.fnal.gov/pub/light/light_page6.html">Electromagnetic waves</a></b> are radiation produced by electric
+and magnetic fields.  Light, radio waves, and microwaves are all
+electromagnetic waves.  The green areas are where the electric
+field is in the positive z direction, and the red areas are where
+the electric field is in the negative z direction.  The magnetic
+field is not shown.  The "Fixed Edges" checkbox should be checked to properly
+simulate electromagnetic waves.
+<p>
+On my computer, at the default settings,
+a wave takes about four seconds to travel across the screen.
+In real life, electromagnetic waves travel at
+about 300 million meters/second or about 186,000 mph.
+</ul>
+<p>
+<a href="index.html">Click here to go to the applet.</a>
+<hr>
+<a href="/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

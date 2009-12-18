@@ -1,0 +1,97 @@
+<title>Fresnel Diffraction Applet</title>
+<body>
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<p>
+This java applet generates Fresnel <a href="http://homepages.tig.com.au/~flavios/diffrac.htm">diffraction</a> patterns, which are patterns
+similar to the shadows cast by small apertures
+when using a point source of monochromatic light as a light source.
+<p>
+When you start up the applet, a circular aperture will be used.
+This is the pattern generated when a plane source of monochromatic
+light is shined on a small circular hole in an otherwise opaque
+object.  The red line is the outline of the geometrical shadow
+(the shadow which would be cast if there were no diffraction).
+<p>
+You can select a different aperture shape (such as a half plane, double
+slit, triple slit, rectangle, etc.) from the <b>Aperture popup</b>.
+Or you can change the size of the circle by dragging the red line
+with the mouse.
+<p>
+The diffraction pattern generated depends on the size of the aperture
+compared to the wavelength of the light source.  To change the size
+of the aperture, you can drag the red line; or, you can
+change the <b>Aperture Scale</b> slider, which will modify the
+scale of the aperture without changing the scale of the image.
+If you move the slider to the right, this will make the aperture
+larger relative to the wavelength of the light; this reduces the
+effects of diffraction.  If you move it to the left, it will make
+the aperture smaller, which increases the amount of diffraction.
+<p>
+The <b>Zoom</b> slider will modify the scale of the image, without
+changing the scale of the aperture compared to the wavelength.
+<p>
+The <b>Brightness</b> slider can be used just like the brightness on
+a TV, to brighten dim areas on the screen.  Often times you may see
+large, boring areas of black or white on the screen which change into
+interesting patterns when the brightness is turned to just the right setting.
+<p>
+The <b>Image Resolution</b> slider can be used to generate a higher
+quality image.  If you move it to the right, it will increase the
+resolution of the image, but it will also slow things WAY down,
+so be careful.
+<p>
+The <b>Set to Defaults</b> button will reset all the settings to the
+default, which can be a quick way to recover if you set the
+Image Resolution slider too high and the applet has slowed to a crawl.
+<p>
+The <b>Tri-Chromatic</b> checkbox will cause the light source to emit
+red, green, and blue light.  These three colors have different wavelengths,
+which means they generate different diffraction patterns.  The applet will
+generate the three patterns and combine them to create a color image.
+This checkbox makes the images a lot more interesting but it also
+slows things down a bit.
+<p>
+The <b>Reversed</b> checkbox will reverse the aperture so that transparent
+areas become opaque and vice versa.  So if you have the default
+setting (a circular hole in an opaque object)
+and check this checkbox, you will wind up with a circular obstacle
+in the path of the light source.  This is not the same as reversing
+the colors on the image.
+<p>
+The <b>Show Dimensions</b> checkbox will tell you the width of the
+aperture (and its geometrical shadow).  The point of observation is
+four meters away from the aperture.  The wavelength of the light
+is 510 nm for a monochrome image, and for a color image the wavelengths
+are 650 nm (red), 510 nm (green), and 475 nm (blue).
+<p>
+It may be unclear what dimension "width" refers to for
+some apertures.  The width
+of the half plane or corner
+is the distance from the left edge of the
+aperture
+to the right side of the screen.  The width of the double slit is the
+distance from the left end of the left slit to the right end of the
+right slit.  The width of the cross is simply the width of the screen.
+<p>
+The <b>Alternate Rendering</b> checkbox is used to speed up
+rendering, but it actually slows things down on some machines.
+Try selecting this, and then play with the brightness slider a bit.
+If it seems slower, then uncheck this box.  If it's faster than
+leave it alone.
+<p>
+This algorithm used by the circular apertures in this applet is from a paper by
+<a href="http://www.dauger.com">Dean Dauger</a> called
+"Simulation and Study of Fresnel Diffraction for Arbitrary
+Two-Dimensional Apertures", published in <i>Computers In Physics</i>,
+Nov/Dec 1996.  More info about
+<a href="http://www.dauger.com/fresnel/">Fresnel Diffraction</a>,
+including a Mac application to generate
+diffraction patterns, can be found on <a href="http://www.dauger.com/fresnel/">his page</a>.
+<p>
+<a href="index.html">Click here to go to the applet.</a>
+<hr>
+<a href="http://www.falstad.com/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="http://www.falstad.com/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

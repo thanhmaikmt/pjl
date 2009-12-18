@@ -1,0 +1,645 @@
+<title>Electrodynamics Applet (TM) Directions</title>
+<body>
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<p>
+This java applet is a simulation that demonstrates
+magnetostatics and electromagnetic waves in two dimensions.
+<p>
+When the applet starts up you will see a
+white circle (called the "source") emitting red and green circular
+waves.  The color indicates the electric field; 
+green areas are positive (towards you) and the red areas are
+negative (away from you).  (In this applet, the electric field is
+always perpendicular to the plane of the screen; that means there
+are no free charges, and all
+currents have to be perpendicular to the screen as well.  It also means
+the electrostatic potential is zero everywhere.)
+<p>
+In addition to the red and green color, you will see arrows which
+indicate the direction of the magnetic field (which is always in the
+plane of the screen).
+<p>
+Also, sources and conductors may show a blue or yellow color,
+indicating current.  Yellow means that current is flowing towards you
+and blue means it is flowing away from you.
+<p>
+Conductors, dielectrics, and other media will show up as gray.  There
+aren't enough colors or shades of gray to make the different
+kinds of media look different.  Use the <b>Show Material Type</b>
+menu option to tell them apart.
+<p>
+These are electromagnetic waves, so in real life they would
+be moving at the speed of light.
+<p>
+This is the TM version of the applet.  There is also a
+<a href="/emwave1/">TE version</a>.
+<hr>
+<p>
+The <b>Setup popup</b> can be used to view some interesting
+pre-defined experiments.  Once an experiment is selected,
+you may modify it all you want.  The choices are:
+<ul>
+<li><b>Single Source</b>: this is a single wire with an alternating
+current, creating circular waves.
+<li><b>Two Sources</b>: this is two wires emitting circular waves,
+creating an interference pattern between them.
+<li><b>Plane Wave</b>: this demonstrates a simple plane wave source.
+<li><b>Intersecting Planes</b>: this demonstrates two plane waves intersecting
+at right angles.
+<p>
+The following 28 setups are all static, involving steady currents or
+permanent magnets, with no waves (except at the start).  When you
+select one of them,
+just wait a bit for the system to reach a steady state.
+<p>
+<li><b>Single Wire</b>: this is a wire with a steady current.
+<li><b>Wire Pair</b>: this is two wires with current in the same
+direction.
+<li><b>Dipole Wire Pair</b>: this is two wires with current in opposite
+directions.
+<li><b>Magnet Pair</b>: this is two permanent magnets with the north
+poles facing up.
+<li><b>Magnet Pair, Opp</b>: this is two permanent magnets; the left one
+has the north pole facing up and the right one has it facing down.
+<li><b>Magnet Pair Stacked</b>: this is two permanent magnets stacked on
+top of each other with the north poles facing up.
+<li><b>Magnet Pair Stacked Opp</b>: this is two permanent magnets stacked on
+top of each other with the north poles facing towards each other.
+<li><b>Uniform Field</b>: this is a (fairly) uniform field created by
+currents on the left and right sides of the screen.
+<li><b>Field Near Aperture</b>: this shows a uniform magnetic field
+leaking through an aperture in a perfect conductor.
+<li><b>Solenoid</b>: this shows the cross section of a coil of wire with
+a current running through it.
+<li><b>Toroidal Solenoid</b>: this shows the cross section of a torus
+(donut) with a coil of wire wrapped around it.
+<li><b>Sphere</b>: this shows the cross section of a
+uniformly magnetized sphere (actually an infinitely long cylinder, since
+this is 2-D).
+<li><b>Thick Wire</b>: this shows a thick wire carrying a current.
+<li><b>Hole in Wire 1</b>: this shows a thick current-carrying wire with a hole in it,
+resulting in no field in the hole.
+<li><b>Hole in Wire 2</b>: this shows a thick current-carrying wire with an off-center
+hole in it, resulting in a uniform field in the hole.
+<li><b>Ferromagnet</b>: this is a <a target="_blank" href="http://hyperphysics.phy-astr.gsu.edu/hbase/solids/ferro.html">ferromagnet</a> (like soft iron) near
+a solenoid.  The
+ferromagnets in this applet are linear and have no hysteresis.
+<li><b>Diamagnet</b>: this is a strong <A target="_blank" href="http://hyperphysics.phy-astr.gsu.edu/hbase/solids/magpr.html#c2">diamagnet</a> near a solenoid.  The
+diamagnets in this applet are far stronger than any known diamagnet,
+to illustrate the effect more clearly.
+<li><b><a target="_blank" href="http://hyperphysics.phy-astr.gsu.edu/hbase/solids/meis.html">Meissner Effect</a></b>: this shows a superconductor near a solenoid.  The
+superconductor rejects all magnetic fields (except at the surface).
+The blue and yellow color in the superconductor indicates the presence
+of eddy currents.  Since this is a superconductor, the eddy currents
+do not die out.
+<li><b>Horseshoe Magnet</b>: this shows an electromagnet in the shape of
+a horseshoe.
+<li><b>Horseshoe + Load</b>: this shows a horseshoe electromagnet carrying
+a ferromagnetic load.
+<li><b>Magnetic Shielding 1</b>: this shows the magnetic field of solenoid
+being shielded by a ferromagnet.  Notice that there is very little field
+below the ferromagnet.  (You will see a somewhat strong magnetic field one
+grid square
+below the ferromagnet, but that is a bug and
+this would not happen in real life.)
+<li><b>Magnetic Shielding 2</b>: this shows the magnetic field of solenoid
+being shielded by a ferromagnetic box.  Notice that there is very little field
+outside of the ferromagnet.  The ferromagnet is conducting and thus will
+reflect the wave generated when the current is first switched on in the
+solenoid; so you will have to wait a bit for the oscillation to die out.
+<li><b>Magnetic Shielding 3</b>: this shows the magnetic field of solenoid
+being shielded by a ferromagnetic sphere.  The field
+is weaker outside of the ferromagnet; the brightness is turned up
+so that you can see that the field outside looks like the field of a
+magnetic dipole 
+(compare it to <b>Dipole Wire Pair</b> and <b>Sphere</b>).  You
+will have to wait even longer for the oscillation to die out because
+the brightness is turned up and the current is much stronger than
+in the previous setup.
+<li><b>Magnetic Shielding 4</b>: this shows a 
+ferromagnetic box shielding its interior from a uniform external field.
+<li><b>Magnetic Circuit 1</b>: this shows a 
+magnetic circuit; the field generated by the solenoid on the right
+is being "conducted" by ferromagnetic material.
+<li><b>Magnetic Circuit 2</b>: this shows a 
+magnetic circuit with an air gap on the left.
+<li><b>Monopole Attempt</b>: This is a simulation
+of what would happen if you tried to make a
+magnetic monopole (a magnet with only a north pole and no south pole)
+by taking a bunch of magnets and forcing them into a square with
+their south poles in the center.  Instead of getting a monopole,
+you would find that the gaps between the magnets would act as south poles,
+and the field there would be much stronger than on the faces of the
+magnets.  If you could force them together perfectly with no gaps,
+there would be no field at all anywhere because all the currents would
+cancel out.
+<li><b><a target="_blank" href="http://cbp-1.lbl.gov/cycle2p02d.htm">Quadrupole Lens</a></b>: this shows four magnets in the shape of
+hyperbolas, forced together.  This device is used to focus
+particle beams.
+<li><b><a target="_blank"
+href="http://www.matchrockets.com/ether/halbach.html">Halbach
+Array</a></b>: this shows five magnets in a linear Halbach array.  The
+magnetic field is concentrated on the bottom side.  To see the
+orientations of the individual magnets, select <b>Show
+Magnetization</b> from the <b>Show</b> popup.
+<li><b>Halbach Array (long)</a></b>: this shows a longer Halbach array.
+<li><b>Halbach Array (dipole)</a></b>: this shows a circular Halbach array
+with a uniform magnetic field inside.
+<li><b>Halbach Array (quadrupole)</a></b>: this shows a circular Halbach array
+with a magnetic quadrupole inside.
+<p>
+The rest of the setups are all dynamic, involving changing currents
+and waves.
+<p>
+<li><b>Dielectric</b>: this shows wave packets being reflected by
+a dielectric medium.  Waves travel slower in a dielectric, causing the
+incoming wave to be partially reflected and partially refracted.
+<li><b>Fair Conductor Reflection</b>: this shows wave packets being
+reflected by
+a fairly good conductor.  When waves hit a conductor, it causes
+eddy currents which cause the wave to be mostly reflected.  A small
+fraction of the wave is transmitted, and that part is attenuated
+almost immediately.
+<li><b>Poor Conductor Reflection</b>: this shows wave packets being
+reflected by
+a poor conductor.  When waves hit the conductor, it causes
+weak eddy currents which cause the wave to be partly reflected.  Part
+of the wave is transmitted, and that part is quickly attenuated by
+eddy currents.
+<li><b>Skin Effect 1</b>: this shows that waves hitting a conductor
+will only penetrate a certain distance, called the
+<a href="http://scienceworld.wolfram.com/physics/SkinDepth.html">skin
+depth</a>.  (Actually the strength of the wave falls off exponentially,
+but the skin depth is a measure of how fast this happens.)
+<li><b>Skin Effect 2</b>: this shows that the skin depth is smaller
+for higher-frequency waves.
+<li><b>Resonant Absorption</b>: this creates a medium made up of little
+resonators.  The resonators have a
+characteristic frequency which is the same as the frequency of the incoming
+radiation.  Since this medium has a resonance frequency, it is dispersive,
+which means that waves of different frequencies travel at different
+speeds.  Here, since the incoming radiation's frequency is close to the
+resonance frequency, it is
+absorbed by the medium, although much of it
+is reflected because of the discontinuity caused by the strong absorption.
+<li><b>Dispersion 1</b>: this setup illustrates dispersion in the resonant
+medium.  The incident wave has a frequency which is much lower than the
+resonance frequency, so the refractive index is only slightly higher
+than 1.  So it is transmitted largely without reflection.
+<li><b>Dispersion 2</b>: Here
+the incident wave has a frequency which is slightly lower than the
+resonance frequency, so waves travel much more slowly in the medium,
+and more of the wave is reflected.  Also there is some absorption, so the
+farther the wave travels into the medium, the weaker it is.
+<li><b>Dispersion 3</b>: Here
+the incident wave has a frequency which is slightly higher than the
+resonance frequency, so waves have a phase velocity that is faster
+than in a vacuum.  So waves seem to move faster than the speed of light
+in a vacuum.  Still, the signal velocity in the medium is not faster
+than the speed of light; when the source is first switched on, the initial
+wave train travels at normal speed.
+<li><b>Dispersion 4</b>: Here
+the incident wave has a frequency which is much higher than the
+resonance frequency, so waves have a phase velocity that is only
+slightly faster than in a vacuum.  So the medium has very little
+affect on the incoming wave.
+<li><b>Magnetic Diffusion</b>: this shows a magnetic field (generated
+by a wire) diffusing slowly through a conductor.  Wait for the field to
+slowly build up, then get rid of the wire (the yellow square)
+by clicking on it.  The field will slowly die out; the presence of
+the conductor causes changes in magnetic field to diffuse slowly
+rather than happening at the speed of light.
+<li><b>Oscillating Ring</b>: this shows the cross section of a ring
+with an oscillating current running through it.  This is approximated
+by two wires with current running in opposite directions.  The oscillating
+current causes radiation; this is called magnetic dipole radiation.
+<li><b>Oscillating Ring Pair</b>: this shows the cross section of two
+rings with an oscillating current running through them in opposite
+directions, resulting in magnetic quadrupole radiation.
+<li><b>Ring Induction</b>: this shows a ring with an oscillating
+current running through it, inducing an opposing current in another ring
+right below it.
+<li><b>Wire Induction</b>: this shows a wire with an oscillating
+current running through it, inducing an opposing current in another wire
+right below it.
+<li><b>Ring + Fair Conductor</b>: this shows a ring with a slowly
+oscillating current running through it, with a fairly good conductor
+underneath it.  The changing current generates eddy currents in the conductor,
+causing the magnetic field to diffuse slowly through the conductor to
+the other side.
+<li><b>Ring + Poor Conductor</b>: this shows a ring with a slowly
+oscillating current running through it, with a poor conductor
+underneath it.  The eddy currents are much weaker, so the 
+magnetic field diffuses quickly through the conductor to
+the other side.
+<li><b>Wire + Fair Conductor</b>: this shows a wire with a slowly
+oscillating current running through it, with a fairly good conductor
+underneath it.  The changing current generates eddy currents in the conductor,
+causing the magnetic field to diffuse slowly through the conductor to
+the other side.
+<li><b>Wire + Poor Conductor</b>: this shows a wire with a slowly
+oscillating current running through it, with a poor conductor
+underneath it.  The eddy currents are much weaker, so the 
+magnetic field diffuses quickly through the conductor to
+the other side.
+<li><b>Rings + Ferromagnet</b>: this is an oscillating ring (in the middle)
+positioned near two conducting rings.  There is a ferromagnetic core
+present which cause the induced current to be stronger in the lower ring
+than in the upper ring.
+<li><b>Osc. Solenoid</b>: this is a solenoid with an oscillating
+current running through it.
+<li><b>Transformer</b>: this is two coils wrapped around each other,
+with an oscillating current in the inner one.  This induces a
+current in the outer one.  This transformer is rather pointless
+since the number of turns is the same in the inner and outer coils.  This
+applet cannot demonstrate transformers very well
+because there is no way to measure voltage, and because the current
+is always perpendicular to the screen, and none
+of the conducting grid squares are connected to one another.  Also the
+current in the inner coil is fixed and is not affected by the outer coil.
+<li><b>Osc. Toroidal Solenoid</b>: this is a toroidal solenoid with
+an oscillating
+current running through it.
+<li><b>Coaxial Cable</b>: this is a cross section of a coaxial cable,
+with an oscillating current running through it.  Note that there is
+very little radiation (assuming the wavelength of the oscillation is
+small compared to the diameter of the cable).  This is part of the
+reason that coaxial cable is used to carry high frequencies--it reduces
+the amount of power loss from radiation.
+<li><b>Cond. in Osc. Field</b>: this is a small conducting square in a
+uniform field that is oscillating.
+<li><b>Moving Wire</b>: this is a current-carrying wire which is
+moving at a significant fraction of the speed of light.  The magnetic
+field lines are slightly flattened out.  It stops
+periodically and then starts again so you can see
+the radiation generated when its velocity changes.
+<li><b>Moving Wire in Tube</b>: this is a current-carrying wire which is
+moving through a conducting tube.  When the wire moves it causes
+a changing magnetic field, which generates eddy currents in the tube.  The
+presence of the tube causes a force on the wire opposing the direction of
+motion, which you can see by selecting <b>Show Force</b> from the
+<b>Show</b> menu.
+<li><b>Moving Magnet in Tube</b>: this is a magnet which is
+<a target="_blank" href="http://www.exploratorium.edu/snacks/eddy_currents.html">moving through a conducting tube</a>.  When the
+magnet moves it causes
+a changing magnetic field, which generates eddy currents in the tube.  The
+presence of the tube causes a force on the magnet opposing the direction of
+motion, which you can see by selecting <b>Show Force</b> from the
+<b>Show</b> menu.  The magnet stops periodically to give the eddy
+currents a chance to die out.
+<li><b>Rotating Magnet 1</b>: this is a rotating magnet, which emits
+radiation.  Select <b>Show Magnetization</b> to see the direction
+the magnet is pointing.
+<li><b>Rotating Magnet 2</b>: this is a magnet which rotates through
+180 degrees and then reverses direction.  This causes it to emit
+radiation.
+<li><b>Scattering 1</b>: this shows a plane wave being scattered by
+a small resonator.  The incoming plane wave gets turned off periodically
+so you can see the scattered wave better.  The frequency of the incoming
+wave is close to the resonant frequency of the resonator, so the scattered
+wave is relatively strong.
+<li><b>Scattering 2</b>: Here the
+frequency of the incoming
+wave is not as close to the resonant frequency of the resonator, so
+the scattered wave is much weaker.
+<li><b>Big TM11 Mode</b>: this creates a small superconducting cavity
+with a standing wave inside it.  The electric field is 90 degrees out
+of phase with the magnetic field.  The field in the cavity is oscillating in
+its TM11 mode.
+<li><b>TM11 Modes</b>: this creates a set of small superconducting cavities
+with TM11 standing waves inside them.
+<li><b>TMn1 Modes</b>: this creates a set of small superconducting cavities
+with TM11, TM21, and TM31 standing waves inside them.  (If the
+resolution is set higher then more cavities are present with higher modes.)
+<li><b>TMnn Modes</b>: this creates a set of small superconducting cavities
+with various TM modes inside them.
+<li><b>TMn1 Mode Combos</b>: this creates a set of small superconducting
+cavities, with various combinations of TMn1 modes inside them.
+<li><b>TMnn Mode Combos</b>: this creates a set of small superconducting
+cavities, with various combinations of TM modes inside them.
+<li><b>Triangle Modes</b>: this creates a set of small triangular
+cavities with standing waves.
+<li><b>Circular Modes 1</b>: this creates a set of small circular
+cavities with standing waves.
+<li><b>Circular Modes 2</b>: this creates a circular
+cavity with two standing waves superimposed 90 degrees out of phase
+so that the fields appear to rotate.
+<li><b>Waveguides 1</b>:
+This creates a series of <a target="_blank" href="http://www.ee.surrey.ac.uk/Personal/D.Jefferies/wguide.html">waveguides</a> of different widths.
+Narrower waveguides, like at the left end of the screen,
+have higher cutoff frequencies.
+<p>
+Notice that the waves seem to be moving faster in thinner
+waveguides.  They appear to be moving faster than waves normally
+move in the applet.  This is because the phase velocity is faster in
+thinner waveguides; but the signal velocity is actually slower than normal,
+as you
+can verify by clicking the <b>Clear Waves</b> button and watching the
+wave move down the guide for the first time.
+<p>
+Since the waveguides are being driven by a plane wave, only the TE01
+mode is present.  (See the <a target="_blank" href="/embox/guide.html">waveguide applet</a>
+for another way to view waveguide modes.)
+<p>
+<li><b>Waveguides 2</b>:
+This is just the same set of waveguides with a lower frequency.  The
+waveguide on the left has a
+cutoff frequency that is higher than the source, so there is no
+wave motion in it.  You can fix this by turning the <b>Source
+Frequency</b> slider up.
+<li><b>Waveguides 3</b>:
+This is a set of identical waveguides being driven by small holes at
+different locations.  This causes different sets of modes to be excited
+in different proportions.  When the guide is being driven near the center,
+the TE01 mode is dominant, but when it is driven near the edge, the
+TE02 mode is more prevalent.  The frequency is low enough so that all
+other modes are cut off.  You can fix this by turning the frequency up.
+By turning the frequency down, you can cut off the TE02 mode as well.
+<li><b>Waveguides 4</b>:
+This is a set of identical waveguides with various modes present.
+The first waveguide contains the TE01 mode; the second contains the
+TE02 mode; the third contains the TE03 mode;
+the fourth contains TE01 and TE02;
+the fifth contains TE01 and TE03; the sixth contains TE02 and TE03.
+(There will not be room on your screen for all these modes if
+your resolution is not set high enough.)
+<p>
+Notice that the higher modes (TE02 and especially TE03) seem to be moving
+faster.  This is because the phase velocity of TE02 and TE03 is greater
+than that of TE01.
+Their signal velocities are slower, though, which is why it takes
+the TE03 wave so long to make it down to the end of the waveguide.
+Also if you turn off the source (by setting the source 
+popup to "No Sources") it will take quite a while for the TE03 mode
+to stop.
+<li><b>Resonant Cavities 1</b>:
+This creates a series of rectangular cavities being driven by
+a plane wave from above.  As you change the frequency you will
+see the response of each cavity change.  Each cavity has a different
+resonant frequency so it will respond differently.  After changing
+the frequency you may want to wait a bit for things to settle down
+(or turn the simulation speed way up).
+<li><b>Single Slit</b>: this demonstrates <a target="_blank" href="http://homepages.tig.com.au/~flavios/diffrac.htm">diffraction</a> of waves
+travelling through a slit.
+<li><b>Double Slit</b>: this demonstrates diffraction of waves
+travelling through a double slit.
+<li><b>Triple Slit</b>.
+<li><b>Obstacle</b>: this demonstrates diffraction of waves
+travelling around an obstacle.
+<li><b>Half Plane</b>: this demonstrates diffraction of waves
+around the edge of a plane.
+<li><b>Lloyd's Mirror</b>:
+This shows an interferometer which consists of a point source
+close to a mirror (at the bottom of the window).
+The waves coming from the source interfere with the waves coming
+from its mirror image.
+</ul>
+<p>
+The <b>Source popup</b> controls the wave sources (oscillating
+currents).  It has the
+following settings:
+<ul>
+<li>
+<b>No Sources</b>: there will be no sources of wave motion.
+<li>
+<b>1 Src, 1 Freq</b>: there will
+be a single source of sinusoidal waves at a single frequency
+(set using the <b>Source Frequency</b> slider).  This source can be
+dragged anywhere on the screen with the mouse.
+<li>
+<b>1 Src, 2 Freq</b>: the source will be emitting
+two waves, at separate frequencies.  The first frequency is set
+using the <b>Source Frequency</b> slider, and the second frequency
+is set using <b>2nd Frequency</b>.
+<li><b>2 Src, 1 Freq</b>: two sources will be created,
+both at the same frequency.  But you can select the phase difference
+using the <b>Phase Difference</b> slider.  If the slider is all the
+way to the left, the sources will be in phase; if it is all the
+way to the right, the sources will be 180 degrees out of phase.
+(The top one will be green while the bottom one is red, and vice versa.)
+<li><b>2 Src, 2 Freq</b>: the two sources will be at
+different frequencies.  The <b>Source 2 Frequency</b> slider can be
+used to set the second one's frequency.
+<li><b>3 Src, 1 Freq</b> or <b>4 Src, 1 Freq</b>:
+3 or 4 sources will be created, all at the same frequency.
+<li><b>1 Src, 1 Freq (Packet)</b>: the source will emit wave
+packets periodically.
+<li><b>x Plane Src, y Freq</b>: the source(s) will emit <a target="_blank" href="http://www.its.bldrdoc.gov/fs-1037/dir-027/_4031.htm">plane waves</a>
+rather than circular waves.  The location and direction of the
+plane wave can be modified by dragging one or both of the two
+white circles.  If the white circles are located at the edge of
+the screen, the plane is extended offscreen; otherwise it is not.
+Since the waves are not extended infinitely offscreen they are
+not true plane waves, strictly speaking.
+<li><b>1 Plane 1 Freq (Packet)</b>: the source will emit
+plane wave packets.
+</ul>
+<p>
+The <b>Mouse popup</b> controls what happens when the mouse is
+clicked.  The following settings are possible:
+<ul>
+<li><b>Mouse = Add Perf. Conductor</b>:
+Clicking on a
+point will create a perfect conductor there.  Clicking on
+an existing conductor will erase it.
+<li><b>Mouse = Add Good Conductor</b>:
+Clicking on a
+point will create a conductor which is not perfect but is still pretty
+good.
+<li><b>Mouse = Add Fair Conductor</b>:
+Clicking on a
+point will create a fairly good conductor.
+<li><b>Mouse = Add Current (+)</b>:
+Clicking on a
+point will create a wire with current flowing in the positive
+z direction (towards you).
+<li><b>Mouse = Add Current (-)</b>:
+Clicking on a
+point will create a wire with current flowing in the negative
+z direction (away from you).
+<li><b>Mouse = Add Ferromagnet</b>:
+Clicking on a
+point will create a <a target="_blank" href="http://hyperphysics.phy-astr.gsu.edu/hbase/solids/ferro.html">ferromagnetic</a>
+medium.  The
+ferromagnets in this applet are linear and have no hysteresis
+(except for the permanent magnets).
+<li><b>Mouse = Add Diamagnet</b>:
+Clicking on a
+point will create a
+<A target="_blank" href="http://hyperphysics.phy-astr.gsu.edu/hbase/solids/magpr.html#c2">diamagnetic</a>
+medium.  The
+diamagnets in this applet are far stronger than any known diamagnet,
+to illustrate the effect more clearly.
+<li><b>Mouse = Add Dielectric</b>:
+Clicking on a
+point will create a dielectric medium.
+<li><b>Mouse = Add Magnet (Down/Up/Left/Right)</b>:
+Clicking on a point will create a permanent magnet with the
+north pole pointing in the direction indicated.
+<li><b>Mouse = Add Resonant Medium</b>:
+Clicking on a
+point will create a resonant medium.
+<li><b>Mouse = Clear</b>:
+Clicking on a point will remove whatever is there.
+<li><b>Mouse = Adjust Conductivity</b>:
+Clicking on a point and dragging out a rectangular area will allow you to
+adjust the conductivity of the conductors in that area using the
+<b>Conductivity</b> slider.  The
+<b>Show Material Type</b> menu option may come in handy here (and in
+the following options) to see feedback from the changes you are making
+and to compare the conductivity of all conductors on the screen.
+<li><b>Mouse = Adjust Permeability</b>:
+Clicking on a point and dragging out a rectangular area will allow you to
+adjust the permeability of the ferromagnets in that area using the
+<b>Permeability</b> slider.
+<li><b>Mouse = Adjust Current</b>:
+Clicking on a point and dragging out a rectangular area will allow you to
+adjust the current flowing through the wires in that area using the
+<b>Current</b> slider.
+<li><b>Mouse = Adjust Dielectric</b>:
+Clicking on a point and dragging out a rectangular area will allow you to
+adjust the dielectric constant on the dielectrics in that area using the
+<b>Dielectric Constant</b> slider.
+<li><b>Mouse = Adjust Mag Dir</b>:
+Clicking on a point and dragging out a rectangular area will allow you to
+adjust the direction of the permanent magnets in that area using the
+<b>Direction</b> slider.
+<li><b>Mouse = Adjust Mag Strength</b>:
+Clicking on a point and dragging out a rectangular area will allow you to
+adjust the strength of the permanent magnets in that area using the
+<b>Strength</b> slider.
+</ul>
+<p>
+The <b>Show</b> popup determines which fields or other quantities to
+display, and how to display them.
+<ul>
+<li><b>Show Electric Field (E)</b>: Show the electric field
+as green (positive, toward you) or red (negative, away from you).
+<li><b>Show Magnetic Field (B)</b>: Show the magnetic field
+as arrows.  The arrows go from dark green to light green and
+then to white as the field gets stronger.
+<li><b>Show B Lines</b>: Show the magnetic field as lines.  The
+color of the lines go from dark green to light green and
+then to white as the field gets stronger.  The density of the
+lines is kept fairly constant, so in order to determine the
+field strength you need to look at the color of the lines
+rather than how far apart they are.
+<li><b>Show B Strength</b>: Show the magnetic field strength using
+shades of green.
+<li><b>Show Current (j)</b>: Show the current density as
+yellow (positive, toward you) or blue (negative, away from you).
+<li><b>Show E/B</b>: Show both the electric field and the
+magnetic field arrows.
+<li><b>Show E/B lines</b>: Show both electric field and the
+magnetic field lines.
+<li><b>Show E/B/j</b>: Show both the electric field and the
+magnetic field arrows;
+in conductors, or where the current
+is nonzero, show the current density instead of the electric field.
+<li><b>Show E/B lines/j</b>: Show both the electric field and the
+magnetic field lines;
+in conductors, or where the current
+is nonzero, show the current density instead of the electric field.
+<li><b>Show Mag. Intensity (H)</b>: Show the <a target="_blank" href="http://scienceworld.wolfram.com/physics/H.html">magnetic intensity
+vector</a>, which is equal to the magnetic field minus the
+magnetization.  In linear media (which, in this applet,
+is everywhere except for inside permanent magnets) this is
+equal to <b>B</b> divided by the permeability.  This will be the same
+as <b>B</b> unless ferromagnets, diamagnets, or permanent magnets
+are present.
+<li><b>Show Magnetization (M)</b>: Show the <A target="_blank" href="http://scienceworld.wolfram.com/physics/Magnetization.html">magnetization</a>
+vector, which indicates the direction and degree of alignment
+of magnetic media with an external field.  In permanent magnets,
+the magnetization is constant, and points to the magnet's north pole.
+In ferromagnets, the magnetization is proportional to the
+external field and in the same direction; in diamagnets, it is
+proportional but in the opposite direction.  Everywhere else it is
+zero.
+<li><b>Show Material Type</b>: Since all materials show up as
+gray, you need this option to tell them apart:
+<ul>
+<li>Diamagnets: red (<img src="col_red.gif">)
+<li>Ferromagnets: green (<img src="col_green.gif">) (lighter shades indicate higher
+permeability)
+<li>Permanent Magnets: purple (<img src="col_purple.gif">)
+<li>Dielectrics: orange (<img src="col_orange.gif">) (lighter shades indicate
+stronger dielectrics)
+<li>Resonant: light orange (<img src="col_lorange.gif">)
+<li>Perfect Conductors: white (<img src="col_white.gif">)
+<li>Imperfect Conductors: cyan (<img src="col_cyan.gif">) (lighter shades indicate
+better conductors)
+<li>Wires with Current: blue (<img src="col_blue.gif">) or yellow (<img src="col_yellow.gif">)
+</ul>
+<li><b>Show Vec. Potential</b>: Show the <a target="_blank" href="http://scienceworld.wolfram.com/physics/MagneticVectorPotential.html">vector potential</a> (<b>A</b>)
+as green (positive, toward you) or red (negative, away from you).  The
+vector potential is always perpendicular to the screen.
+<li><b>Show Poynting Vector</b>: Show the <a target="_blank" href="http://scienceworld.wolfram.com/physics/PoyntingVector.html">Poynting vector</a>, which
+indicates the direction of energy transfer.  For waves, it
+is in the direction of wave motion.
+<li><b>Show Energy Density</b>: Show the <A target="_blank" href="http://scienceworld.wolfram.com/physics/EnergyDensity.html">energy density</a> as
+shades of yellow.
+<li><b>Show Poynting/Energy</b>: Show both the energy density and
+the Poynting vector.
+<li><b>Show Force</b>: Show magnetic force.  The total force
+on each object is added up by summing over each grid square (ignoring
+speed-of-light delay) and
+the total is shown on every grid square taken up by the
+object.
+<li><b>Show Effective Current</b>: Show the effective current density in
+magnetic media caused by the alignment of magnetic dipoles.  This is
+equal to the curl of the magnetization.  So for example, for
+permanent magnets,
+this will show you the current distribution which will generate the
+same field as the permanent magnet; a square permanent magnet acts
+the same as a solenoid.
+<li><b>Show Magnetic Charge</b>: Show the effective magnetic charge
+density for any permanent magnets.  For setups involving just
+permanent magnets, we can think of the magnetic field as originating
+from magnetic charges at the north and south poles of the
+magnets.  Using those magnetic charges, we can calculate a scalar potential
+for every point on the screen (just like the electrostatic potential)
+and calculate the magnetic intensity vector (<b>H</b>) from that
+potential.  So if you look the magnetic charge of a permanent magnet you
+see that the two poles are oppositely charged; if you look at the
+<b>H</b> it looks
+like the electric field of two parallel plates with opposite charges on each
+plate (with the plates located at the poles).
+<li><b>Show Curl E</b>: Show the curl of the electric field,
+which is equal to the change in magnetic field (in the absence of
+currents), by one of Maxwell's equations.
+<li><b>Show Bx</b>: Show the x component of the magnetic field;
+green indicates positive (to the right) and red indicates negative
+(to the left).
+<li><b>Show By</b>: Show the y component of the magnetic field;
+green indicates positive (up) and red indicates negative
+(down).
+<li><b>Show Hx,Hy</b>: Show the x or y component of the magnetic
+intensity vector.
+</ul>
+<p>
+The <b>Clear Fields</b> button magically clears out any fields but does not
+remove any currents, sources, or materials.  The <b>Clear All</b> button
+clears out everything.
+<p>
+The <b>Stopped</b> checkbox stops the applet, in case you want to
+take a closer look at something, or if you want to work on something
+with the mouse without worrying about it changing out from under you.
+<p>
+The <b>Simulation Speed</b> slider controls how far the waves move
+between frames.  If you slide this to the left, the applet will go
+faster but the motion will be choppier.
+<p>
+The <b>Resolution</b> slider allows you to speed up or slow down the
+applet by adjusting the resolution; a higher resolution is slower
+but looks better.
+<p>
+The <b>Brightness</b> slider controls the brightness, just like on a
+TV set.  This can be used to view faint waves more easily.
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<hr>
+<a href="http://www.falstad.com/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="http://www.falstad.com/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

@@ -1,0 +1,152 @@
+<title>E+M Waveguide Simulation Directions</title>
+<body>
+<hr>
+<a href="guide.html">Click here to go to the applet.</a>
+<p>
+This java applet demonstrates electromagnetic waves
+in a 3-d rectangular waveguide.
+<p>
+At the top of the applet on the left you will see the waveguide
+with a wave moving in the positive z direction.  The color green means that
+an electric field component is present and is pointing in the
+positive or negative y direction.
+<p>
+The guide is being driven with a single driving
+frequency, but various normal modes may be present.  Each one is
+operating at the same frequency, but the phase velocity will generally
+be different
+for different modes.
+Below the guide you will see two grids showing each
+normal mode's contribution to the wave pattern in the guide.
+The TE modes (transverse electric modes; modes with the electric
+field vector perpendicular
+to the z axis) are shown on top and TM modes (transverse magnetic modes;
+modes with the
+magnetic field vector perpendicular to the z axis) are shown on the
+bottom.  Move the mouse over a grid square to see what mode
+it represents.
+<p>
+Each element of the grid has a color which indicates the presence or
+absence of that mode.  Black means the mode is not present;
+green means the mode is present with a positive coefficient, and red means
+it is present with a negative coefficient.
+In addition, each mode may have a phase shift, which indicates that its
+oscillatory cycle leads or lags others with the same phase velocity.
+This is indicated by
+a vertical blue line.
+<p>
+A phase shift is normally hard to detect.  If the applet is stopped,
+then by altering the phase of a mode you can see the mode oscillate.
+If the applet is running it is harder to tell, unless the mode is
+combined with some other mode; in that case, the phase will affect
+the interference pattern between the two modes.
+<p>
+Also, some modes may be crossed out with a diagonal line.  This means
+the driving frequency is not high enough to drive that mode.  Adjusting
+the <b>Driving Frequency</b> slider will allow that mode to be activated.
+<p>
+You can add or remove a mode by clicking on it.  If you click and drag
+up and down you can fine-tune the magnitude of the mode.  If you drag
+left and right you can alter the phase shift.
+<p>
+Double-clicking on a mode will clear all other modes and just set that one.
+<p>
+For performance reasons, only 10 modes can be active at a time.
+<p>
+<p>
+The <b>Show Electric Field</b> popup will let you select which
+field is shown: the electric field, the magnetic field, or both.
+You can also view the currents or charge in the walls.
+<p>
+The <b>Show Field</b> popup controls how the field is displayed.
+The choices are:
+<ul>
+<li><b>Show Field (tri-color)</b> shows the x component of the field as red,
+y as green, and z as blue.  The sign of the field component isn't
+indicated.
+<li><b>Show Field X</b> shows the x component of the field as green if it's
+positive and red if it's negative.  The other components aren't shown.
+If the field has no x component then the display is blank.
+<li><b>Show Field Y</b> shows the y component of the field as green if it's
+positive and red if it's negative.
+<li><b>Show Field Z</b> shows the z component of the field as green if it's
+positive and red if it's negative.
+<li><b>Show Field Magnitude</b> shows the magnitude of the field vector in green.
+The direction of the field is not indicated.
+<li><b>Show Field Vectors</b> shows little field vectors indicating the
+magnitude and direction of the field.  As the field gets stronger, the
+vectors turn from black (weakest) to green to white (strongest).
+The number of vectors shown can be controlled with the
+<b>Vector Density</b> slider.
+<li><b>Show Particles on Field Lines</b> shows a bunch of particles moving
+in the direction of the field lines.  They move faster where the field
+is stronger.
+Note that the particles are only a educational device
+intended to show the shape
+of the field lines; in real life, particles would not move in this manner.
+</ul>
+<p>
+The <b>Show Field</b> popup also controls how you can view the current;
+in that case, think "current vector" when you see "field" in the above
+directions.  There is only one way to view the charge, however; green
+means positive charge and red means negative.
+<p>
+The <b>Slice popup</b> allows you to look at planar slices of the guide
+rather than looking at the contents of the entire guide.
+If the popup is set to <b>No Slicing</b>, you view the entire
+guide.  Otherwise you will see the guide sliced in one of three
+directions.  The location of the slice can be adjusted by dragging
+the line running along the sides of guide near the slice.
+<p>
+The <b>Mouse</b> popup controls what happens when you click on the guide.
+If you set it to <b>Adjust Angle</b> or <b>Adjust Zoom</b>, you can
+adjust the orientation or size of the 3-d view by clicking and
+dragging on the guide.
+<p>
+The <b>Stopped</b> checkbox can be used to stop the applet
+for a moment.
+<p>
+The <b>Stop Oscillation</b> checkbox can be used to stop the oscillation
+for a moment; this is useful when "Show Particles" is selected.
+The particles keep moving, to illustrate the field lines, but the
+oscillation of the electric and magnetic fields stops so the field
+lines are easier to follow.
+<p>
+The <b>Show Sides</b> checkbox shows the field on the sides of the
+guide rather than inside.
+<p>
+The <b>Alternate Rendering</b> checkbox is used to speed up
+rendering, but it actually slows things down on some machines.
+Also for large windows and low resolutions it is usually slower.
+(Internally, it uses the MemoryImageSource class instead of drawing
+a bunch of rectangles.)
+<p>
+The <b>Oscillation Speed</b> slider controls the speed of oscillation.
+<p>
+The <b>Particle Speed</b> slider controls the speed of the particles.
+<p>
+The <b>Number of Particles</b> slider controls the number of particles.
+<p>
+The <b>Brightness</b> slider can be used just like the brightness on
+a TV, to brighten dim areas of the guide.
+<p>
+The <b>Image Resolution</b> slider can be used to generate a higher
+quality image.  If you move it to the right, it will increase the
+resolution of the image, but it will also slow things down,
+so be careful.
+<p>
+The <b>Width</b> and <b>Height</b> sliders will adjust the width or height
+of the guide.  This changes the phase velocities and
+cutoff frequencies of each mode.
+<p>
+The <b>Clear</b> button clears all modes.
+<p>
+The <b>Reset Particles</b> button resets the particle positions to
+some random state.
+<hr>
+<a href="guide.html">Back to the applet</a>.
+<hr>
+<a href="http://www.falstad.com/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="http://www.falstad.com/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

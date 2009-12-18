@@ -1,0 +1,37 @@
+<title>Fourier Series Examples: Clipping</title>
+<link rel="SHORTCUT ICON" href="favicon.ico">
+<body>
+<hr>
+<applet code=Fourier.class archive=fourier.jar width=800 height=400>
+Sorry, you need a Java-enabled browser to see the simulation.
+<param name=state value=clip>
+<param name=show value="Sine,Clip,Terms,Sound">
+<param name=useFrame value=false>
+<param name="Mag/Phase View" value=true>
+<param name="Log View" value=true>
+</applet><p>
+
+Here, a sine function is <a
+href="http://en.wikipedia.org/wiki/Clipping_(audio)">clipped</a>,
+meaning that the function goes beyond the allowed maximum and minimum
+levels and so the tops and bottoms are chopped off.
+This distortion causes new frequencies to be introduced; these
+frequencies
+can be heard when the function is played (by clicking the <b>Sound</b> checkbox).
+<p>
+Press <b>Sine</b>
+to get a clean sine wave, and play it for comparison.  Press
+<b>Clip</b> to clip it, multiple times to increase the amount of
+clipping.  If you press it enough times, the waveform becomes a
+<a href="e-square.html">square wave</a>.
+
+<p>
+Next: <a href="e-rect.html">Rectification</a><br>
+Previous: <a href="e-alias.html">Aliasing</a><br>
+<a href="e-index.html">Index</a><br>
+<hr>
+<a href="http://www.falstad.com/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="http://www.falstad.com/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+<br>Generated Tue Sep  9 2008
+</body>

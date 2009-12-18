@@ -1,0 +1,41 @@
+<title>Fourier Series Examples: Aliasing</title>
+<link rel="SHORTCUT ICON" href="favicon.ico">
+<body>
+<hr>
+<applet code=Fourier.class archive=fourier.jar width=800 height=400>
+Sorry, you need a Java-enabled browser to see the simulation.
+<param name=state value=resample>
+<param name=show value="Sine,Resample,Terms,Sound">
+<param name=useFrame value=false>
+<param name="Mag/Phase View" value=true>
+<param name="Log View" value=true>
+</applet><p>
+
+Here, a sine function is replaced with samples at 32 points.  Unlike
+<a href="e-quant.html">quantization</a>, the function can take any
+value at those points; but the
+function is flat between these samples.  32 points per cycle corresponds
+to a sampling frequency of 220 &times; 32 = 7040 Hz (at the default playing frequency of
+220 Hz).  This causes
+aliasing, where new, unwanted frequencies will be introduced.  For example
+a frequency of 220 Hz, when resampled, will have aliases at 6820 Hz
+(7040-220), 7260 Hz (7040+220), 13860 Hz (7040*2-220),
+and so on.  These
+frequencies
+can be heard when the function is played (by clicking the <b>Sound</b> checkbox).
+<p>
+Press <b>Sine</b>
+to get a clean sine wave, and play it for comparison.  Press
+<b>Resample</b> to resample it, multiple times to use a lower sampling
+rate.
+
+<p>
+Next: <a href="e-clip.html">Clipping</a><br>
+Previous: <a href="e-quant.html">Quantization Distortion</a><br>
+<a href="e-index.html">Index</a><br>
+<hr>
+<a href="http://www.falstad.com/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="http://www.falstad.com/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+<br>Generated Tue Sep  9 2008
+</body>

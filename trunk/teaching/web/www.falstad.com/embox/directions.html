@@ -1,0 +1,177 @@
+<title>E+M Cavity Modes Applet Directions</title>
+<body>
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<p>
+This java applet demonstrates standing electromagnetic waves
+in a 3-d rectangular box, or cavity resonator.
+<p>
+At the top of the applet on the left you will see the cavity,
+oscillating in one of its modes.  The color green means that
+an electric field component is present and is pointing in the
+positive or negative y direction.
+<p>
+Below the cavity you will see a series of grids showing each
+normal mode's contribution to the vibration.
+The TE modes (modes with the electric field vector perpendicular
+to the z axis) are shown on top and TM modes (modes with the
+magnetic field vector perpendicular to the z axis) are shown on the
+bottom.  Move the mouse over a grid square to see what mode
+it represents.
+<p>
+Each element of the grid has a color which indicates the presence or
+absence of that mode.  Black means the mode is not present;
+green means the mode is present with a positive coefficient, and red means
+it is present with a negative coefficient.
+In addition, each mode may have a phase shift, which indicates that its
+oscillatory cycle leads or lags others with the same frequency.
+This is indicated by
+a vertical blue line.
+<p>
+A phase shift is normally hard to detect.  If the applet is stopped,
+then by altering the phase of a mode you can see the mode oscillate.
+If the applet is running it is much harder to tell,
+except in a case which will be explained later.
+<p>
+You can add or remove a mode by clicking on it.  If you click and drag
+up and down you can fine-tune the magnitude of the mode.  If you drag
+left and right you can alter the phase shift.
+<p>
+Double-clicking on a mode will clear all other modes and just set that one.
+<p>
+For performance reasons, only 10 modes can be active at a time.
+<p>
+<p>
+The <b>Show Electric Field</b> popup will let you select which
+field is shown: the electric field, the magnetic field, or both.
+You can also view the currents or charge in the walls.
+<p>
+The <b>Show Field</b> popup controls how the field is displayed.
+The choices are:
+<ul>
+<li><b>Show Field (tri-color)</b> shows the x component of the field as red,
+y as green, and z as blue.  The sign of the field component isn't
+indicated.
+<li><b>Show Field X</b> shows the x component of the field as green if it's
+positive and red if it's negative.  The other components aren't shown.
+If the field has no x component then the display is blank.
+<li><b>Show Field Y</b> shows the y component of the field as green if it's
+positive and red if it's negative.
+<li><b>Show Field Z</b> shows the z component of the field as green if it's
+positive and red if it's negative.
+<li><b>Show Field Magnitude</b> shows the magnitude of the field vector in green.
+The direction of the field is not indicated.
+<li><b>Show Field Vectors</b> shows little field vectors indicating the
+magnitude and direction of the field.  As the field gets stronger, the
+vectors turn from black (weakest) to green to white (strongest).
+The number of vectors shown can be controlled with the
+<b>Vector Density</b> slider.
+<li><b>Show Particles on Field Lines</b> shows a bunch of particles moving
+in the direction of the field lines.  They move faster where the field
+is stronger.
+Note that the particles are only a educational device
+intended to show the shape
+of the field lines; in real life, particles would not move in this manner.
+</ul>
+<p>
+The <b>Show Field</b> popup also controls how you can view the current;
+in that case, think "current vector" when you see "field" in the above
+directions.  There is only one way to view the charge, however; green
+means positive charge and red means negative.
+<p>
+The <b>Slice popup</b> allows you to look at planar slices of the cavity
+rather than looking at the contents of the entire cavity.
+If the popup is set to <b>No Slicing</b>, you view the entire
+cavity.  Otherwise you will see the cavity sliced in one of three
+directions.  The location of the slice can be adjusted by dragging
+the line running along the sides of cavity near the slice.
+<p>
+The <b>Mouse</b> popup controls what happens when you click on the cavity.
+If you set it to <b>Adjust Angle</b> or <b>Adjust Zoom</b>, you can
+adjust the orientation or size of the 3-d view by clicking and
+dragging on the cavity.
+<p>
+The <b>Stopped</b> checkbox can be used to stop the applet
+for a moment.
+<p>
+The <b>Stop Oscillation</b> checkbox can be used to stop the oscillation
+for a moment; this is useful when "Show Particles" is selected.
+The particles keep moving, to illustrate the field lines, but the
+oscillation of the electric and magnetic fields stops so the field
+lines are easier to follow.
+<p>
+The <b>Show Spectrum</b> checkbox can be used to show or hide
+the spectrum of mode frequencies.  Each mode is represented on
+the spectrum by a vertical line.  Higher frequencies are on the right.
+In some cases, multiple modes will have the same frequency.  This is
+called degeneracy.  When that happens, the line for that frequency
+will be taller than normal.  The more modes have the same frequency,
+the taller the line.
+<p>
+The <b>Show Sides</b> checkbox shows the field on the sides of the
+cavity rather than inside.
+<p>
+The <b>Alternate Rendering</b> checkbox is used to speed up
+rendering, but it actually slows things down on some machines.
+Also for large windows and low resolutions it is usually slower.
+(Internally, it uses the MemoryImageSource class instead of drawing
+a bunch of rectangles.)
+<p>
+The <b>Oscillation Speed</b> slider controls the speed of oscillation.
+<p>
+The <b>Particle Speed</b> slider controls the speed of the particles.
+<p>
+The <b>Number of Particles</b> slider controls the number of particles.
+<p>
+The <b>Brightness</b> slider can be used just like the brightness on
+a TV, to brighten dim areas of the cavity.
+<p>
+The <b>Image Resolution</b> slider can be used to generate a higher
+quality image.  If you move it to the right, it will increase the
+resolution of the image, but it will also slow things down,
+so be careful.
+<p>
+The <b>Width</b> and <b>Height</b> sliders will adjust the width or height
+of the cavity.  This changes the frequency spectrum.  The depth can't be
+changed.
+<p>
+The <b>Clear</b> button clears all modes.
+<p>
+The <b>Reset Particles</b> button resets the particle positions to
+some random state.
+<p>
+<p>
+Normally each mode has a different frequency.  However in some cases,
+several modes can have the same frequency.  This is called
+degeneracy.  The presence or absence of degeneracy
+depends on the dimensions of the cavity.
+By default the width, height, and depth are equal, which means it is
+a cube.
+In this case, all the <i>m</i>,<i>n</i>,<i>p</i> modes are degenerate, because
+they have the same frequency
+as the <i>n</i>,<i>m</i>,<i>p</i> modes, and the <i>m</i>,<i>p</i>,<i>n</i>
+modes, and the <i>p</i>,<i>n</i>,<i>m</i> modes, and so on.
+If the width, height, and depth are not all equal,
+there often is no degeneracy.  There may be some, if two or more of
+the cavity dimensions
+have a ratio equal to an integer or a simple fraction.
+The width and height slider
+ranges from 1/2 to 3, so if either slider is set to one of those extremes,
+there will be degeneracy.
+<p>
+When two or more modes have the same frequency, each one is shown in
+yellow.
+<p>
+The interesting thing about degenerate modes is that if you combine
+them, you get a new mode that oscillates with simple harmonic motion,
+just like any other mode.  Since both modes are oscillating at the
+same rate, you can't tell them apart.  If one of the modes has a phase
+shift relative to the other one, then the wave will change shape
+at a rate equal to the frequency of the modes.
+<hr>
+<a href="index.html">Back to the applet</a>.
+<hr>
+<a href="http://www.falstad.com/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="http://www.falstad.com/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>

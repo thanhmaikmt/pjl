@@ -1,0 +1,159 @@
+<title>Digital Filters Applet</title>
+<body>
+<hr>
+<a href="index.html">Click here to go to the applet.</a>
+<p>
+<script type="text/javascript"><!--
+google_ad_client = "pub-1974179407250396";
+google_ad_width = 728;
+google_ad_height = 90;
+google_ad_format = "728x90_as";
+google_ad_type = "text_image";
+google_ad_channel ="";
+//--></script>
+<script type="text/javascript"
+  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+<p>
+This java applet is a demonstration of
+<a href="http://www.dspguide.com">digital filters</a>.  You should
+hear a noise waveform when the applet starts up.  If you get a message
+"Need java 2 for sound", then you should get the
+<a target="_blank"
+href="/cgi-bin/go.pl?http://java.sun.com/getjava/">Java plug-in</a>.
+<p>
+The applet starts up with a low-pass filter.  It shows the frequency
+response of the filter, the spectrum of the filtered waveform being
+played, the waveform itself, and the impulse response of the filter.
+Click on the response curve to change the cutoff frequency.
+<p>
+The freqency response graph shows the filter response (shown
+vertically, in dB, with lines at 10 dB intervals) versus the frequency
+(shown horizontally, with vertical lines marking off octaves).  The
+spectrum graph shows the spectrum of the sound output.
+<p>
+The <b>Input</b> popup menu allows you to select an input waveform.
+The choices are:
+<ul>
+<li>Noise
+<li>Sine Wave - select the frequency by clicking on the spectrum.
+<li>Sawtooth Wave
+<li>Triangle Wave
+<li>Square Wave
+<li>Periodic Noise - select the frequency by clicking on the spectrum.
+<li>Sweep - a sine wave that sweeps across the frequency spectrum at
+  an adjustable rate.
+<li>Impulses
+<li>Various mp3 files (you can add your own by downloading the applet
+  and then editing the index.html file)
+</ul>
+<p>
+The <b>Filter</b> popup menu allows you to select a filter.  See
+<a href="http://www.dspguide.com">this site</a> for technical
+details about the filter types.
+The choices are:
+<ul>
+<li><a href="http://en.wikipedia.org/wiki/Finite_impulse_response">FIR</a> Low-pass - filters out high frequencies (everything below the
+cutoff frequency, which is adjustable by clicking on the response graph
+with the mouse).
+<li>FIR High-pass - filters out low frequencies.
+<li>FIR Band-pass - filters out everything except a range of frequencies.  Use
+  the <b>Center Frequency</b> and <b>Passband Width</b> sliders to
+  adjust the range.
+<li>FIR Band-stop - filters out a range of frequencies.
+<p>
+  Here are some adjustable parameters that affect the quality of the
+  FIR filters: the number of points,
+  which you can adjust with the <b>Order</b> slider (more points is
+  better); and the window,
+  which you select with the <b>Window</b> popup.  An FIR filter is
+  defined by its impulse response, which you can view near the bottom
+  of the window.  To view the window function, select <b>FIR Low-pass</b>,
+  set the cutoff frequency near zero and look at the impulse response.
+<p>
+<li>Custom FIR - draw on the frequency response graph to specify your
+  own filter.  The actual response, shown in red, is affected by the
+  <b>Order</b> slider and <b>Window</b> popup.
+<li>None - no filtering
+<li><A href="http://en.wikipedia.org/wiki/Butterworth_filter">Butterworth</a> Low-pass - a flat filter that filters out high frequencies
+<li>Butterworth High-pass - a flat filter that filters out low frequencies
+<li>Butterworth Band-pass - a flat filter that filters out frequencies
+  outside of a certain band
+<li>Butterworth Band-stop - a flat filter that filters out frequencies
+  inside of a certain band
+<li><A href="http://en.wikipedia.org/wiki/Chebyshev_filter">Chebyshev</a> Low-pass - a low-pass filter with an adjustable amount
+  of ripple in the passband
+<li>Chebyshev High-pass, Band-pass, Band-stop
+<li>Inv Cheby Low-pass - inverse Chebyshev (also known as Chebyshev
+  type II), a low-pass filter with a flat passband, but an adjustable amount
+  of ripple in the stopband
+<li>Inv Cheby High-pass, Band-pass, Band-stop
+<li><a href="http://en.wikipedia.org/wiki/Elliptic_filter">Elliptic</a> Low-pass -
+  (also known as Cauer) a low-pass filter with an adjustable amount
+  of ripple in the passband and stopband.  Adjusting the <b>Transition
+  Band Width</b> will change the stopband attenuation.
+<li>Elliptic High-pass, Band-pass, Band-stop
+<li><a href="http://en.wikipedia.org/wiki/Comb_filter">Comb</a> (+) - this filter (used on noise) sounds like someone blowing
+  into a tube.
+<li>Comb (-) - this is a tube with one end covered.
+<li>Delay - an echo filter (the same as a comb filter, but with longer delays)
+<li>Plucked-String Filter - when the <b>Input</b> popup is set to
+  "Impulses", this sounds like a string being plucked.
+<li>Inverse Comb
+<li>Reson - resonates at one frequency
+<li>Reson w/ Zeros - a reson filter with zeros added at 0 and half the
+  sampling rate
+<li>Notch - filters out a narrow range of frequencies
+<li>Moving Average - a simple FIR attempt at a low-pass filter.  This filter
+(when used on noise) reminds me of an Atari 2600.
+<li>Triangle
+<li>Allpass - passes all frequencies equally, but with different phase delay.
+  Use the <b>Phase Response</b> item in the <b>View</b> menu to view
+  the phase response.  For low frequencies, this filter acts as a
+  fractional delay (a delay of less than one sample).
+<li>Gaussian - the impulse response and
+  frequency response are both gaussian-shaped
+<li>Random
+<li>Custom IIR - drag the poles and zeros around to change the filter.
+</ul>
+<p>
+The <b>Sampling Rate</b> popup allows you to view or change the
+sampling rate.  You can't change the rate if the input is an MP3.
+<p>
+The <b>View</b> menu allows you to turn on or off the various views.
+The <b>Log Frequency Scale</b> item which shows the
+frequency response using a logarithmic plot instead of linear.
+The <b>Show Entire Waveform</b> item will compress the waveform
+segments horizontally so that each one fits in the window; this way, all of the waveform
+will be displayed, but the window usually won't be wide enough to show
+each sample separately.  The <b>Ferris Plot</b> item
+will display a
+<a href="http://www.maa.org/pubs/amm_complements/complex.html">Ferris Plot</a>
+of the transfer function.
+<p>
+When displaying the frequency response, the applet only shows the
+portion of the spectrum from 0 to the <a
+href="http://en.wikipedia.org/wiki/Nyquist_frequency">Nyquist
+frequency</a> (&pi;).  The rest of the response up to 2&pi; is just a mirror image of this,
+and then the response
+repeats every 2&pi;.  For example, here is a frequency response as
+displayed in the applet (up to &pi;):
+<p><img src="resp2.gif"><p>
+Here is the response up to 4&pi;:
+<p><img src="resp1.gif">
+<p>
+Good books about digital filters:
+<ul>
+<li><A href="http://www.amazon.com/exec/obidos/tg/detail/-/0805316841">Steiglitz</a>
+  (great intro to DSP; has info on comb filters, resons, plucked-string)
+<li><a href="http://www.dspguide.com/">Smith</a> (downloadable)
+<li><a href="http://www.amazon.com/exec/obidos/tg/detail/-/0750675470/">Winder</a>
+<li><a href="http://www.amazon.com/exec/obidos/tg/detail/-/0072513780/">Mitra</a>
+</ul>
+<p>
+<a href="index.html">Click here to go to the applet.</a>
+<hr>
+<a href="/mathphysics.html"><img src="/mathphysics_small.gif"></a>
+<a href="/index.html"><img src="/me_small.gif"></a>
+<br><i>java@</i><i>falstad.com</i>
+</body>
