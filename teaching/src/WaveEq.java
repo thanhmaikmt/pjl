@@ -16,21 +16,25 @@ public class WaveEq {
     double u[];
     double dt;
     double dx;
+    double vel;
 
     WaveEq() {
       
     
-        double vel=1000.0;
-        double dt = 1.0e-5;                           // time step
+        vel=1000.0;
+
+        dt = 1.0e-5;                           // time step
 
         N=100;
 
-        double dx = 1.0 / N;
+        dx = .01;
 
-        double courrant = vel * dt / dx;
+        // See sadiku page 147
+        double r= (vel * dt / dx);
+        r=r*r;
 
-        s0 = 2 * (1 - courrant * courrant);
-        s1 = courrant * courrant;
+        s0 = 2 * (1 - r);
+        s1 = r ;
 
 
 
