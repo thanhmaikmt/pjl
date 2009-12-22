@@ -575,7 +575,7 @@ public abstract class CircuitElm implements Editable {
     public EditInfo getEditInfo(int n) { return null; }
     public void setEditValue(int n, EditInfo ei) {}
     boolean getConnection(int n1, int n2) { return true; }
-    boolean hasGroundConnection(int n1) { return false; }
+    boolean hasGroundConnection(int n1) { return false; } 
     boolean isWire() { return false; }
     boolean canViewInScope() { return getPostCount() <= 2; }
     boolean comparePair(int x1, int x2, int y1, int y2) {
