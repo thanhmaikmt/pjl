@@ -1,3 +1,10 @@
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.AbstractButton;
+import javax.swing.JComboBox;
+import javax.swing.Timer;
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -15,10 +22,41 @@
 public class WaveApplet extends javax.swing.JApplet {
 
     private WaveEq waveEq;
+    private Timer timer;
+    Boundary boundL;
+    Boundary boundR;
+    private double dt;
+    private PulseSource pulse;
+    private SinSource sin;
 
     /** Initializes the applet WaveApplet */
     public void init() {
-        waveEq = new WaveEq();
+        double vel = 3e8;
+        double L = 1.0e-9;
+        double C = 1.0 / vel / vel / L;
+
+        dt = 1.0e-3 / (vel);   // 1.0e-5;                           // time step
+        int N = 200;
+        double dx = dt * vel;      // .01;
+
+
+        boundR = new Boundary();
+        boundL = new Boundary();
+
+        double wid = 20 * dt;
+        pulse = new PulseSource(wid);
+
+        sin = new SinSource(wid);
+
+
+        boundL.setSource(pulse);
+
+        //     waveEq = new WaveEq2( C,L, dt, dx, N);
+        waveEq = new WaveEq1(vel, dt, dx, N);
+        waveEq.setLeftBoundary(boundL);
+        waveEq.setRightBoundary(boundR);
+
+        //  waveEq.setup();
         try {
             java.awt.EventQueue.invokeAndWait(new Runnable() {
 
@@ -29,6 +67,19 @@ public class WaveApplet extends javax.swing.JApplet {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        timer = new Timer(20, new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                update(e);
+            }
+        });
+
+        srcCombo.setSelectedItem("PULSE1");
+        srcImpCombo.setSelectedItem("Z0");
+        loadCombo.setSelectedItem("Z0");
+        runButton.setSelected(true);
+        timer.start();
+        // timer.setRepeats(true);
     }
 
     /** This method is called from within the init() method to
@@ -42,22 +93,68 @@ public class WaveApplet extends javax.swing.JApplet {
 
         wavepanel = wavepanel=new WavePanel(waveEq);
         stepBut = new javax.swing.JButton();
+        runButton = new javax.swing.JToggleButton();
+        pulseBut = new javax.swing.JButton();
+        loadCombo = new javax.swing.JComboBox();
+        srcCombo = new javax.swing.JComboBox();
+        srcImpCombo = new javax.swing.JComboBox();
+
+        setStub(null);
 
         javax.swing.GroupLayout wavepanelLayout = new javax.swing.GroupLayout(wavepanel);
         wavepanel.setLayout(wavepanelLayout);
         wavepanelLayout.setHorizontalGroup(
             wavepanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 250, Short.MAX_VALUE)
+            .addGap(0, 443, Short.MAX_VALUE)
         );
         wavepanelLayout.setVerticalGroup(
             wavepanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 195, Short.MAX_VALUE)
+            .addGap(0, 247, Short.MAX_VALUE)
         );
 
         stepBut.setText("STEP");
+        stepBut.setMaximumSize(new java.awt.Dimension(20, 100));
         stepBut.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 update(evt);
+            }
+        });
+
+        runButton.setText("RUN");
+        runButton.setMaximumSize(new java.awt.Dimension(20, 100));
+        runButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                run(evt);
+            }
+        });
+
+        pulseBut.setText("PULSE");
+        pulseBut.setMaximumSize(new java.awt.Dimension(20, 100));
+        pulseBut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pulseAction(evt);
+            }
+        });
+
+        loadCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "OPEN", "SHORT", "Z0", "Z0*2", "Z0*0.5" }));
+        loadCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadComboActionPerformed(evt);
+            }
+        });
+
+        srcCombo.setEditable(true);
+        srcCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Sine", "Pulse1", "Pulse2", "Step" }));
+        srcCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                srcComboActionPerformed(evt);
+            }
+        });
+
+        srcImpCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "SHORT", "Z0", "Z0*2", "Z0*0.5" }));
+        srcImpCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                srcImpComboActionPerformed(evt);
             }
         });
 
@@ -65,21 +162,46 @@ public class WaveApplet extends javax.swing.JApplet {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(23, 23, 23)
-                .addComponent(wavepanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 60, Short.MAX_VALUE)
-                .addComponent(stepBut)
-                .addGap(23, 23, 23))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(srcCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(pulseBut, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE)
+                    .addComponent(srcImpCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(stepBut, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(runButton, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(wavepanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(29, 29, 29)
+                        .addComponent(loadCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(109, 109, 109))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(stepBut)
-                    .addComponent(wavepanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(81, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(25, 25, 25)
+                                .addComponent(srcCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(srcImpCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(17, 17, 17)
+                                .addComponent(pulseBut, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(wavepanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(53, 53, 53)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(stepBut, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(runButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(loadCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(56, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -87,7 +209,72 @@ public class WaveApplet extends javax.swing.JApplet {
         waveEq.step();
         wavepanel.repaint();
     }//GEN-LAST:event_update
+
+    private void run(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_run
+        boolean runMe = ((AbstractButton) evt.getSource()).isSelected();
+
+        if (runMe) {
+            timer.start();
+        } else {
+            timer.stop();
+        }
+}//GEN-LAST:event_run
+
+    private void pulseAction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pulseAction
+        double t = waveEq.getTime();
+        pulse.fireAt(t + dt);
+    }//GEN-LAST:event_pulseAction
+
+    private void srcComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_srcComboActionPerformed
+       String str = (String) ((JComboBox) evt.getSource()).getSelectedItem();
+        System.out.println(str);
+        if (str.equals("PULSE1")) {
+            boundL.setSource(pulse);
+        } else if (str.equals("SINE")) {
+            boundL.setSource(sin);
+        }
+
+    }//GEN-LAST:event_srcComboActionPerformed
+
+    private void loadComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadComboActionPerformed
+
+          String str = (String) ((JComboBox) evt.getSource()).getSelectedItem();
+        System.out.println(str);
+        if (str.equals("OPEN")) {
+            boundR.setImp(Double.POSITIVE_INFINITY);
+        } else if (str.equals("SHORT")) {
+            boundR.setImp(0.0);
+        } else if (str.equals("Z0")) {
+            boundR.setImp(1.0);
+        } else {
+            String valStr = str.substring(3);
+            double val = Double.parseDouble(valStr);
+            boundR.setImp(val);
+        }
+    }//GEN-LAST:event_loadComboActionPerformed
+
+    private void srcImpComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_srcImpComboActionPerformed
+         String str = (String) ((JComboBox) evt.getSource()).getSelectedItem();
+        System.out.println(str);
+        if (str.equals("OPEN")) {
+            boundL.setImp(Double.POSITIVE_INFINITY);
+        } else if (str.equals("SHORT")) {
+            boundL.setImp(0.0);
+        } else if (str.equals("Z0")) {
+            boundL.setImp(1.0);
+        } else {
+            String valStr = str.substring(3);
+            double val = Double.parseDouble(valStr);
+            boundL.setImp(val);
+        }   // TODO add your handling code here:
+    }//GEN-LAST:event_srcImpComboActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox loadCombo;
+    private javax.swing.JButton pulseBut;
+    private javax.swing.JToggleButton runButton;
+    private javax.swing.JComboBox srcCombo;
+    private javax.swing.JComboBox srcImpCombo;
     private javax.swing.JButton stepBut;
     private javax.swing.JPanel wavepanel;
     // End of variables declaration//GEN-END:variables

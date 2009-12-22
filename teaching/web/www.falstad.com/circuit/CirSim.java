@@ -810,7 +810,7 @@ public class CirSim extends Frame
 
 	realg.drawImage(dbimage, 0, 0, this);
 	if (!stoppedCheck.getState() && circuitMatrix != null) {
-	    // Limit to 50 fps (thanks to Jürgen Klötzer for this)
+	    // Limit to 50 fps (thanks to Jï¿½rgen Klï¿½tzer for this)
 	    long delay = 1000/50 - (System.currentTimeMillis() - lastFrameTime);
 	    //realg.drawString("delay: " + delay,  10, 90);
 	    if (delay > 0) {
@@ -1846,7 +1846,7 @@ public class CirSim extends Frame
 	if (ac.compareTo("unstackAll") == 0)
 	    unstackAll();
 	if (e.getSource() == elmEditMenuItem)
-	    doEdit(menuElm);
+	    doEdit(menuElm); 
 	if (ac.compareTo("Delete") == 0) {
 	    if (e.getSource() != elmDeleteMenuItem)
 		menuElm = null;
