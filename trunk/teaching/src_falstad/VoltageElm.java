@@ -88,7 +88,7 @@ class VoltageElm extends CircuitElm {
 	case WF_SAWTOOTH:
 	    return bias+(w % (2*pi))*(maxVoltage/pi)-maxVoltage;
 	case WF_PULSE:
-	    return ((w % (2*pi)) < 1) ? maxVoltage+bias : bias;
+	    return ((w % (2*pi)) < (2*pi*dutyCycle)) ? maxVoltage+bias : bias;
 	default: return 0;
 	}
     }
@@ -247,7 +247,7 @@ class VoltageElm extends CircuitElm {
 	if (n == 4)
 	    return new EditInfo("Phase Offset (degrees)", phaseShift*180/pi,
 				-180, 180);
-	if (n == 5 && waveform == WF_SQUARE)
+	if (n == 5 && (waveform == WF_SQUARE || waveform == WF_PULSE))
 	    return new EditInfo("Duty Cycle", dutyCycle*100, 0, 100);
 	return null;
     }
