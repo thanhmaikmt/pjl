@@ -1,4 +1,10 @@
 ### setuplist.txt first line must be a comment
++Prot Demo
+prot-switch-opencirc.txt Switch - line - o/c
+prot-switch-load10.txt Switch - line - 10 Ohm
+prot-mismatch.txt Mismatched transmission lines
+prot-match-withtrans.txt Matched lines with transformer
+-
 +Basics
 ohms.txt Ohm's Law
 resistors.txt Resistors

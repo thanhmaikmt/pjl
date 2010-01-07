@@ -80,8 +80,7 @@ public class WaveEq1 implements WaveEq {
 
 
         for (int i = 1; i < N - 1; i++) {
-            u[i] = -u2[i] + s0 * u1[i] + s1 * (u1[i - 1] + u1[i + 1]);
-            // out[n] = (1 - rp_frac) * u[rp_int] + rp_frac * u[rp_int + 1];     // readout
+            u[i] = -u2[i] + s0 * u1[i] + s1 * (u1[i - 1] + u1[i + 1]);           
         }
 
 
@@ -91,14 +90,14 @@ public class WaveEq1 implements WaveEq {
         if (imp == Double.POSITIVE_INFINITY) {
             u[0] = -u2[0] + s0 * u1[0] + 2 * s1 * u1[1];
         }    else if (imp <= 1.0) {
-            u[0] = u1[0] - imp * s1 * (u1[0] - u1[1]);
+            u[0] =  boundL.getValue(t)+u1[0] - imp * s1 * (u1[0] - u1[1]);
         } else if (imp > 1.0) {
             double nimp=1.0/imp;
             u[0] = (1.0-nimp)*(-u2[0] + s0 * u1[0] + 2 * s1 * u1[1])
             + nimp*(u1[0] -  s1 * (u1[0] - u1[1]));
         }
 
-        u[0] = boundL.getValue(t);
+        //u[0] = boundL.getValue(t);
 
 
         imp = boundR.imp;
