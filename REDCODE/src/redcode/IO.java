@@ -9,8 +9,7 @@ package redcode;
  *
  * @author pjl
  */
-class Value {
-
-    int x;
-
+interface IO {
+    void put(int x);
+    Integer get();
 }

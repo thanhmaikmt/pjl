@@ -8,10 +8,10 @@
  *
  * Created on 15-Feb-2010, 16:32:11
  */
-
 package redcode;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.Observable;
@@ -28,23 +28,52 @@ public class MainPanel extends javax.swing.JPanel {
 
     Machine mach;
     CodeTableModel codeModel;
+    private Character inChar;
+  
 
     /** Creates new form MainPanel */
     public MainPanel(final Machine mach) {
-        this.mach=mach;
-        codeModel=new CodeTableModel(mach);
+        this.mach = mach;
+        mach.setIO(new IO() {
+
+            String out = "";
+
+            public void put(int x) {
+                char c = (char) x;
+                out = out + c;
+                ioText.setText(out);
+            }
+
+            public Integer get() {
+                if (inChar == null) {
+                    statusPanel.setText("Waiting for input");
+                    return null;
+                } else {
+                    Integer ret= new Integer((int) inChar);
+                    inChar=null;
+                    return ret;
+                }
+            }
+        });
+        
+        codeModel = new CodeTableModel(mach);
         initComponents();
         codeTable.setModel(codeModel);
-        mach.addObserver(new Observer(){
+        mach.addObserver(new Observer() {
 
             public void update(Observable o, Object arg) {
                 codeModel.fireTableDataChanged();
-                int line=mach.getPC();
+                int line = mach.getPC();
                 codeTable.setRowSelectionInterval(line, line);
                 codeTable.scrollRectToVisible(codeTable.getCellRect(line, line, true));
             }
-            
         });
+
+
+        codeTable.getColumn(codeModel.getColumnName(0)).setMinWidth(30);
+        codeTable.getColumn(codeModel.getColumnName(1)).setMinWidth(220);
+        sizeText.setText("" + mach.getSize());
+        editPanel.setSelectionColor(Color.red);
     }
 
     /** This method is called from within the constructor to
@@ -66,6 +95,8 @@ public class MainPanel extends javax.swing.JPanel {
         statusPanel = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         sizeText = new javax.swing.JTextField();
+        ioText = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
 
         editPanel.setColumns(4);
         editPanel.setRows(500);
@@ -94,7 +125,7 @@ public class MainPanel extends javax.swing.JPanel {
         codeTable.setEnabled(false);
         codeTableScroll.setViewportView(codeTable);
 
-        loadBut.setText("Load");
+        loadBut.setText("Compile");
         loadBut.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadButActionPerformed(evt);
@@ -119,66 +150,90 @@ public class MainPanel extends javax.swing.JPanel {
             }
         });
 
+        ioText.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                ioTextKeyPressed(evt);
+            }
+        });
+
+        jLabel2.setText("IO");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(loadBut)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 489, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
+                    .addComponent(statusPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(loadBut)
+                        .addGap(14, 14, 14)
                         .addComponent(stepBut)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(runButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel1)
-                        .addGap(18, 18, 18)
-                        .addComponent(sizeText, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(codeTableScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE))
-                .addContainerGap())
-            .addComponent(statusPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 874, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(sizeText, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ioText, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE))
+                    .addComponent(codeTableScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, 0, 0, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(codeTableScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 419, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(12, 12, 12)
+                        .addComponent(codeTableScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 499, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 511, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(loadBut)
                     .addComponent(stepBut)
                     .addComponent(runButton)
-                    .addComponent(sizeText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
+                    .addComponent(jLabel1)
+                    .addComponent(sizeText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(statusPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 14, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel2)
+                        .addComponent(ioText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(statusPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
-
     private void loadButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButActionPerformed
-       BufferedReader reader=new BufferedReader(new StringReader(editPanel.getText()));
+        BufferedReader reader = new BufferedReader(new StringReader(editPanel.getText()));
+        //    editPanel.setCaretPosition(0);
+        int i1 = -1;
+        int i2 = -1;
         try {
             mach.load(reader);
             statusPanel.setText("LOADED OK");
         } catch (RedCodeParseException ex) {
-            editPanel.setSelectionColor(Color.red);
+            //
             try {
-                int i1 = editPanel.getLineStartOffset(mach.getParseLine());
-                int i2= editPanel.getLineEndOffset(mach.getParseLine());
+
+                i1 = editPanel.getLineStartOffset(mach.getParseLine());
+                i2 = editPanel.getLineEndOffset(mach.getParseLine());
+
                 editPanel.select(i1, i2);
+                //  editPanel.selectAll();
+                //  editPanel.notifyAll();
             } catch (BadLocationException ex1) {
                 Logger.getLogger(MainPanel.class.getName()).log(Level.SEVERE, null, ex1);
             }
 
-            statusPanel.setText("CHECK THE HIGHLIGHED LINE "+ ex.getMessage());
+            statusPanel.setText("CHECK THE HIGHLIGHED LINE " + mach.getParseLine() + " " + i1 + " " + i2);
         }
+
     }//GEN-LAST:event_loadButActionPerformed
 
     private void stepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stepActionPerformed
@@ -199,16 +254,23 @@ public class MainPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_runButtonActionPerformed
 
     private void sizeTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sizeTextActionPerformed
-        int size=Integer.parseInt(sizeText.getText());
+        int size = Integer.parseInt(sizeText.getText());
         mach.setSize(size);
     }//GEN-LAST:event_sizeTextActionPerformed
 
+    private void ioTextKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_ioTextKeyPressed
 
+        KeyEvent k = (KeyEvent) evt;
+        inChar = k.getKeyChar();
+ 
+    }//GEN-LAST:event_ioTextKeyPressed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable codeTable;
     private javax.swing.JScrollPane codeTableScroll;
     private javax.swing.JTextArea editPanel;
+    private javax.swing.JTextField ioText;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton loadBut;
     private javax.swing.JToggleButton runButton;
@@ -218,7 +280,9 @@ public class MainPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     private void resetStatusPanel() {
-  //      statusPanel.setText("");
     }
 
+    void setEditText(String str) {
+        editPanel.setText(str);
+    }
 }
