@@ -4,11 +4,14 @@
  */
 package redcode;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.Timer;
 
 /**
  *
@@ -16,14 +19,62 @@ import java.util.logging.Logger;
  */
 public class Machine extends Observable {
 
-    static private final int nBitOperand = 6;
+    enum Mode {
+
+        IMEDIATE("#", 1), DIRECT("", 0), INDIRECT("@", 2);
+        String s;
+        int val;
+
+        Mode(String s, int val) {
+            this.s = s;
+            this.val = val;
+        }
+
+        @Override
+        public String toString() {
+            return s;
+        }
+    };
+
+    enum Opcode {
+
+        HLT("HLT", 1), ADD("ADD", 2), MOV("MOV", 3), SUB("SUB", 4),
+        DAT("DAT", 0), JMP("JMP", 5), JMG("JMG", 6), JMZ("JMZ", 7),
+        DJZ("DJZ", 8), CMP("CMP", 9), IN("IN", 10), OUT("OUT", 11);
+        String name;
+        int val;
+
+        Opcode(String name, int val) {
+            this.name = name;
+            this.val = val;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    };
+    static private final int nBitOperand = 8;
+    static private final int nBitOpcode = 4;
+    static private final int nBitMode = 2;
     Instruction mem[];
     int PC;
     int size;
     private int parseLine = 0;
-    String status="";
-    private boolean running=false;
-    private boolean inputWait=false;
+    String status = "";
+    private boolean running = false;
+    private boolean inputWait = false;
+    private Timer timer;
+    private IO io;
+
+    Machine(int size) throws RedCodeParseException {
+        this.size = size;
+        init();
+    }
+
+    void setIO(IO io) {
+        this.io = io;
+    }
 
     int getSize() {
         return size;
@@ -57,25 +108,28 @@ public class Machine extends Observable {
     }
 
     void run() {
-        Thread t=new Thread(new Runnable(){
 
-            public void run() {
-                while(running) {
-                    try {
-                        step();
-                    } catch (RedCodeParseException ex) {
-                        Logger.getLogger(Machine.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+        timer = new Timer(500, new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    step();
+                } catch (RedCodeParseException ex) {
+                    Logger.getLogger(Machine.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            
         });
-        running=true;
-        t.start();
+
+        timer.start();
     }
 
     void stop() {
-        running=false;
+        running = false;
+        if (timer == null) {
+            return;
+        }
+        timer.stop();
+        timer = null;
     }
 
     void setSize(int sizeNew) {
@@ -102,47 +156,24 @@ public class Machine extends Observable {
 
     }
 
-    enum Mode {
-
-        IMEDIATE("#"), DIRECT(""), INDIRECT("@");
-        String s;
-
-        Mode(String s) {
-            this.s = s;
-        }
-
-        @Override
-        public String toString() {
-            return s;
-        }
-    };
-
-    enum Opcode {
-
-        HLT("HLT"), ADD("ADD"), MOV("MOV"), SUB("SUB"), DAT("DAT"), JMP("JMP"), JMZ("JMZ"), DJZ("DJZ"), CMP("CMP"), IN("IN"), OUT("OUT");
-        String name;
-
-        Opcode(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String toString() {
-            return name;
-        }
-    };
-
     String getStatus() {
-        if (inputWait) return "Waiting for input";
-        if (running) return "Running";
-        if (mem[PC].code == Opcode.HLT) return "Halted";
-        if (mem[PC].code == Opcode.DAT) return "Halted (invalid instruction)";
-        assert(false);
+        if (inputWait) {
+            return "Waiting for input";
+        }
+        if (running) {
+            return "Running";
+        }
+        if (mem[PC].code == Opcode.HLT) {
+            return "Halted";
+        }
+        if (mem[PC].code == Opcode.DAT) {
+            return "Halted (invalid instruction)";
+        }
+        assert (false);
         return "";
     }
 
-    Machine(int size) throws RedCodeParseException {
-        this.size = size;
+    void init() throws RedCodeParseException {
         mem = new Instruction[size];
         for (int i = 0; i < size; i++) {
             mem[i] = new Instruction("DAT 0");
@@ -150,6 +181,7 @@ public class Machine extends Observable {
     }
 
     void load(BufferedReader reader) throws RedCodeParseException {
+        init();
         parseLine = 0;
         boolean pcSet = false;
         setChanged();
@@ -182,27 +214,96 @@ public class Machine extends Observable {
         }
         notifyObservers();
         return;
+    }
 
+    void step() throws RedCodeParseException {
+        
+//        // Do this on another thread to avoid deadlock
+//        new Thread(new Runnable() {
+//
+//            public void run() {
+                mem[PC].execute();
+//            }
+//        }).run();
 
+    }
+
+    @Override
+    public String toString() {
+        String str = "";
+        for (Instruction inst : mem) {
+            str = str + inst.toString() + "\n";
+        }
+        return str;
+    }
+
+    int fixAddress(int addr) {
+        while (addr < 0) {
+            addr += size;
+        }
+        return addr % size;
+    }
+
+    class Value {
+
+        int x;
+        private final int nBit;
+
+        Value(int nBit) {
+            this.nBit = nBit;
+        }
+
+        public String binaryString() {
+            String str = "";
+
+            int mask = 1;
+            for (int i = 0; i < nBit; i++) {
+                if (i == nBitOperand ||
+                        i == 2 * nBitOperand ||
+                        i == 2 * nBitOperand + nBitMode ||
+                        i == 2 * nBitOperand + 2 * nBitMode) {
+                    str = "|" + str;
+                }
+
+                if ((x & mask) != 0) {
+                    str = "1" + str;
+                } else {
+                    str = "0" + str;
+                }
+                mask = mask * 2;
+
+            }
+            return str;
+
+        }
     }
 
     public class Instruction {
 
-        Value word;
+        Value word = new Value(nBitOperand * 2 + 2 * nBitMode + nBitOpcode);
         Opcode code;
         Operand opA;
         Operand opB;
+        UBitSection bitOpcode = new UBitSection(word, (nBitOperand + nBitMode) * 2, nBitOpcode);
+        UBitSection bitOpAmode = new UBitSection(word, nBitOperand * 2 + nBitMode, nBitMode);
+        UBitSection bitOpBmode = new UBitSection(word, nBitOperand * 2, nBitMode);
+        BitSection bitOpB = new BitSection(word, 0, nBitOperand);
+        BitSection bitOpA = new BitSection(word, nBitOperand, nBitOperand);
 
         Instruction(String line1) throws RedCodeParseException {
             String line = line1.trim();
 
-            word = new Value();
             String toks[] = line.split("[ \t]+");
 
             for (Opcode op : Opcode.values()) {
                 if (toks[0].equals(op.name)) {
                     code = op;
+                    bitOpcode.put(code.val);
                 }
+            }
+
+            if (code == null) {
+                throw new RedCodeParseException("Invalid line " + line1, "");
             }
 
             switch (code) {
@@ -213,6 +314,8 @@ public class Machine extends Observable {
                     opB = new OperandB(toks[1]);
                     return;
                 case JMP:
+                case OUT:
+                case IN:
                     if (toks.length < 2) {
                         throw new RedCodeParseException(" Expected an operand!", "");
                     }
@@ -232,13 +335,27 @@ public class Machine extends Observable {
         void execute() {
 
             switch (code) {
+                case OUT:
+                    io.put(opA.getOpValue());
+                    PC = (PC + 1) % size;
+                    break;
+
+                case IN:
+                    Integer val = io.get();
+                    if (val == null) return;
+                    
+                    opA.putOpValue(val);
+                    PC = (PC + 1) % size;
+                    break;
+
+
                 case HLT:
-                    running=false;
+                    running = false;
                     break;
 
                 case DAT:
-                    running=false;
-                   break;
+                    running = false;
+                    break;
 
                 case CMP:
                     if (opA.getOpValue() == opB.getOpValue()) {
@@ -247,6 +364,14 @@ public class Machine extends Observable {
                         PC = (PC + 2) % size;
                     }
                     break;
+                case JMG:
+                    if (opB.getOpValue() <= 0) {
+                        PC = (PC + 1) % size;
+                        break;
+                    }
+                    PC = opA.getAddress();
+                    break;
+
 
                 case DJZ:
                     opB.putOpValue(opB.getOpValue() - 1);
@@ -255,6 +380,9 @@ public class Machine extends Observable {
                         PC = (PC + 1) % size;
                         break;
                     }
+                    PC = opA.getAddress();
+                    break;
+
                 // fall thru
                 case JMP:
                     PC = opA.getAddress();
@@ -272,10 +400,14 @@ public class Machine extends Observable {
 
                 case MOV:
                     if (opA.mode == Mode.IMEDIATE) {
-                        int val = opA.getOpValue();
+                        val = opA.getOpValue();
                         opB.putOpValue(val);
-                        assert (opB.getOpValue() == val);
-                    } else if (opA.mode == Mode.DIRECT) {
+                        if (opB.getOpValue() != val) {
+                            System.out.println(opB.getOpValue() + "   " + val);
+                            //                    assert(false);
+
+                        }
+                    } else {  // if (opA.mode == Mode.DIRECT) {
 
                         int addrA = opA.getAddress();
                         int addrB = opB.getAddress();
@@ -288,6 +420,7 @@ public class Machine extends Observable {
                             assert (false);
                         }
                         mem[addrB] = cpy;
+
 
                     }
                     PC = (PC + 1) % size;
@@ -302,21 +435,28 @@ public class Machine extends Observable {
 
         @Override
         public String toString() {
+            String ret = code.name;
             if (opA != null) {
-                return code.name + " " + opA.toString() + " " + opB.toString();
+                ret = ret + " " + opA.toString();
             }
-            return code.name + "     " + opB.toString();
+            if (opB != null) {
+                ret = ret + " " + opB.toString();
+            }
+            return ret;
         }
 
         abstract class Operand {
 
             BitSection bits;
+            UBitSection bitsMode;
             Mode mode;
 
-            Operand(String str1, BitSection bits) throws RedCodeParseException {
+            Operand(String str1, BitSection bits, UBitSection modeBit) throws RedCodeParseException {
 
                 String str = str1.trim();
                 this.bits = bits;
+                this.bitsMode = modeBit;
+
                 if (str.startsWith("@")) {
                     mode = Mode.INDIRECT;
                     str = str.substring(1);
@@ -332,6 +472,7 @@ public class Machine extends Observable {
                 } catch (Exception ex) {
                     throw new RedCodeParseException(str, ex.getMessage());
                 }
+                modeBit.put(mode.val);
             }
 
             private void putOpValue(int val) {
@@ -345,11 +486,12 @@ public class Machine extends Observable {
 
                 switch (mode) {
                     case DIRECT:
-                        return (size + PC + vv) % size;
+                        return fixAddress(PC + vv);
 
                     case INDIRECT:
-                        int ad1 = (size + PC + vv) % size;
-                        return (size + ad1 + mem[ad1 % size].opB.getValue()) % size;
+                        int ad1 = fixAddress(PC + vv);
+                        return fixAddress(ad1 + mem[ad1].opB.getValue());
+
                 }
                 assert (false);
                 return -1;
@@ -380,10 +522,10 @@ public class Machine extends Observable {
             private int getAddress() {
                 switch (mode) {
                     case DIRECT:
-                        return (size + PC + bits.get()) % size;
+                        return fixAddress(PC + bits.get());
                     case INDIRECT:
-                        int ad1 = PC + bits.get();
-                        return (size + ad1 + mem[ad1 % size].opB.getValue()) % size;
+                        int ad1 = fixAddress(PC + bits.get());
+                        return fixAddress(ad1 + mem[ad1].opB.getValue());
 
                 }
                 try {
@@ -403,28 +545,15 @@ public class Machine extends Observable {
         class OperandA extends Operand {
 
             OperandA(String str) throws RedCodeParseException {
-                super(str, new BitSection(word, 0, nBitOperand));
+                super(str, bitOpA, bitOpAmode);
             }
         }
 
         class OperandB extends Operand {
 
             OperandB(String str) throws RedCodeParseException {
-                super(str, new BitSection(word, nBitOperand, nBitOperand));
+                super(str, bitOpB, bitOpBmode);
             }
         }
-    }
-
-    void step() throws RedCodeParseException {
-        mem[PC].execute();
-    }
-
-    @Override
-    public String toString() {
-        String str = "";
-        for (Instruction inst : mem) {
-            str = str + inst.toString() + "\n";
-        }
-        return str;
     }
 }

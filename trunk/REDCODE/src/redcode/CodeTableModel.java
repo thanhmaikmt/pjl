@@ -20,10 +20,12 @@ class CodeTableModel  extends AbstractTableModel {
 
     public String getColumnName(int columnIndex) {
         switch (columnIndex) {
+
             case 0: return "addr";
-            case 1: return "OPCODE";
-            case 2: return "A";
-            case 3: return "B";
+            case 1: return "machine code";
+            case 2: return "opcode";
+            case 3: return "A";
+            case 4: return "B";
 
         }
         return "";
@@ -34,15 +36,16 @@ class CodeTableModel  extends AbstractTableModel {
     }
 
     public int getColumnCount() {
-        return 4;
+        return 5;
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
         switch (columnIndex) {
             case 0: return ""+rowIndex;
-            case 1: return mach.opCodeAt(rowIndex);
-            case 2: return mach.operandAAt(rowIndex);
-            case 3: return mach.operandBAt(rowIndex);
+            case 1: return mach.mem[rowIndex].word.binaryString() ;// + " #"+ mach.mem[rowIndex].word.x;
+            case 2: return mach.opCodeAt(rowIndex);
+            case 3: return mach.operandAAt(rowIndex);
+            case 4: return mach.operandBAt(rowIndex);
 
         }
         assert(false);
