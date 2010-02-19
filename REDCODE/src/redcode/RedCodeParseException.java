@@ -16,4 +16,7 @@ class RedCodeParseException extends Exception {
         super(mess);
         this.line=line;
     }
+    String userString() {
+        return line;
+    }
 }
