@@ -18,6 +18,8 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
@@ -34,7 +36,7 @@ public class MainPanel extends javax.swing.JPanel {
     String out = "";
     private final DefaultHighlighter hilit;
     private final DefaultHighlightPainter painter;
-    final static Color HILIT_COLOR = Color.PINK;
+    final static Color HILIT_COLOR = Color.RED;
 
     /** Creates new form MainPanel */
     public MainPanel(final Machine mach) {
@@ -45,12 +47,12 @@ public class MainPanel extends javax.swing.JPanel {
                 char c = (char) x;
                 out = out + c;
                 ioText.setText(out);
-                System.out.println("OUT:>" + out + "<");
+             //   System.out.println("OUT:>" + out + "<");
             }
 
             public Integer get() {
                 if (inChar == null) {
-                    statusPanel.setText("Waiting for input");
+                    statusPanel.setText("Waiting for input . . .");
                     return null;
                 } else {
                     Integer ret = new Integer((int) inChar);
@@ -71,6 +73,7 @@ public class MainPanel extends javax.swing.JPanel {
                 codeTable.setRowSelectionInterval(line, line);
                 codeTable.scrollRectToVisible(codeTable.getCellRect(line, line, true));
                 if (!mach.isRunning()) {
+                    statusPanel.setText("Halted");
                     runButton.setSelected(false);
                 }
                 ioText.setText(out);
@@ -87,6 +90,20 @@ public class MainPanel extends javax.swing.JPanel {
         hilit = new DefaultHighlighter();
         painter = new DefaultHighlighter.DefaultHighlightPainter(HILIT_COLOR);
         editPanel.setHighlighter(hilit);
+        editPanel.getDocument().addDocumentListener(new DocumentListener() {
+
+            public void insertUpdate(DocumentEvent e) {
+                hilit.removeAllHighlights();
+            }
+
+            public void removeUpdate(DocumentEvent e) {
+                 hilit.removeAllHighlights();
+            }
+
+            public void changedUpdate(DocumentEvent e) {
+                 hilit.removeAllHighlights();
+            }
+        });
     }
 
     /** This method is called from within the constructor to
@@ -112,6 +129,8 @@ public class MainPanel extends javax.swing.JPanel {
         jSlider1 = new javax.swing.JSlider();
         jLabel3 = new javax.swing.JLabel();
 
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Editor"));
+
         editPanel.setColumns(4);
         editPanel.setRows(500);
         editPanel.setWrapStyleWord(true);
@@ -124,6 +143,8 @@ public class MainPanel extends javax.swing.JPanel {
                 stepActionPerformed(evt);
             }
         });
+
+        codeTableScroll.setBorder(javax.swing.BorderFactory.createTitledBorder("Machine"));
 
         codeTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -166,7 +187,7 @@ public class MainPanel extends javax.swing.JPanel {
 
         ioText.setBackground(new java.awt.Color(255, 255, 255));
         ioText.setEditable(false);
-        ioText.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+        ioText.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createTitledBorder("Machine IO")));
         ioText.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 ioTextKeyPressed(evt);
@@ -202,9 +223,7 @@ public class MainPanel extends javax.swing.JPanel {
                         .addComponent(stepBut, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(runButton, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
@@ -223,11 +242,9 @@ public class MainPanel extends javax.swing.JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(12, 12, 12)
-                        .addComponent(codeTableScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 352, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(codeTableScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ioText, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -257,12 +274,12 @@ public class MainPanel extends javax.swing.JPanel {
         int i1 = -1;
         int i2 = -1;
         out = "";
-
+        hilit.removeAllHighlights();
         try {
             mach.load(reader);
             statusPanel.setText("LOADED OK");
         } catch (RedCodeParseException ex) {
-            hilit.removeAllHighlights();
+          
 
             //
             try {
@@ -277,7 +294,7 @@ public class MainPanel extends javax.swing.JPanel {
                 Logger.getLogger(MainPanel.class.getName()).log(Level.SEVERE, null, ex1);
             }
 
-            statusPanel.setText("CHECK THE HIGHLIGHED LINE " + mach.getParseLine() + " " + i1 + " " + i2);
+            statusPanel.setText("Error at line " + mach.getParseLine() + "  :  "+ ex.userString());
         }
 
     }//GEN-LAST:event_loadButActionPerformed
@@ -289,12 +306,15 @@ public class MainPanel extends javax.swing.JPanel {
         } catch (RedCodeParseException ex) {
             Logger.getLogger(MainPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
+        statusPanel.setText(mach.getStatus());
     }//GEN-LAST:event_stepActionPerformed
 
     private void runButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runButtonActionPerformed
         if (runButton.isSelected()) {
+            statusPanel.setText("Running");
             mach.run();
         } else {
+            statusPanel.setText("Stopped");
             mach.stop();
         }
     }//GEN-LAST:event_runButtonActionPerformed
@@ -331,6 +351,7 @@ public class MainPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     private void resetStatusPanel() {
+        statusPanel.setText("");
     }
 
     void setEditText(String str) {
