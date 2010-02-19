@@ -19,6 +19,8 @@ import java.util.Observer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
 
 /**
  *
@@ -30,18 +32,20 @@ public class MainPanel extends javax.swing.JPanel {
     CodeTableModel codeModel;
     private Character inChar;
     String out = "";
+    private final DefaultHighlighter hilit;
+    private final DefaultHighlightPainter painter;
+    final static Color HILIT_COLOR = Color.PINK;
 
     /** Creates new form MainPanel */
     public MainPanel(final Machine mach) {
         this.mach = mach;
         mach.setIO(new IO() {
 
-           
             public void put(int x) {
                 char c = (char) x;
                 out = out + c;
                 ioText.setText(out);
-                System.out.println("OUT:>"+out+"<");
+                System.out.println("OUT:>" + out + "<");
             }
 
             public Integer get() {
@@ -49,13 +53,13 @@ public class MainPanel extends javax.swing.JPanel {
                     statusPanel.setText("Waiting for input");
                     return null;
                 } else {
-                    Integer ret= new Integer((int) inChar);
-                    inChar=null;
+                    Integer ret = new Integer((int) inChar);
+                    inChar = null;
                     return ret;
                 }
             }
         });
-        
+
         codeModel = new CodeTableModel(mach);
         initComponents();
         codeTable.setModel(codeModel);
@@ -66,7 +70,9 @@ public class MainPanel extends javax.swing.JPanel {
                 int line = mach.getPC();
                 codeTable.setRowSelectionInterval(line, line);
                 codeTable.scrollRectToVisible(codeTable.getCellRect(line, line, true));
-                if (!mach.isRunning()) runButton.setSelected(false);
+                if (!mach.isRunning()) {
+                    runButton.setSelected(false);
+                }
                 ioText.setText(out);
             }
         });
@@ -76,6 +82,11 @@ public class MainPanel extends javax.swing.JPanel {
         codeTable.getColumn(codeModel.getColumnName(1)).setMinWidth(220);
         sizeText.setText("" + mach.getSize());
         editPanel.setSelectionColor(Color.red);
+
+
+        hilit = new DefaultHighlighter();
+        painter = new DefaultHighlighter.DefaultHighlightPainter(HILIT_COLOR);
+        editPanel.setHighlighter(hilit);
     }
 
     /** This method is called from within the constructor to
@@ -245,19 +256,21 @@ public class MainPanel extends javax.swing.JPanel {
         //    editPanel.setCaretPosition(0);
         int i1 = -1;
         int i2 = -1;
-        out="";
-        
+        out = "";
+
         try {
             mach.load(reader);
             statusPanel.setText("LOADED OK");
         } catch (RedCodeParseException ex) {
+            hilit.removeAllHighlights();
+
             //
             try {
 
                 i1 = editPanel.getLineStartOffset(mach.getParseLine());
                 i2 = editPanel.getLineEndOffset(mach.getParseLine());
-
-                editPanel.select(i1, i2);
+                hilit.addHighlight(i1, i2, painter);
+                //editPanel.select(i1, i2);
                 //  editPanel.selectAll();
                 //  editPanel.notifyAll();
             } catch (BadLocationException ex1) {
@@ -295,13 +308,12 @@ public class MainPanel extends javax.swing.JPanel {
 
         KeyEvent k = (KeyEvent) evt;
         inChar = k.getKeyChar();
- 
+
     }//GEN-LAST:event_ioTextKeyPressed
 
     private void jSlider1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider1StateChanged
         mach.setSpeed(jSlider1.getValue());
     }//GEN-LAST:event_jSlider1StateChanged
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable codeTable;
     private javax.swing.JScrollPane codeTableScroll;
