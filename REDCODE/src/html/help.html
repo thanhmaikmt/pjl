@@ -9,6 +9,10 @@
             <th> Notes </th>
         </tr>
         <tr>
+            <td>MOV   A    B</td>
+            <td>Move(copy) A to B</td>
+        </tr>
+        <tr>
             <td>ADD   A    B</td>
             <td>Add A to B</td>
         </tr>
@@ -17,10 +21,73 @@
             <td>Subtract A from B</td>
         </tr>
         <tr>
-            <td>MOV   A    B</td>
-            <td>Move(copy) A to B</td>
+            <td>JMP   A    </td>
+            <td>Jump to A   (PC=A)
+            </td>
+        </tr>
+        <tr>
+            <td>JMZ   A  B   </td>
+            <td>if B is zero  jump to A
+            </td>
+        </tr>
+        <tr>
+            <td>JGZ   A  B   </td>
+            <td>if B greater than zero Jump to A   (PC=A)
+            </td>
+        </tr>
+        <tr>
+            <td>JGZ   A  B   </td>
+            <td>subtract 1 from B, if B is now zero jump to A   (PC=A)
+            </td>
+        </tr>
+        <tr>
+            <td>CMP   A  B   </td>
+            <td>if A is not equal to B skip next instruction (PC=PC+2)
+            </td>
+        </tr>
+
+        <tr>
+            <td>IN   A    </td>
+            <td>get a character from input and out into A
+            </td>
+        </tr>
+
+        <tr>
+            <td>OUT   A    </td>
+            <td>transfer A to the output
+            </td>
+        </tr>
+
+        <tr>
+            <td>HLT </td>
+            <td> Terminate execution
+            </td>
+        </tr>
+
+        <tr>
+            <td>DAT  B    </td>
+            <td>Directive to initialise memory of the B field with a value.
+            </td>
         </tr>
     </table>
 
 
+    <table border="1">
+        <tr>
+            <th> Character</th>
+            <th> Mode </th>
+        </tr>
+        <tr>
+            <td> @ </td>
+            <td>Indirect</td>
+        </tr><tr>
+            <td> # </td>
+            <td>Immediate</td>
+        </tr>
+        <tr>
+            <td>  </td>
+            <td>direct</td>
+        </tr>
+
+    </table>
 </body>
