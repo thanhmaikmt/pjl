@@ -18,6 +18,15 @@ import javax.swing.Timer;
  * @author pjl
  */
 public class Machine extends Observable {
+    private int delay=1000;
+
+    void setSpeed(int value) {
+        delay=(int) (1000.0 / value);
+
+        if (timer != null) timer.setDelay(delay);
+    }
+
+   
 
     enum Mode {
 
@@ -62,7 +71,7 @@ public class Machine extends Observable {
     int size;
     private int parseLine = 0;
     String status = "";
-    private boolean running = false;
+   //rivate boolean running = false;
     private boolean inputWait = false;
     private Timer timer;
     private IO io;
@@ -109,7 +118,7 @@ public class Machine extends Observable {
 
     void run() {
 
-        timer = new Timer(500, new ActionListener() {
+        timer = new Timer(delay, new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -121,10 +130,12 @@ public class Machine extends Observable {
         });
 
         timer.start();
+//        running=true;
+
     }
 
     void stop() {
-        running = false;
+
         if (timer == null) {
             return;
         }
@@ -160,7 +171,7 @@ public class Machine extends Observable {
         if (inputWait) {
             return "Waiting for input";
         }
-        if (running) {
+        if (timer != null) {
             return "Running";
         }
         if (mem[PC].code == Opcode.HLT) {
@@ -217,15 +228,7 @@ public class Machine extends Observable {
     }
 
     void step() throws RedCodeParseException {
-        
-//        // Do this on another thread to avoid deadlock
-//        new Thread(new Runnable() {
-//
-//            public void run() {
-                mem[PC].execute();
-//            }
-//        }).run();
-
+        mem[PC].execute();
     }
 
     @Override
@@ -311,6 +314,7 @@ public class Machine extends Observable {
                     if (toks.length < 2) {
                         throw new RedCodeParseException(" Expected an operand!", "");
                     }
+                    //opA = new OperandA("0");
                     opB = new OperandB(toks[1]);
                     return;
                 case JMP:
@@ -319,7 +323,8 @@ public class Machine extends Observable {
                     if (toks.length < 2) {
                         throw new RedCodeParseException(" Expected an operand!", "");
                     }
-                    opA = new OperandB(toks[1]);
+                    opA = new OperandA(toks[1]);
+                    //opB = new OperandA("0");
                     return;
                 case HLT:
                     return;
@@ -342,19 +347,21 @@ public class Machine extends Observable {
 
                 case IN:
                     Integer val = io.get();
-                    if (val == null) return;
-                    
+                    if (val == null) {
+                        return;
+                    }
+
                     opA.putOpValue(val);
                     PC = (PC + 1) % size;
                     break;
 
 
                 case HLT:
-                    running = false;
+                    stop();
                     break;
 
                 case DAT:
-                    running = false;
+                    stop();
                     break;
 
                 case CMP:
@@ -466,11 +473,17 @@ public class Machine extends Observable {
                 } else {
                     mode = Mode.DIRECT;
                 }
-                try {
-                    int val = Integer.parseInt(str);
+
+                if (str.charAt(0) == '\'') {
+                    int val = (int) str.charAt(1);
                     bits.put(val);
-                } catch (Exception ex) {
-                    throw new RedCodeParseException(str, ex.getMessage());
+                } else {
+                    try {
+                        int val = Integer.parseInt(str);
+                        bits.put(val);
+                    } catch (Exception ex) {
+                        throw new RedCodeParseException(str, ex.getMessage());
+                    }
                 }
                 modeBit.put(mode.val);
             }
@@ -505,6 +518,7 @@ public class Machine extends Observable {
                     case DIRECT:
                     case INDIRECT:
                         //int ad1 = (size + PC + vv) % size;
+                        
                         return mem[resolveAddress()].opB.getValue();
 //                        ad1 = (size + PC + vv) % size;
 //                        int ad2 = size + PC + mem[ad1 % size].opB.getValue();
@@ -556,4 +570,9 @@ public class Machine extends Observable {
             }
         }
     }
+
+    boolean isRunning() {
+        return timer != null;
+    }
+
 }
