@@ -11,13 +11,23 @@
 package redcode;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
@@ -37,9 +47,11 @@ public class MainPanel extends javax.swing.JPanel {
     private final DefaultHighlighter hilit;
     private final DefaultHighlightPainter painter;
     final static Color HILIT_COLOR = Color.RED;
+    private JPopupMenu popup;
 
     /** Creates new form MainPanel */
-    public MainPanel(final Machine mach) {
+    public MainPanel(final Machine mach,URL codebase) {
+        popup=makePopup(codebase);
         this.mach = mach;
         mach.setIO(new IO() {
 
@@ -47,7 +59,7 @@ public class MainPanel extends javax.swing.JPanel {
                 char c = (char) x;
                 out = out + c;
                 ioText.setText(out);
-             //   System.out.println("OUT:>" + out + "<");
+                //   System.out.println("OUT:>" + out + "<");
             }
 
             public Integer get() {
@@ -97,11 +109,11 @@ public class MainPanel extends javax.swing.JPanel {
             }
 
             public void removeUpdate(DocumentEvent e) {
-                 hilit.removeAllHighlights();
+                hilit.removeAllHighlights();
             }
 
             public void changedUpdate(DocumentEvent e) {
-                 hilit.removeAllHighlights();
+                hilit.removeAllHighlights();
             }
         });
     }
@@ -128,13 +140,20 @@ public class MainPanel extends javax.swing.JPanel {
         ioText = new javax.swing.JTextField();
         jSlider1 = new javax.swing.JSlider();
         jLabel3 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Editor"));
 
         editPanel.setColumns(4);
         editPanel.setRows(500);
+        editPanel.setToolTipText("Type in redcode or load file(right mouse)");
         editPanel.setWrapStyleWord(true);
         editPanel.setAutoscrolls(true);
+        editPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                editPanelMousePressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(editPanel);
 
         stepBut.setText("Step");
@@ -187,6 +206,7 @@ public class MainPanel extends javax.swing.JPanel {
 
         ioText.setBackground(new java.awt.Color(255, 255, 255));
         ioText.setEditable(false);
+        ioText.setToolTipText("Machine IO in this panel (click to gain focus)");
         ioText.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createTitledBorder("Machine IO")));
         ioText.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -210,6 +230,13 @@ public class MainPanel extends javax.swing.JPanel {
 
         jLabel3.setText("speed");
 
+        jButton1.setText("File");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -217,8 +244,9 @@ public class MainPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(13, 13, 13)
-                        .addComponent(loadBut, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(loadBut, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(stepBut, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -259,7 +287,8 @@ public class MainPanel extends javax.swing.JPanel {
                                 .addComponent(runButton)
                                 .addComponent(loadBut)
                                 .addComponent(stepBut)
-                                .addComponent(jLabel3))))
+                                .addComponent(jLabel3)
+                                .addComponent(jButton1))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(26, 26, 26)
                         .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -279,7 +308,7 @@ public class MainPanel extends javax.swing.JPanel {
             mach.load(reader);
             statusPanel.setText("LOADED OK");
         } catch (RedCodeParseException ex) {
-          
+
 
             //
             try {
@@ -294,7 +323,7 @@ public class MainPanel extends javax.swing.JPanel {
                 Logger.getLogger(MainPanel.class.getName()).log(Level.SEVERE, null, ex1);
             }
 
-            statusPanel.setText("Error at line " + mach.getParseLine() + "  :  "+ ex.userString());
+            statusPanel.setText("Error at line " + mach.getParseLine() + "  :  " + ex.userString());
         }
 
     }//GEN-LAST:event_loadButActionPerformed
@@ -334,11 +363,27 @@ public class MainPanel extends javax.swing.JPanel {
     private void jSlider1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jSlider1StateChanged
         mach.setSpeed(jSlider1.getValue());
     }//GEN-LAST:event_jSlider1StateChanged
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        System.out.println(evt);
+        JComponent c=(JComponent) evt.getSource();
+        int x =c.getX()+c.getWidth()/2;
+        int y =c.getY()+c.getHeight()/2;
+
+        popup.show(this, x,y);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void editPanelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editPanelMousePressed
+        if (evt.getButton() != MouseEvent.BUTTON3) return;
+        popup.show(this, evt.getX(),evt.getY()); // TODO add your handling code here:
+    }//GEN-LAST:event_editPanelMousePressed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable codeTable;
     private javax.swing.JScrollPane codeTableScroll;
     private javax.swing.JTextArea editPanel;
     private javax.swing.JTextField ioText;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
@@ -356,5 +401,74 @@ public class MainPanel extends javax.swing.JPanel {
 
     void setEditText(String str) {
         editPanel.setText(str);
+    }
+
+    void loadFromURL(URL name) throws IOException {
+        String str = "";
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(
+                name.openStream()));
+
+        String inputLine;
+
+        while ((inputLine = in.readLine()) != null) {
+            System.out.println(inputLine);
+            str = str + inputLine + "\n";
+        }
+
+        in.close();
+        setEditText(str);
+
+    }
+
+    JPopupMenu makePopup(URL codeBase) {
+
+        JPopupMenu menu = new JPopupMenu();
+
+
+        String fna = codeBase + "/prog";
+
+        final URL url;
+        try {
+            url = new URL(fna);
+
+
+            System.out.println(url);
+
+            java.net.URLConnection con;
+            con = url.openConnection();
+
+            con.connect();
+
+            java.io.BufferedReader in = new java.io.BufferedReader(new java.io.InputStreamReader(con.getInputStream()));
+            String line;
+
+            while ((line = in.readLine()) != null) {
+
+                System.out.println(line);
+                final JMenuItem item = new JMenuItem(line);
+                menu.add(item);
+                item.addActionListener(new ActionListener() {
+
+                    public void actionPerformed(ActionEvent e) {
+                        String fna = item.getActionCommand();
+                        System.out.println(item.getActionCommand());
+                        try {
+                            loadFromURL(new URL(url.toString() + "/" + fna));
+                        } catch (IOException ex) {
+                            Logger.getLogger(RedcodeApplet.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                });
+            }
+
+        } catch (MalformedURLException ex) {
+            Logger.getLogger(RedcodeApplet.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(RedcodeApplet.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        // TODO overwrite start(), stop() and destroy() methods
+        return menu;
+
     }
 }
