@@ -5,6 +5,7 @@
 
 package redcode;
 
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -24,7 +25,7 @@ public class MainFrame {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
         JFrame frame =new JFrame();
-        MainPanel p=new MainPanel(mach);
+        MainPanel p=new MainPanel(mach,null);
         frame.setContentPane(p);
 
         frame.setSize(800,600);
