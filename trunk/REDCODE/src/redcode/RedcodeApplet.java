@@ -27,6 +27,7 @@ public class RedcodeApplet extends JApplet {
      */
     MainPanel mainPanel;
     JTabbedPane tabPanel;
+    boolean useJar = false;
 
     @Override
     public void init() {
@@ -34,7 +35,17 @@ public class RedcodeApplet extends JApplet {
             // TODO start asynchronous download of heavy resources
             Machine mach = null;
             mach = new Machine(500);
-            URL codeBase=getClass().getResource("/prog/");
+
+
+            URL codeBase;
+
+            if (useJar) {
+                codeBase = getClass().getResource("/prog/"); // getClass().getResource("/html/help.html"); //new URL(fna);
+            } else {
+                String fna = getCodeBase() + "/prog/";
+                codeBase = new URL(fna);
+            }
+
             mainPanel = new MainPanel(mach, codeBase);
             tabPanel = new JTabbedPane();
             tabPanel.addTab("Simulator", mainPanel);
@@ -54,12 +65,16 @@ public class RedcodeApplet extends JApplet {
 
     private JComponent createHtmlPanel() throws MalformedURLException {
 
-        String fna = getCodeBase() + "html/help.html";
-        final URL helpURL = getClass().getResource("/html/help.html"); //new URL(fna);
+        final URL helpURL;
 
+        if (useJar) {
+            helpURL = getClass().getResource("/html/help.html"); //new URL(fna);
+        } else {
+            String fna = getCodeBase() + "html/help.html";
+            helpURL = new URL(fna);
+        }
 
         System.out.println(helpURL);
-
 
         JScrollPane scroll = new JScrollPane();
 
