@@ -34,7 +34,8 @@ public class RedcodeApplet extends JApplet {
             // TODO start asynchronous download of heavy resources
             Machine mach = null;
             mach = new Machine(500);
-            mainPanel = new MainPanel(mach, getCodeBase());
+            URL codeBase=getClass().getResource("/prog/");
+            mainPanel = new MainPanel(mach, codeBase);
             tabPanel = new JTabbedPane();
             tabPanel.addTab("Simulator", mainPanel);
             tabPanel.addTab("Reference", createHtmlPanel());
@@ -54,7 +55,7 @@ public class RedcodeApplet extends JApplet {
     private JComponent createHtmlPanel() throws MalformedURLException {
 
         String fna = getCodeBase() + "html/help.html";
-        final URL helpURL = new URL(fna);
+        final URL helpURL = getClass().getResource("/html/help.html"); //new URL(fna);
 
 
         System.out.println(helpURL);

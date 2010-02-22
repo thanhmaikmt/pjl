@@ -421,16 +421,16 @@ public class MainPanel extends javax.swing.JPanel {
 
     }
 
-    JPopupMenu makePopup(URL codeBase) {
+    JPopupMenu makePopup(final URL url) {
 
         JPopupMenu menu = new JPopupMenu();
 
 
-        String fna = codeBase + "/prog";
+      //  String fna = codeBase + "/prog";
 
-        final URL url;
+      //  final URL url;
         try {
-            url = new URL(fna);
+         //   url = new URL(fna);
 
 
             System.out.println(url);
