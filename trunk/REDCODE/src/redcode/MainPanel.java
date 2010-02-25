@@ -412,7 +412,7 @@ public class MainPanel extends javax.swing.JPanel {
         String inputLine;
 
         while ((inputLine = in.readLine()) != null) {
-            System.out.println(inputLine);
+         //   System.out.println(inputLine);
             str = str + inputLine + "\n";
         }
 
@@ -421,7 +421,7 @@ public class MainPanel extends javax.swing.JPanel {
 
     }
 
-    JPopupMenu makePopup(final URL url) {
+    JPopupMenu makePopup(final URL urlBase) {
 
         JPopupMenu menu = new JPopupMenu();
 
@@ -430,7 +430,7 @@ public class MainPanel extends javax.swing.JPanel {
 
       //  final URL url;
         try {
-         //   url = new URL(fna);
+            URL url = new URL(urlBase+"list.txt");
 
 
             System.out.println(url);
@@ -454,7 +454,7 @@ public class MainPanel extends javax.swing.JPanel {
                         String fna = item.getActionCommand();
                         System.out.println(item.getActionCommand());
                         try {
-                            loadFromURL(new URL(url.toString() + "/" + fna));
+                            loadFromURL(new URL(urlBase + "/" + fna));
                         } catch (IOException ex) {
                             Logger.getLogger(RedcodeApplet.class.getName()).log(Level.SEVERE, null, ex);
                         }
