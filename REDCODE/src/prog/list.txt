@@ -1,0 +1,8 @@
+add5.red
+divide.red
+dwarf.red
+gemini.red
+hello.red
+imp.red
+inout.red
+movdata.red
