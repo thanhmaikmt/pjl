@@ -220,7 +220,7 @@ public class Machine extends Observable {
             } catch (IOException ex) {
 
                 Logger.getLogger(Machine.class.getName()).log(Level.SEVERE, null, ex);
-                throw new RedCodeParseException(str1, ex.getMessage());
+                throw new RedCodeParseException(str1,parseLine);
             }
         }
         notifyObservers();
@@ -306,13 +306,13 @@ public class Machine extends Observable {
             }
 
             if (code == null) {
-                throw new RedCodeParseException("Invalid instruction \"" + toks[0] +"\"",null);
+                throw new RedCodeParseException("Invalid instruction \"" + toks[0] +"\"",parseLine);
             }
 
             switch (code) {
                 case DAT:
                     if (toks.length < 2) {
-                        throw new RedCodeParseException(" Expected an operand !", "");
+                        throw new RedCodeParseException(" Expected an operand !", parseLine);
                     }
                     //opA = new OperandA("0");
                     opB = new OperandB(toks[1]);
@@ -321,7 +321,7 @@ public class Machine extends Observable {
                 case OUT:
                 case IN:
                     if (toks.length < 2) {
-                        throw new RedCodeParseException(" Expected an operand !", "");
+                        throw new RedCodeParseException(" Expected an operand !",parseLine);
                     }
                     opA = new OperandA(toks[1]);
                     //opB = new OperandA("0");
@@ -330,7 +330,7 @@ public class Machine extends Observable {
                     return;
                 default:
                     if (toks.length < 3) {
-                        throw new RedCodeParseException(" Expected 2 operands !", "");
+                        throw new RedCodeParseException(" Expected 2 operands !", parseLine);
                     }
                     opA = new OperandA(toks[1]);
                     opB = new OperandB(toks[2]);
@@ -482,7 +482,7 @@ public class Machine extends Observable {
                         int val = Integer.parseInt(str);
                         bits.put(val);
                     } catch (Exception ex) {
-                        throw new RedCodeParseException(" Malformed operand \"" + str +"\"", ex.getMessage());
+                        throw new RedCodeParseException(" Malformed operand \"" + str +"\"", parseLine);
                     }
                 }
                 modeBit.put(mode.val);

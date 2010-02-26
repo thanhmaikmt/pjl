@@ -10,13 +10,17 @@ package redcode;
  * @author pjl
  */
 class RedCodeParseException extends Exception {
-    private final String line;
-
-    RedCodeParseException(String line,String mess) {
-        super(mess);
-        this.line=line;
+    private final String mess;
+    int line;
+    RedCodeParseException(String mess,int line) {
+         this.line=line;
+         this.mess=mess;
     }
     String userString() {
+        return mess;
+    }
+
+    int getLine() {
         return line;
     }
 }
