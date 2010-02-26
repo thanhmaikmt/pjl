@@ -50,8 +50,8 @@ public class MainPanel extends javax.swing.JPanel {
     private JPopupMenu popup;
 
     /** Creates new form MainPanel */
-    public MainPanel(final Machine mach,URL codebase) {
-        popup=makePopup(codebase);
+    public MainPanel(final Machine mach, URL codebase) {
+        popup = makePopup(codebase);
         this.mach = mach;
         mach.setIO(new IO() {
 
@@ -298,31 +298,36 @@ public class MainPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void loadButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButActionPerformed
-        BufferedReader reader = new BufferedReader(new StringReader(editPanel.getText()));
-        //    editPanel.setCaretPosition(0);
-        int i1 = -1;
-        int i2 = -1;
-        out = "";
-        hilit.removeAllHighlights();
+
+
+
+        String blueCode = editPanel.getText();
+        Prism prism = new Prism();
+
         try {
+            String redCode = prism.compile(blueCode);
+
+            System.out.println("----------------");
+            System.out.println(redCode);
+            System.out.println("----------------");
+            BufferedReader reader = new BufferedReader(new StringReader(redCode));
+            out = "";
+            hilit.removeAllHighlights();
             mach.load(reader);
             statusPanel.setText("LOADED OK");
         } catch (RedCodeParseException ex) {
 
-
             //
             try {
 
-                i1 = editPanel.getLineStartOffset(mach.getParseLine());
-                i2 = editPanel.getLineEndOffset(mach.getParseLine());
+                int errorLine = ex.getLine();
+                int i1 = editPanel.getLineStartOffset(errorLine);
+                int i2 = editPanel.getLineEndOffset(errorLine);
                 hilit.addHighlight(i1, i2, painter);
-                //editPanel.select(i1, i2);
-                //  editPanel.selectAll();
-                //  editPanel.notifyAll();
             } catch (BadLocationException ex1) {
                 Logger.getLogger(MainPanel.class.getName()).log(Level.SEVERE, null, ex1);
             }
-
+            
             statusPanel.setText("Error at line " + mach.getParseLine() + "  :  " + ex.userString());
         }
 
@@ -366,18 +371,19 @@ public class MainPanel extends javax.swing.JPanel {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         System.out.println(evt);
-        JComponent c=(JComponent) evt.getSource();
-        int x =c.getX()+c.getWidth()/2;
-        int y =c.getY()+c.getHeight()/2;
+        JComponent c = (JComponent) evt.getSource();
+        int x = c.getX() + c.getWidth() / 2;
+        int y = c.getY() + c.getHeight() / 2;
 
-        popup.show(this, x,y);
+        popup.show(this, x, y);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void editPanelMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_editPanelMousePressed
-        if (evt.getButton() != MouseEvent.BUTTON3) return;
-        popup.show(this, evt.getX(),evt.getY()); // TODO add your handling code here:
+        if (evt.getButton() != MouseEvent.BUTTON3) {
+            return;
+        }
+        popup.show(this, evt.getX(), evt.getY()); // TODO add your handling code here:
     }//GEN-LAST:event_editPanelMousePressed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTable codeTable;
     private javax.swing.JScrollPane codeTableScroll;
@@ -412,7 +418,7 @@ public class MainPanel extends javax.swing.JPanel {
         String inputLine;
 
         while ((inputLine = in.readLine()) != null) {
-         //   System.out.println(inputLine);
+            //   System.out.println(inputLine);
             str = str + inputLine + "\n";
         }
 
@@ -426,11 +432,11 @@ public class MainPanel extends javax.swing.JPanel {
         JPopupMenu menu = new JPopupMenu();
 
 
-      //  String fna = codeBase + "/prog";
+        //  String fna = codeBase + "/prog";
 
-      //  final URL url;
+        //  final URL url;
         try {
-            URL url = new URL(urlBase+"list.txt");
+            URL url = new URL(urlBase + "list.txt");
 
 
             System.out.println(url);

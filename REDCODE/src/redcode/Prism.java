@@ -23,8 +23,9 @@ public class Prism {
     HashMap<String, Integer> tokens = new HashMap<String, Integer>();
     int parseLine;
 
-    void load(BufferedReader reader) {
+    String load(BufferedReader reader) {
 
+        String redCode="";
 
         String line = null;
 
@@ -52,19 +53,24 @@ public class Prism {
         parseLine = 0;
         for (String inLine : lines) {
             inLine = inLine.trim();
-
+            System.out.println(":" + inLine);
             String toks[] = inLine.split("[ \t]+");
+            line = toks[0];
+            if (toks.length > 1) {
+                toks[1] = crackOp(toks[1]);
+                line = line + " " + toks[1];
 
-            toks[1] = crackOp(toks[1]);
+            }
 
-            line = toks[0] + " " + toks[1];
             if (toks.length > 2) {
                 toks[2] = crackOp(toks[2]);
                 line = line + " " + toks[2];
             }
             parseLine++;
-            System.out.println(">"+line);
+            System.out.println(">" + line);
+            redCode = redCode + line +"\n";
         }
+        return redCode;
     }
 
     private String crackOp(String str) {
@@ -89,10 +95,10 @@ public class Prism {
                 if (toker.ttype == StreamTokenizer.TT_WORD) {
                     String lab = toker.sval;
                     int lineNo = tokens.get(lab);
-                    System.out.println("WORD:" + toker.sval + " line: " + lineNo);
+                    //      System.out.println("WORD:" + toker.sval + " line: " + lineNo);
                     val += sign * (lineNo - parseLine);
                 } else if (toker.ttype == StreamTokenizer.TT_NUMBER) {
-                    System.out.println("NUMBER:" + toker.nval);
+                    //      System.out.println("NUMBER:" + toker.nval);
                     val += sign * (int) toker.nval;
 
                 } else {
@@ -113,7 +119,7 @@ public class Prism {
 
 
                     }
-                    System.out.println("XX:" + c);
+                    //      System.out.println("XX:" + c);
 
                 }
             }
@@ -126,7 +132,8 @@ public class Prism {
     }
 
     public static void main(String args[]) {
-        String str = "X: DAT 0\n  loop: MOV #1 X\n JMP  X+1";
+        String str = "ptr: DAT 0\n  MOV #-6 ptr\n";
+        //str = "CMP -5 #-1";
         BufferedReader reader = new BufferedReader(new StringReader(str));
 
         new Prism().load(reader);
@@ -142,5 +149,11 @@ public class Prism {
 //            Logger.getLogger(Prism.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 
+    }
+
+    String compile(String inText) throws RedCodeParseException {
+        BufferedReader reader = new BufferedReader(new StringReader(inText));
+        return load(reader);
+       
     }
 }
