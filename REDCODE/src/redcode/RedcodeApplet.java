@@ -47,6 +47,7 @@ public class RedcodeApplet extends JApplet {
             }
 
             mainPanel = new MainPanel(mach, codeBase);
+           
             tabPanel = new JTabbedPane();
             tabPanel.addTab("Simulator", mainPanel);
             tabPanel.addTab("Reference", createHtmlPanel());

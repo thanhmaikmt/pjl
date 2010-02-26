@@ -21,40 +21,39 @@ public class Prism {
 
     ArrayList<String> lines = new ArrayList<String>();
     HashMap<String, Integer> tokens = new HashMap<String, Integer>();
+    int parseLine;
 
     void load(BufferedReader reader) {
 
 
-        //   String parseLine;
+        String line = null;
 
-        String str1 = null;
-        int loc = 0;
         while (true) {
             try {
-                str1 = reader.readLine();
-                if (str1 == null) {
+                line = reader.readLine();
+                if (line == null) {
                     break;
                 }
-                str1 = str1.trim();
-                System.out.println(str1);
+                line = line.trim();
+                System.out.println(line);
             } catch (IOException ex) {
                 break;
             }
-            lines.add(str1);
-            int ii = str1.indexOf(":");
+            int ii = line.indexOf(":");
             if (ii > 0) {
-                String tok = str1.substring(0, ii);
-                tokens.put(tok, loc);
-                str1 = str1.substring(ii + 1);
+                String tok = line.substring(0, ii);
+                tokens.put(tok, parseLine);
+                line = line.substring(ii + 1);
             }
-            lines.add(str1);
-            loc++;
+            lines.add(line);
+            parseLine++;
         }
 
-        loc = 0;
-        for (String line : lines) {
-            line = line.trim();
-            String toks[] = line.split("[ \t]+");
+        parseLine = 0;
+        for (String inLine : lines) {
+            inLine = inLine.trim();
+
+            String toks[] = inLine.split("[ \t]+");
 
             toks[1] = crackOp(toks[1]);
 
@@ -63,9 +62,9 @@ public class Prism {
                 toks[2] = crackOp(toks[2]);
                 line = line + " " + toks[2];
             }
-            loc++;
+            parseLine++;
+            System.out.println(">"+line);
         }
-
     }
 
     private String crackOp(String str) {
@@ -74,26 +73,28 @@ public class Prism {
         StreamTokenizer toker = new StreamTokenizer(new StringReader(str));
 
         int sign = 1;
-        Integer val = null;
+
+        //Integer val = null;
         // boolean first = true;
 
+        int val = 0;
         toker.ordinaryChar('-');
         try {
             while (toker.nextToken() != StreamTokenizer.TT_EOF) {
+
+
                 if (toker.ttype == StreamTokenizer.TT_EOL) {
                     break;
                 }
                 if (toker.ttype == StreamTokenizer.TT_WORD) {
                     String lab = toker.sval;
-//                    if (first) {
-//                        ret = ret + lab + " ";
-//                        first = false;
-//                    } else {
                     int lineNo = tokens.get(lab);
                     System.out.println("WORD:" + toker.sval + " line: " + lineNo);
-                    //        }
+                    val += sign * (lineNo - parseLine);
                 } else if (toker.ttype == StreamTokenizer.TT_NUMBER) {
                     System.out.println("NUMBER:" + toker.nval);
+                    val += sign * (int) toker.nval;
+
                 } else {
                     char c = (char) (toker.ttype);
 
@@ -104,25 +105,28 @@ public class Prism {
                             sign = -1;
                             break;
                         case '#':
-                            ret
-                    
+                            ret = "#";
+                            break;
+                        case '@':
+                            ret = "@";
+                            break;
+
+
                     }
                     System.out.println("XX:" + c);
 
-                    if (val == null) {
-                        }
-
+                }
             }
         } catch (IOException ex) {
             Logger.getLogger(Prism.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return "null";
+        return ret + val;
 
 
     }
 
     public static void main(String args[]) {
-        String str = "X: DAT 0\n  MOV #1 X";
+        String str = "X: DAT 0\n  loop: MOV #1 X\n JMP  X+1";
         BufferedReader reader = new BufferedReader(new StringReader(str));
 
         new Prism().load(reader);
