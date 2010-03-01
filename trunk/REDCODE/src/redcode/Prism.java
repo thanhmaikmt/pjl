@@ -23,7 +23,7 @@ public class Prism {
     HashMap<String, Integer> tokens = new HashMap<String, Integer>();
     int parseLine;
 
-    String load(BufferedReader reader) {
+    String load(BufferedReader reader) throws RedCodeParseException {
 
         String redCode="";
 
@@ -73,7 +73,7 @@ public class Prism {
         return redCode;
     }
 
-    private String crackOp(String str) {
+    private String crackOp(String str) throws RedCodeParseException {
         String ret = "";
         str = str.trim();
         StreamTokenizer toker = new StreamTokenizer(new StringReader(str));
@@ -94,6 +94,8 @@ public class Prism {
                 }
                 if (toker.ttype == StreamTokenizer.TT_WORD) {
                     String lab = toker.sval;
+                    if (!tokens.containsKey(lab))
+                        throw new RedCodeParseException("no value for symmbol: "+lab,parseLine);
                     int lineNo = tokens.get(lab);
                     //      System.out.println("WORD:" + toker.sval + " line: " + lineNo);
                     val += sign * (lineNo - parseLine);
@@ -131,7 +133,7 @@ public class Prism {
 
     }
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws RedCodeParseException {
         String str = "ptr: DAT 0\n  MOV #-6 ptr\n";
         //str = "CMP -5 #-1";
         BufferedReader reader = new BufferedReader(new StringReader(str));

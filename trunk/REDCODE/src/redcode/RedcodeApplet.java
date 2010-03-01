@@ -47,10 +47,11 @@ public class RedcodeApplet extends JApplet {
             }
 
             mainPanel = new MainPanel(mach, codeBase);
-           
+
             tabPanel = new JTabbedPane();
             tabPanel.addTab("Simulator", mainPanel);
-            tabPanel.addTab("Reference", createHtmlPanel());
+            tabPanel.addTab("Help", createHtmlPanel("help"));
+            tabPanel.addTab("Reference", createHtmlPanel("reference"));
 
             setContentPane(tabPanel);
 
@@ -64,14 +65,14 @@ public class RedcodeApplet extends JApplet {
 
     }
 
-    private JComponent createHtmlPanel() throws MalformedURLException {
+    private JComponent createHtmlPanel(String name) throws MalformedURLException {
 
         final URL helpURL;
 
         if (useJar) {
-            helpURL = getClass().getResource("/html/help.html"); //new URL(fna);
+            helpURL = getClass().getResource("/html/"+name+".html");
         } else {
-            String fna = getCodeBase() + "html/help.html";
+            String fna = getCodeBase() + "html/"+name+".html";
             helpURL = new URL(fna);
         }
 
