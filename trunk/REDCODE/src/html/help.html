@@ -1,6 +1,6 @@
 <body>
     <h1> Redcode assembler and simulator</h1>
-    
+
     <h2> Assembly code</h2>
     <p>
         Enter redcode assembly code into the Editor pane. If you want to save/load code you can cut and paste (control-C and control-V).
@@ -12,27 +12,38 @@
     X:  DAT 0
         DAT 0
     Y:  DAT 0
-        MOV #Y-X  Y
+        MOV #X-Y  Y
     </pre>
 
 
     will compile into
 
     <pre>
-         DAT 0
-         DAT 0
-         DAT 0
-         MOV #-2  -1
+        DAT 0
+        DAT 0
+        DAT 0
+        MOV #-2  -1
     </pre>
 
+
+    The assembler understands character constants
+
+    <pre>
+        DAT 'H'
+        CMP -1 #'H'
+    </pre>
+
+
+    will compile into  <a href="http://www.asciitable.com/"> ascii </a>code for 'H'
+
+    <pre>
+        DAT 72
+        CMP -1 #72
+    </pre>
 
     <h2> Compiling and loading </h2>
 
     The compile/load button will attempt to compile the code and load it into the simulator (right panel).
     If there are any errors they should be reported and highted.
-
-
-</p>
-
 
 </body>
