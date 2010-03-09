@@ -43,7 +43,7 @@ class Pretty {
             int cnt = 0;
 
             if (!toks[0].contains(":")) {
-                line = "      ";
+                line = String.format("%-6s ", " ");
             } else {
                 line = String.format("%-6s ", toks[0]);
                 cnt = 1;

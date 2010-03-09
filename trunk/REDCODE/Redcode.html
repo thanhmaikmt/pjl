@@ -3,8 +3,12 @@
 
 <BODY marginheight=0 marginwidth=0 leftmargin=0 topmargin=0  scroll=no> 
 
-<script language="Javascript">
-var w = (navigator.appName=="Netscape") ? innerWidth-10 : document.body.clientWidth-10;
-var h = (navigator.appName=="Netscape") ? innerHeight-20 : document.body.clientHeight-20;
-document.write("<APPLET archive=REDCODE.jar CODE=uk.ac.bath.redcode.RedcodeApplet WIDTH=" + w+ " HEIGHT=" + h + " HSPACE=5 VSPACE=5>");
-</script>
+    <script language="Javascript">
+        var w = (navigator.appName=="Netscape") ? innerWidth-10 : document.body.clientWidth-10;
+        var h = (navigator.appName=="Netscape") ? innerHeight-20 : document.body.clientHeight-20;
+        document.write(
+        "<APPLET> archive=REDCODE.jar CODE=uk.ac.bath.redcode.RedcodeApplet WIDTH=" + w+ " HEIGHT=" + h + " HSPACE=5 VSPACE=5>"+
+            "alt=\"Your browser understands the &lt;APPLET&gt; tag but isn't running the applet, for some reason.\""+
+            "Your browser is completely ignoring the &lt;APPLET&gt; tag!</APPLET>"
+
+    </script>
