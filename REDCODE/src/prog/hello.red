@@ -1,13 +1,13 @@
-   DAT          72
-   DAT         101
-   DAT         108
-   DAT         108
-   DAT         111
-   DAT           0
-   DAT          -6
-   JMZ     4   @-1
-   OUT   @-2
-   ADD    #1    -3
-   JMP    -3
-   HLT
+a:     DAT          'H'
+       DAT          'e'
+       DAT          'l'
+       DAT          'l'
+       DAT          'o'
+       DAT           0
+ptr:   DAT           a
+loop:  JMZ     end  @ptr
+       OUT     @ptr
+       ADD    #1    ptr
+       JMP    loop
+end:   HLT
 
