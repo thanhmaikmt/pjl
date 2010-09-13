@@ -36,4 +36,6 @@ sim         = Simulation(world,dt)
 #uncomment the next line to hide the walls.
 #sim.world.blind=True
 
-sim.run()
+
+def doit():
+    sim.run()
