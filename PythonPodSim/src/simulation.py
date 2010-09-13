@@ -341,7 +341,7 @@ class CarPod(Pod):
         
     def step(self,dt,world):
         state=State(self)
-        self.control=self.brain.process(self.sensors,state)        
+        self.control=self.brain.process(self.sensors,state,dt)
         self.control.limit()
 
     
@@ -392,7 +392,7 @@ class GravityPod(Pod):
     def step(self,dt,world):
 
         state=State(self)
-        self.control=self.brain.process(self.sensors,state)
+        self.control=self.brain.process(self.sensors,state,dt)
         self.control.limit()
 
         xNext = self.x + self.dxdt*dt
@@ -425,7 +425,7 @@ class SimplePod(Pod):
 
     def step(self,dt,world):
         state=State(self)
-        self.control=self.brain.process(self.sensors,state)
+        self.control=self.brain.process(self.sensors,state,dt)
         self.control.limit()
 
     
