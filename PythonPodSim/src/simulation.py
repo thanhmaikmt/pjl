@@ -448,6 +448,7 @@ class Simulation:
 
         pg.init()
         self.dt=dt
+        self.slowMotionFactor=1
         self.world = world
         sw = self.world.rect.width+20
         sh = self.world.rect.height+20
@@ -457,7 +458,7 @@ class Simulation:
     def run(self):
 
         clock = pg.time.Clock()
-        frameRate=1.0/self.dt
+        frameRate=1.0/self.dt/self.slowMotionFactor
 
     
   

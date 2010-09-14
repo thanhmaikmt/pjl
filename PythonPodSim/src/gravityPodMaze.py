@@ -2,7 +2,7 @@ from simulation import *
 import pygame 
 
 #
-#    Manual drive a car around a track
+#    gravity pod around the track
 #
 
 
@@ -41,5 +41,6 @@ sim         = Simulation(world,dt)
 #uncomment the next line to hide the walls.
 #sim.world.blind=True
 
+sim.slowMotionFactor=1
 
 sim.run()
