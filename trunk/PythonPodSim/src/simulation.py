@@ -82,6 +82,7 @@ class Sensor:
         self.ang=ang_ref
         self.range=range
         self.val=0
+        # self.val=0
         self.wall="None"
         self.name=name
 
@@ -276,7 +277,7 @@ class Pod:
             ang=sensor.ang_ref+self.ang
             sensor.ang=ang
             (s,wall)=world.find_closest_intersect(self.x,self.y,self.x+sensor.range*sin(ang),self.y+sensor.range*cos(ang))
-            sensor.val=s
+            sensor.val=s*sensor.range
             if wall == None:
                 sensor.wall=None
             else:
@@ -319,8 +320,8 @@ class Pod:
             else:
                 col=(70,70,70)
 
-            dist=sensor.val*sensor.range
-
+            dist=sensor.val
+            
             p1=(self.x,self.y)
             p2=(self.x+dist*sin(sensor.ang),self.y+dist*cos(sensor.ang))
             pg.draw.line(screen,col,p1,p2,1)
