@@ -1,26 +1,21 @@
-# To change this template, choose Tools | Templates
-# and open the template in the editor.
-
-
 import pygame
 from simulation import *
-import copy
 
-yHover   =  300
-dydtMin  = -100
-dydtMax  =  10
+#
+#  Cursor control UP/DOWN with some collision protection using snsors
+#
+
+
 
 class AutoControl:
-
 
     def __init__(self):
         self.targetState = None
         self.vel=100
         self.velHyst=2
+        self.dd=100
 
     def process(self,sensor,state,dt):
-
-       
 
         control=Control()
         
@@ -32,9 +27,16 @@ class AutoControl:
         if keyinput[pg.K_RIGHT]:
             pass
 
+        if state.dydt > self.velHyst and sensor[len(sensor)/2].val < self.dd:
+            control.up=1
+            return control
+     
 
         if keyinput[pg.K_UP] and  state.dydt > -self.vel:
-                control.up=1
+            if state.dydt < -self.velHyst and sensor[0].val < self.dd:
+                print "UP collide :",sensor[0].val
+                return control
+            control.up=1
 
         elif keyinput[pg.K_DOWN]:
             if state.dydt < self.vel:
@@ -56,7 +58,7 @@ dt          =.1
 brain       = AutoControl()
 nSensors    = 40
 sensorRange = 2000
-pod         = GravityPod(nSensors,sensorRange,brain,(255,0,0))
+pod         = GravityPod(nSensors,sensorRange,brain,(0,255,255))
 pods        = [pod]
 world       = World("rect_world.txt",pods)
 sim         = Simulation(world,dt)

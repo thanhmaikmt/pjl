@@ -1,15 +1,15 @@
-
-
 from simulation import *
-
+#
+#     get the gravity pod to hover at y=yHover
+#
 
 yHover   =  300
 dydtMin  = -100
 dydtMax  =  10
 
-class AutoControl:
+class HoverControl:
 
-    def process(self,sensor,state):
+    def process(self,sensor,state,dt):
 
         control=Control()
 
@@ -25,17 +25,14 @@ class AutoControl:
 
 
 dt          =.1
-brain       = AutoControl()
+brain       = HoverControl()
 nSensors    = 40
 sensorRange = 2000
 pod         = GravityPod(nSensors,sensorRange,brain,(255,0,0))
 pods        = [pod]
 world       = World("rect_world.txt",pods)
 sim         = Simulation(world,dt)
-
 #uncomment the next line to hide the walls.
 #sim.world.blind=True
 
-
-def doit():
-    sim.run()
+sim.run()
