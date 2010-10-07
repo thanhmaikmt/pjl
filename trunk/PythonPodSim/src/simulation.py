@@ -452,7 +452,14 @@ class Simulation:
         self.world = world
         sw = self.world.rect.width+20
         sh = self.world.rect.height+20
-        self.screen = pg.display.set_mode((sw, sh))
+
+
+        self.screen = pg.Surface((sw,sh)) #
+
+        self.sw2=sw/2
+        self.sh2=sh/2
+
+        self.display = pg.display.set_mode((self.sw2, self.sh2))
         pg.display.set_caption('PodSim (press escape to exit)')
 
     def run(self):
@@ -476,5 +483,6 @@ class Simulation:
             self.world.step(self.dt)
             self.screen.fill((0,0,0))
             self.world.draw(self.screen)
-
+            zz=pg.transform.scale(self.screen,(self.sw2,self.sh2))
+            self.display.blit(zz,(0,0))
             pg.display.flip()
