@@ -450,16 +450,27 @@ class Simulation:
         self.dt=dt
         self.slowMotionFactor=1
         self.world = world
-        sw = self.world.rect.width+20
-        sh = self.world.rect.height+20
+        dim_world = (self.world.rect.width+20, self.world.rect.height+20)
+        self.frameskipfactor=1
+        self.frameskipcount=1
 
+        self.screen = pg.Surface(dim_world) #
 
-        self.screen = pg.Surface((sw,sh)) #
+        modes=pg.display.list_modes()
+        dim_display=modes[0]
 
-        self.sw2=sw/2
-        self.sh2=sh/2
+        sx=dim_display[1]/float(dim_world[1])
+        sy=dim_display[0]/float(dim_world[0])
+        
+        if sx < 1 or sy < 1:
+            s=min(sx,sy)/1.2
+            self.dim_window=(dim_world[0]*s,dim_world[1]*s)
+            print "Naff small screen: scaling world by ",s
 
-        self.display = pg.display.set_mode((self.sw2, self.sh2))
+        else:
+            self.dim_window=dim_world
+
+        self.display = pg.display.set_mode(self.dim_window)
         pg.display.set_caption('PodSim (press escape to exit)')
 
     def run(self):
@@ -467,12 +478,17 @@ class Simulation:
         clock = pg.time.Clock()
         frameRate=1.0/self.dt/self.slowMotionFactor
 
-    
-  
        # the event loop also loops the animation code
         while True:
 
-            clock.tick(frameRate)
+            self.frameskipcount -= 1
+
+            display= self.frameskipcount == 0 and self.frameskipfactor != 0
+
+            if display:
+                clock.tick(frameRate)
+                self.frameskipcount=slef.frameskiprate
+
             pg.event.pump()
             keyinput = pg.key.get_pressed()
 
@@ -481,8 +497,10 @@ class Simulation:
 
 
             self.world.step(self.dt)
-            self.screen.fill((0,0,0))
-            self.world.draw(self.screen)
-            zz=pg.transform.scale(self.screen,(self.sw2,self.sh2))
-            self.display.blit(zz,(0,0))
-            pg.display.flip()
+            if display:
+                self.screen.fill((0,0,0))
+                self.world.draw(self.screen)
+                zz=pg.transform.scale(self.screen,self.dim_window)
+                self.display.blit(zz,(0,0))
+                pg.display.flip()
+            
