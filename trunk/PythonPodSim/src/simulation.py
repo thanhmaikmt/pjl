@@ -228,8 +228,8 @@ class World:
             pod.update_sensors(self)
 
     def draw(self,screen):
-        #if not self.blind:
-        for wall in self.walls:
+        if not self.blind:
+         for wall in self.walls:
             if "start" in wall.name:
                     col=(255,255,0)
             elif "end" in wall.name:
@@ -448,7 +448,7 @@ class Simulation:
 
         pg.init()
         self.dt=dt
-        self.slowMotionFactor=1
+        self.slowMotionFactor=1.0
         self.world = world
         dim_world = (self.world.rect.width+20, self.world.rect.height+20)
         self.frameskipfactor=1
@@ -487,13 +487,15 @@ class Simulation:
 
             if display:
                 clock.tick(frameRate)
-                self.frameskipcount=slef.frameskiprate
+                self.frameskipcount=self.frameskipfactor
 
             pg.event.pump()
             keyinput = pg.key.get_pressed()
 
             if keyinput[pg.K_ESCAPE] or pg.event.peek(pg.QUIT):
-                raise SystemExit
+                pg.display.quit()
+                break
+                # raise SystemExit
 
 
             self.world.step(self.dt)

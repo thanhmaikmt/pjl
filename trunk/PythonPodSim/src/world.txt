@@ -1,4 +1,4 @@
-assistedCur# define boundary list of points  x1,y1,x2,y2  . . . .
+# define boundary list of points  x1,y1,x2,y2  . . . .
 wall boundary
 	50,700,250,700,430,540,270,350,180,300,180,180,250,100,450,300,
 	600,300,700,200,700,100,800,100,800,290,900,300,900,400,680,400,
