@@ -232,13 +232,13 @@ class World:
          for wall in self.walls:
             if "start" in wall.name:
                     col=(255,255,0)
-            elif "end" in wall.name:
+                elif "end" in wall.name:
                     col=(0,255,255)
-            else:
-                col=(0,0,255)
+                else:
+                    col=(0,0,255)
 
-            for seg in wall.segments:
-                pg.draw.line(screen,col,(seg[0],seg[1]),(seg[2],seg[3]),6)
+                for seg in wall.segments:
+                    pg.draw.line(screen,col,(seg[0],seg[1]),(seg[2],seg[3]),6)
 
         for pod in self.pods:
             pod.draw(screen)

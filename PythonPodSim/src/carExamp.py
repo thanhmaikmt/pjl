@@ -39,6 +39,8 @@ world       = World("world.txt",pods)
 sim         = Simulation(world,dt)
 
 #uncomment the next line to hide the walls.
+
+
 #sim.world.blind=True
 sim.frameskipfactor=10
 
