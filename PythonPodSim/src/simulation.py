@@ -230,7 +230,7 @@ class World:
     def draw(self,screen):
         if not self.blind:
          for wall in self.walls:
-            if "start" in wall.name:
+                if "start" in wall.name:
                     col=(255,255,0)
                 elif "end" in wall.name:
                     col=(0,255,255)
@@ -333,7 +333,7 @@ class CarPod(Pod):
         Pod.__init__(self,nSensor,sensorRange,brain,col)
         self.mass  = 20
         self.brake = 0
-        self.steer_factor=.2
+        self.steer_factor=.05
         self.thrust_max=200
         self.slip_speed_thresh=80
         self.slip_speed_max=200
