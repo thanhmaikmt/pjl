@@ -333,7 +333,7 @@ class CarPod(Pod):
         Pod.__init__(self,nSensor,sensorRange,brain,col)
         self.mass  = 20
         self.brake = 0
-        self.steer_factor=.002
+        self.steer_factor=.2
         self.thrust_max=200
         self.slip_speed_thresh=80
         self.slip_speed_max=200
@@ -358,7 +358,7 @@ class CarPod(Pod):
             self.y = yNext
             self.vel += (self.control.up-self.control.down)*self.thrust_max/self.mass-self.damp*self.vel*self.vel
             self.collide = False
-            self.ang += (1.0-self.slip)*(-self.control.right+self.control.left)*self.vel*self.steer_factor
+            self.ang += (1.0-self.slip)*(-self.control.right+self.control.left)*self.vel*self.steer_factor*dt
             avel=abs(self.vel)
             if avel > self.slip_speed_max:
                 self.slip=1
@@ -373,7 +373,7 @@ class CarPod(Pod):
             self.dxdt = 0
             self.vel  = 0
             self.collide = True
-            self.ang += (-self.control.right+self.control.left)*self.vel*self.steer_factor
+            self.ang += (-self.control.right+self.control.left)*self.vel*self.steer_factor*dt
 
 
  
