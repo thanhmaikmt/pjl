@@ -27,7 +27,8 @@ TD= [ [[0.,0.,0.,1.],0.], \
 w=[0.,0.,0.,0.]
 
 converged=False
-beta=1.
+beta=1
+
 
 iter=1
 while not converged:
