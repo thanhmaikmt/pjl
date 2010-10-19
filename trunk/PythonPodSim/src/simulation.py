@@ -339,7 +339,8 @@ class CarPod(Pod):
         self.slip_speed_max=200
         self.slip=0.0
         self.damp=.0001
-        
+        self.vel=0
+
     def step(self,dt,world):
         state=State(self)
         self.control=self.brain.process(self.sensors,state,dt)
