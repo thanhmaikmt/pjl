@@ -20,6 +20,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -44,10 +45,13 @@ public class AliasPanel extends JPanel {
     AudioSystem audioSystem;
     private final MyFreqDampedSource src;
     JLabel fresDisp;
+    float sampleRate;
+    private JLabel ampDisp;
 
     public AliasPanel() throws Exception {
 
         setLayout(new BorderLayout());
+
 
 
         audioSystem = AudioSystem.instance();
@@ -56,15 +60,13 @@ public class AliasPanel extends JPanel {
         peakIn = new AudioPeakMonitor();
 
 
-
-
         src = new MyFreqDampedSource();
 
 
         AudioServer server = audioSystem.getServer();
 
         final AudioProcess output = audioSystem.getOut();
-
+        sampleRate=server.getSampleRate();
 
         server.setClient(new AudioClient() {
 
@@ -74,7 +76,7 @@ public class AliasPanel extends JPanel {
 
                 if (chunk == null || size != frameSize) {
                     frameSize = size;
-                    chunk = new AudioBuffer(null, 2, size, 44100.0f);
+                    chunk = new AudioBuffer(null, 2, size, sampleRate);
 
                     chunk.setRealTime(true);
                 }
@@ -125,7 +127,8 @@ public class AliasPanel extends JPanel {
         }
         float freq = src.getFreq();
 
-        fresDisp.setText(String.format("%9.3f kHz", freq / 1000));
+        fresDisp.setText(String.format("%9.3f [kHz]", freq / 1000.0));
+        ampDisp.setText( String.format("    %5.3f ", src.getAmp()));
 
     }
     int nLevel = (int) Math.pow(2, 16);
@@ -143,9 +146,9 @@ public class AliasPanel extends JPanel {
         content.add(meterPanel, BorderLayout.WEST);
 
 
-        JPanel side = new JPanel();
-        side.setLayout(new BoxLayout(side, BoxLayout.Y_AXIS));
-        content.add(side, BorderLayout.CENTER);
+        JPanel north = new JPanel();
+        north.setLayout(new BoxLayout(north, BoxLayout.Y_AXIS));
+        content.add(north, BorderLayout.NORTH);
 
         MyFreqDampedSource.Wave wavs[] = {MyFreqDampedSource.Wave.SAW, MyFreqDampedSource.Wave.SIN, MyFreqDampedSource.Wave.SQUARE,MyFreqDampedSource.Wave.NOISE};
 
@@ -162,21 +165,23 @@ public class AliasPanel extends JPanel {
             }
         });
 
-        side.add(wavCombo);
+        north.add(wavCombo);
+       // wavCombo.setSize(new Dimension(1000,20));
+       // north.add(Box.createVerticalGlue());
 
-        JPanel tt = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel rateLabel=new JLabel(" Sample rate (Fs) is " + sampleRate/1000.0+ " kHz");
 
 
-
+        JPanel freqPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
 
         //  frequency
 
-        tt = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        final DoubleJSlider freqSlide = new DoubleJSlider(0.0, 50000.0, 0.0, 100);
-        freqSlide.setPreferredSize(new Dimension(1000, 20));
+        freqPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        final DoubleJSlider freqSlide = new DoubleJSlider(0.0, 1.5*sampleRate, 0.0, 1.0);
+        freqSlide.setPreferredSize(new Dimension(600, 20));
         fresDisp = new JLabel();
-        fresDisp.setPreferredSize(new Dimension(80, 20));
+        fresDisp.setPreferredSize(new Dimension(100, 20));
 
 
 
@@ -192,34 +197,48 @@ public class AliasPanel extends JPanel {
         });
 
 
-        tt.add(new JLabel("Frequency"));
-        tt.add(freqSlide);
-        tt.add(fresDisp);
-        side.add(tt);
+        freqPanel.add(new JLabel("Frequency"));
+        freqPanel.add(freqSlide);
+        freqPanel.add(fresDisp);
+
+
+        JPanel center=new JPanel();
+
+        center.setLayout(new BoxLayout(center,BoxLayout.Y_AXIS));
+        center.add(freqPanel);
 
         //  frequency
 
-        tt = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        final DoubleJSlider ampSlide = new DoubleJSlider(0.0, 1.0, 0., .001);
-        final JLabel ampDisp = new JLabel();
-        ampDisp.setPreferredSize(new Dimension(80, 20));
-
+        JPanel ampPanel = new JPanel();
+        ampPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        final DoubleJSlider ampSlide = new DoubleJSlider(0.0, 1.5, 0., .10);
+        ampDisp = new JLabel();
+        ampDisp.setPreferredSize(new Dimension(100, 20));
+        ampSlide.setPreferredSize(new Dimension(600, 20));
 
         ampSlide.addChangeListener(new ChangeListener() {
 
             public void stateChanged(ChangeEvent e) {
                 double val = ampSlide.getDoubleValue();
                 src.setAmp(val);
-                ampDisp.setText(String.format("%4.3f", val));
+                ampDisp.setText(String.format("     %5.3f", val));
             }
         });
 
 
-        tt.add(new JLabel("Amplitude"));
-        tt.add(ampSlide);
-        tt.add(ampDisp);
-        side.add(tt);
-        add(content, BorderLayout.CENTER);
+        ampPanel.add(new JLabel("Amplitude"));
+        ampPanel.add(ampSlide);
+        ampPanel.add(ampDisp);
+
+        center.add(ampPanel);
+      
+        center.add(Box.createVerticalGlue());
+        center.add(rateLabel);
+
+
+        content.add(center, BorderLayout.CENTER);
+        add(content);
+        
 
     }
 

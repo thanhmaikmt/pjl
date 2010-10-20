@@ -17,6 +17,10 @@ public class MyFreqDampedSource implements AudioProcess {
     double omega;
     double omegaNext;
     double amp;
+
+    public double getAmp() {
+        return amp;
+    }
     double phi;
     double TWOPI = Math.PI * 2;
     double fact1 = 0.9999;
@@ -44,18 +48,18 @@ public class MyFreqDampedSource implements AudioProcess {
     }
 
     public void setWave(Wave wave) {
-        System.out.println( "Setting wave to --- " +wave );
+        //System.out.println( "Setting wave to --- " +wave );
         this.wave = wave;
     }
 
     public void setAmp(double amp) {
-        System.out.println(" Setting amp "+amp);
+        //System.out.println(" Setting amp "+amp);
         this.amp = amp;
     }
 
     public void setFreq(double freq) {
         this.omegaNext = Math.PI * 2 * freq;
-        System.out.println(" Setting freq "+freq);
+       // System.out.println(" Setting freq "+freq);
     }
 
     public void open() throws Exception {
