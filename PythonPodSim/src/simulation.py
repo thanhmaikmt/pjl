@@ -454,7 +454,7 @@ class Simulation:
         dim_world = (self.world.rect.width+20, self.world.rect.height+20)
         self.frameskipfactor=1
         self.frameskipcount=1
-
+        self.painter=None
         self.screen = pg.Surface(dim_world) #
 
         modes=pg.display.list_modes()
@@ -466,7 +466,7 @@ class Simulation:
         if sx < 1 or sy < 1:
             s=min(sx,sy)/1.2
             self.dim_window=(dim_world[0]*s,dim_world[1]*s)
-            print "Naff small screen: scaling world by ",s
+            print "Small screen: scaling world by ",s
 
         else:
             self.dim_window=dim_world
@@ -502,7 +502,19 @@ class Simulation:
             self.world.step(self.dt)
             if display:
                 self.screen.fill((0,0,0))
+                
+                if self.painter != None:
+                    if self.painter.preDraw != None:
+                        self.painter.preDraw(self.screen)
+                    
                 self.world.draw(self.screen)
+                
+           
+                
+                if self.painter != None:
+                    if self.painter.postDraw != None:
+                        self.painter.postDraw(self.screen)
+                
                 zz=pg.transform.scale(self.screen,self.dim_window)
                 self.display.blit(zz,(0,0))
                 pg.display.flip()
