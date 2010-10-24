@@ -1,6 +1,11 @@
 import pygame as pg
 from math import *
 
+#
+# 24/10/2010
+#    set CarPod dangdt
+#    modified slip to allow power slides (still very naff)
+
 ang_thrust_max=0.5
 
 white = (255,255,255)
@@ -335,31 +340,43 @@ class CarPod(Pod):
         self.brake = 0
         self.steer_factor=.05
         self.thrust_max=200
+        self.slip_thrust_max=200
         self.slip_speed_thresh=80
         self.slip_speed_max=200
         self.slip=0.0
         self.damp=.0001
         self.vel=0
-
+       
+    
     def step(self,dt,world):
         state=State(self)
         self.control=self.brain.process(self.sensors,state,dt)
         self.control.limit()
 
-    
-        self.dxdt = self.dxdt*self.slip+(1.0-self.slip)*self.vel*sin(self.ang)
-        self.dydt = self.dydt*self.slip+(1.0-self.slip)*self.vel*cos(self.ang)
+        slipThrust = (self.control.up-self.control.down)*self.slip*self.slip_thrust_max
+        self.dxdt = self.dxdt*self.slip+(1.0-self.slip)*self.vel*sin(self.ang) +  sin(self.ang)*slipThrust*dt
+        self.dydt = self.dydt*self.slip+(1.0-self.slip)*self.vel*cos(self.ang) +  cos(self.ang)*slipThrust*dt
+        #self.dxdt = self.vel*sin(self.ang)
+        #self.dydt = self.vel*cos(self.ang)
 
         xNext = self.x + self.dxdt*dt
         yNext = self.y + self.dydt*dt
 
         wall=world.check_collide_with_wall(self.x,self.y,xNext,yNext)
+        
+        ang_prev=self.ang
+        
         if wall == None:
             self.x = xNext
             self.y = yNext
-            self.vel += (self.control.up-self.control.down)*self.thrust_max/self.mass-self.damp*self.vel*self.vel
+            if self.vel > 0:
+                damp_fact=self.vel*self.vel*self.vel/abs(self.vel)
+            else:
+                damp_fact=0
+                
+            self.vel += (self.control.up-self.control.down)*self.thrust_max/self.mass-self.damp*damp_fact
             self.collide = False
-            self.ang += (1.0-self.slip)*(-self.control.right+self.control.left)*self.vel*self.steer_factor*dt
+            self.ang += (1.0-self.slip)*(-self.control.right+self.control.left)*self.vel*self.steer_factor*dt + self.slip*self.dangdt*dt
             avel=abs(self.vel)
             if avel > self.slip_speed_max:
                 self.slip=1
@@ -376,7 +393,7 @@ class CarPod(Pod):
             self.collide = True
             self.ang += (-self.control.right+self.control.left)*self.vel*self.steer_factor*dt
 
-
+        self.dangdt=(self.ang-ang_prev)/dt
  
 
 class GravityPod(Pod):
