@@ -10,7 +10,7 @@ dydtMax  =  10
 class Painter:
     
     def __init__(self):
-        self.postDraw=None       # define this function to draw ontop!
+        self.postDraw=None       # define this function to draw on top!
         
     def preDraw(self,screen):    # called before simulation draws to screen
        #  print "predraw"
