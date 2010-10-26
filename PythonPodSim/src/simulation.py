@@ -376,13 +376,13 @@ class CarPod(Pod):
                 
             self.vel += (self.control.up-self.control.down)*self.thrust_max/self.mass-self.damp*damp_fact
             self.collide = False
-            self.ang += (1.0-self.slip)*(-self.control.right+self.control.left)*self.vel*self.steer_factor*dt + self.slip*self.dangdt*dt
+            self.ang += 0.5*(2.0-self.slip)*(-self.control.right+self.control.left)*self.vel*self.steer_factor*dt + self.slip*self.dangdt*dt
             avel=abs(self.vel)
             if avel > self.slip_speed_max:
                 self.slip=1
             elif avel > self.slip_speed_thresh:
                 t=(avel-self.slip_speed_thresh)/(self.slip_speed_max-self.slip_speed_thresh)
-                self.slip=t*t
+                self.slip=t
             else:
                 self.slip=0
 
