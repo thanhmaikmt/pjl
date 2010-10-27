@@ -4,6 +4,8 @@
 
 from math import  *
 from random import  *
+import copy
+import pickle
 
 def sigmoid(x):
         return 1.0 / (1.0 + exp(-x))
@@ -11,63 +13,86 @@ def sigmoid(x):
 def randomSeed():
     return 0.5 - random()
 
-class BackPropBrain:
+def loadBrain(stream):
+        b=pickle.load(stream)
+        a=pickle.load(stream)
+        sz=pickle.load(stream)
+        brain=BackPropBrain(sz, b, a) 
+        brain.weight=pickle.load(stream)    
+        return brain
     
+    
+class BackPropBrain:
+  
+  
+    def save(self,stream):
+            bb=copy.deepcopy(self.beta)
+            pickle.dump(bb,stream)
+            
+            aa=copy.deepcopy(self.alpha)  
+            pickle.dump(aa,stream)
+            
+            ssz=copy.deepcopy(self.layer_size)
+            pickle.dump(ssz,stream)
+            
+            w=copy.deepcopy(self.weight)
+            pickle.dump(w,stream)
+    
+  
     
     def __init__(self,sz, b, a):
-
 
         self.beta = b
         self.alpha = a
 
         #//	set no of layers and their sizes
-        self.numl = len(sz)
-        self.lsize = []   # new int[numl];
+        self.num_layer = len(sz)
+        self.layer_size = []   # new int[num_layer];
 
-        for  i in range(self.numl):
-            self.lsize.append(sz[i])
-        
+        for  i in range(self.num_layer):
+            self.layer_size.append(sz[i])
 
+ 
         #//	allocate memory for output of each neuron
-        self.out = [] # new float[numl][];
-        for  i in range(self.numl):  
+        self.out = [] # new float[num_layer][];
+        for  i in range(self.num_layer):  
             self.out.append([]);
             a=self.out[i]
-            for k in range(self.lsize[i]):
+            for k in range(self.layer_size[i]):
                 a.append(0.0)
 
         
         self.delta = []
-        for  i in range(self.numl):  
+        for  i in range(self.num_layer):  
             self.delta.append([]);
             a=self.delta[i]
-            for k in range(self.lsize[i]):
+            for k in range(self.layer_size[i]):
                 a.append(0.0)
 
 
         self.weight=[]
         self.weight.append([])
         
-        for i in range(1,self.numl):  
+        for i in range(1,self.num_layer):  
             self.weight.append([])
             a=self.weight[i]
-            for j in range(self.lsize[i]):
+            for j in range(self.layer_size[i]):
                 a.append([])
                 r=a[j]
-                for k in range(self.lsize[i - 1]):
+                for k in range(self.layer_size[i - 1]):
                     r.append(randomSeed())
                 r.append(randomSeed())
     
         self.prevDwt=[]
         self.prevDwt.append([])
         
-        for i in range(1,self.numl):  
+        for i in range(1,self.num_layer):  
             self.prevDwt.append([])
             a=self.prevDwt[i]
-            for j in range(self.lsize[i]):
+            for j in range(self.layer_size[i]):
                 a.append([])
                 r=a[j]
-                for k in range(self.lsize[i - 1]):   
+                for k in range(self.layer_size[i - 1]):   
                     r.append(0.0)
                 r.append(0.0)
         
@@ -79,7 +104,7 @@ class BackPropBrain:
  
  
     def output(self):
-        return self.out[self.numl - 1];
+        return self.out[self.num_layer - 1];
     
     
     def input(self):
@@ -89,8 +114,8 @@ class BackPropBrain:
     # mean square error
     def mse(self,tgt): 
         mse = 0.0;
-        for i in range(self.lsize[self.numl - 1]):
-             mse += (tgt[i] - self.out[self.numl - 1][i]) * (tgt[i] - self.out[self.numl - 1][i]);
+        for i in range(self.layer_size[self.num_layer - 1]):
+             mse += (tgt[i] - self.out[self.num_layer - 1][i]) * (tgt[i] - self.out[self.num_layer - 1][i]);
         
         return mse / 2.0;
    
@@ -99,22 +124,22 @@ class BackPropBrain:
     def ffwd(self,x):
         
         #	assign content to input layer
-        for  i in range(self.lsize[0]):
+        for  i in range(self.layer_size[0]):
                  self.out[0][i] = x[i]       # output_from_neuron(i,j) Jth neuron in Ith Layer
 
         #	assign output(activation) value 
         #	to each neuron usng sigmoid func
         
-        for i in range(1,self.numl):         #  For each layer
-            for j in range(self.lsize[i]):   #  For each neuron in current layer
+        for i in range(1,self.num_layer):         #  For each layer
+            for j in range(self.layer_size[i]):   #  For each neuron in current layer
                 sum = 0.0;
-                for k  in range(self.lsize[i - 1]):                     # For input from each neuron in preceeding layer
+                for k  in range(self.layer_size[i - 1]):                     # For input from each neuron in preceeding layer
                     sum += self.out[i - 1][k] * self.weight[i][j][k];	# Apply weight to inputs and add to sum
                 
-                sum += self.weight[i][j][self.lsize[i - 1]];	    	# Apply bias
+                sum += self.weight[i][j][self.layer_size[i - 1]];	    	# Apply bias
                 self.out[i][j] = sigmoid(sum);				            # Apply sigmoid function
     
-        return self.out[self.numl - 1];
+        return self.out[self.num_layer - 1];
     
     #	backpropogate errors from output.
     #   modify weights
@@ -124,37 +149,39 @@ class BackPropBrain:
         self.ffwd(x);
 
         #    find delta for output layer
-        for i in range(self.lsize[self.numl - 1]):  
-            self.delta[self.numl - 1][i] = self.out[self.numl - 1][i] * \
-                    (1 - self.out[self.numl - 1][i]) * (tgt[i] - self.out[self.numl - 1][i])
+        for i in range(self.layer_size[self.num_layer - 1]):  
+            self.delta[self.num_layer - 1][i] = self.out[self.num_layer - 1][i] * \
+                    (1 - self.out[self.num_layer - 1][i]) * (tgt[i] - self.out[self.num_layer - 1][i])
         
 
         #   find delta for hidden layers	
-        for i in range(self.numl-2,0,-1) : 
-            for  j  in range(self.lsize[i]):
+        for i in range(self.num_layer-2,0,-1) : 
+            for  j  in range(self.layer_size[i]):
                 sum = 0.0;
-                for k in range(self.lsize[i + 1]):
+                for k in range(self.layer_size[i + 1]):
                     sum += self.delta[i + 1][k] * self.weight[i + 1][k][j];
                 
                 self.delta[i][j] = self.out[i][j] * (1 - self.out[i][j]) * sum;
          
          
         #	apply momentum ( does nothing if alpha=0 )
-        for i in range(1,self.numl):
-            for j in range(self.lsize[i]):
-                for k in range(self.lsize[i - 1]):
+        for i in range(1,self.num_layer):
+            for j in range(self.layer_size[i]):
+                for k in range(self.layer_size[i - 1]):
                     self.weight[i][j][k] += self.alpha * self.prevDwt[i][j][k];
                 
-                self.weight[i][j][self.lsize[i - 1]] += self.alpha * self.prevDwt[i][j][self.lsize[i - 1]];
+                self.weight[i][j][self.layer_size[i - 1]] += self.alpha * self.prevDwt[i][j][self.layer_size[i - 1]];
             
         #	adjust weights using steepest descent	
-        for i in range(1,self.numl):
-            for j in range(self.lsize[i]):
-                for  k in range(self.lsize[i - 1]):
+        for i in range(1,self.num_layer):
+            for j in range(self.layer_size[i]):
+                for  k in range(self.layer_size[i - 1]):
                     self.prevDwt[i][j][k] = (float) (self.beta * self.delta[i][j] * self.out[i - 1][k]);
                     self.weight[i][j][k] += self.prevDwt[i][j][k];
                 
-                self.prevDwt[i][j][self.lsize[i - 1]] = (float) (self.beta * self.delta[i][j]);
-                self.weight[i][j][self.lsize[i - 1]] += self.prevDwt[i][j][self.lsize[i - 1]];
+                self.prevDwt[i][j][self.layer_size[i - 1]] = (float) (self.beta * self.delta[i][j]);
+                self.weight[i][j][self.layer_size[i - 1]] += self.prevDwt[i][j][self.layer_size[i - 1]];
     
-   
+            
+            
+            

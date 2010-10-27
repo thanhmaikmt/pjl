@@ -1,8 +1,12 @@
 #
-# this function implements the threshold perceptron
+# Perceptron training example
 #
+
 from math import *
 
+#
+# this function implements the threshold perceptron
+#
 def fire(xVec,wVec):
     sum=0.0
     for i in range(4):
@@ -42,7 +46,7 @@ while not converged:
         t=td[1]    #   training is the second
         y=fire(x,w)
         print x,t,y,w
-        if (abs(t-y) > .0):
+        if abs(t-y) > .0:
             converged =False
         for i in range(4):
             w[i]=w[i]+beta*(t-y)*x[i]
