@@ -14,7 +14,7 @@ layerSizes = [2, 2, 2]
 # These make a lot of difference
 # I found these by trail and error.
 beta = .001    # learning rate
-alpha = 1000    # momentum
+alpha = 1000.0    # momentum
 
 #Create a brain
 brain =BackPropBrain(layerSizes, beta, alpha)
@@ -29,22 +29,35 @@ TD = [[[0., 0.],[0.,1.0]], \
 
 
 iter=0
-maxIter=20000
-tol = 0.1     # acceptable error in any output ?
-
+maxIter=200000
+tol = 0.000001     # acceptable error in any output ?
+errorlast=0.0
+dodecay=True
+decayFact=.995
 while True:   # loop until happiness is found or we exceed maxIter 
     
     iter += 1
     error= 0.0      # 
         
     for td in TD:  # loop on all the training data
-        brain.bpgt(td[0],td[1])     # train for one data set. 
+        error=brain.bpgt(td[0],td[1])     # train for one data set. 
         out = brain.output()
-        for i in range(len(td[1])):
-            error = max(error, abs(td[1][i] - out[i]))
+        
+        
+        #for i in range(len(td[1])):
+        #    error = max(error, abs(td[1][i] - out[i]))
+    
+    if dodecay:
+        if error < errorlast:
+            brain.beta *= 1.0/decayFact
+            brain.alpha *=decayFact
+      
+        
             
+    errorlast=error
+        
     print " iteration " ,iter, " max error=",error
-    if error < tol or iter > maxIter :
+    if  iter > maxIter or error < tol:
        	 break
      
 # sanity check !!!

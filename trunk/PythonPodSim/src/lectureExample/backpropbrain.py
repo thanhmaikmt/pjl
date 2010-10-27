@@ -179,9 +179,10 @@ class BackPropBrain:
                     self.prevDwt[i][j][k] = (float) (self.beta * self.delta[i][j] * self.out[i - 1][k]);
                     self.weight[i][j][k] += self.prevDwt[i][j][k];
                 
-                self.prevDwt[i][j][self.layer_size[i - 1]] = (float) (self.beta * self.delta[i][j]);
+                self.prevDwt[i][j][self.layer_size[i - 1]] = self.beta * self.delta[i][j];
                 self.weight[i][j][self.layer_size[i - 1]] += self.prevDwt[i][j][self.layer_size[i - 1]];
     
+        return self.mse(tgt)
             
             
             
