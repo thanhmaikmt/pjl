@@ -4,6 +4,7 @@ import uk.co.drpj.util.Graphs;
 import java.awt.GridLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import uk.org.toot.audio.core.AudioBuffer;
 
 /**
  *  Taken from toot software.
@@ -218,6 +219,7 @@ public class FIRFilterDesign {
         frame.setVisible(true);
 
     }
+
 }
 
 

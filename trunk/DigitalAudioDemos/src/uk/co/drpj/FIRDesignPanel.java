@@ -128,9 +128,6 @@ public class FIRDesignPanel extends JPanel {
         graphPanel.setLayout(new GridLayout(3, 2));
 
 
-
-
-
         FIRFilterDesign filt = new FIRFilterDesign(alpha, sampleRate, frequency, filtType.id, order, winType.id, bandwidth);
 
         float coeffs[] = filt.getCoefficients();
