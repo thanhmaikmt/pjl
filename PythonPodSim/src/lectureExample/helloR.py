@@ -6,8 +6,6 @@ import copy
 POPSIZE      = 1000          # population size	  
 MAXITER      = 100            # maximum iterations
 MUTATEPROB   = 0.5	      # mutation rate
-MATEPROB     = 1.0
-nellite      = 200
 
 target="Hello World!"
 size=len(target)
@@ -43,6 +41,7 @@ def mutate(a):
     i=random.randint(0,size-1)
     a[i]=randomChar()
 
+
 class RouletteWheel:
     def __init__(self,pop):
         self.totfit=0.0
@@ -56,6 +55,10 @@ class RouletteWheel:
     def select(self):
         r = random.random()*self.totfit
         # print r,self.totfit        
+#
+#  The following is a terrible bit of coding     
+#  please use a balanced binary tree to make this run faster
+
         for v,m in zip(self.totfitsofar,self.pop):
             if v >= r:
                 return m
@@ -65,21 +68,15 @@ class RouletteWheel:
 def breedPopulation(wheel):
     newpop=[]
 
-    for i in range(nellite):
-        dad=Gene(pop[i].string)
-        newpop.append(dad)
-
-    for i in range(POPSIZE-nellite):
-        dad=Gene(wheel.select().string)
-#        print dad.string.tostring(),dad.fitness
-        newpop.append(dad)
-
-        if random.random() < MATEPROB:
-            mum=wheel.select()
-            dad.string=mate(dad.string,mum.string)
+    for i in range(POPSIZE):
+        dad=wheel.select()
+        mum=wheel.select()
+       
+        child=Gene(mate(dad.string,mum.string))
+        newpop.append(child)
 
         if random.random() < MUTATEPROB:
-            mutate(dad.string)
+            mutate(child.string)
     
             
     return newpop
@@ -104,14 +101,8 @@ if __name__ == '__main__':
             if m.fitness > fitmax:
                 fitmax=m.fitness
                 best=m
-
         
-        pop = sorted(pop, key = lambda x:x.fitness,reverse=True)
-
-
         wheel=RouletteWheel(pop)
-
-#        print (wheel.totfit/POPSIZE),POPSIZE
 
         print count,best.string.tostring()
         
@@ -122,7 +113,4 @@ if __name__ == '__main__':
         pop = breedPopulation(wheel);
 
         count += 1
-
-  
-
-
+        
