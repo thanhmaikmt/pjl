@@ -337,7 +337,6 @@ public class AliasPanel extends JPanel {
     public class FIRDesignPanelAnti extends JPanel {
 
         float bandwidth = 500.0f;
-        //float sampleRate = 44100.0f;
         float frequency = 10000;
         float alpha = 10.0f;
         int order = 100;
@@ -346,9 +345,6 @@ public class AliasPanel extends JPanel {
         JLabel orderDisp;
         JLabel bwDisp;
         JPanel graphPanel;
-        //  boolean useOrder = false;
-        private JButton redraw;
-        private AbstractButton autoOrder;
         private DoubleJSlider aphaSlide;
         private DoubleJSlider orderSlide;
         private DoubleJSlider transSlide;
@@ -381,7 +377,6 @@ public class AliasPanel extends JPanel {
                         try {
                             wait();
                         } catch (InterruptedException ex) {
-                            //              Logger.getLogger(FIRDesignPanel.class.getName()).log(Level.SEVERE, null, ex);
                         }
                         while (Thread.interrupted()) {
                         } // clear pending interupts
@@ -443,23 +438,15 @@ public class AliasPanel extends JPanel {
 
         void update() {
 
-
             if (graphThread != null) {
                 graphThread.interrupt();
             }
 
             freqDisp.setText(String.format("%6.1f", frequency));
             orderDisp.setText(String.format("%5d", order));
-//        if (!autoOrder.isSelected()) {
-//            bwDisp.setText("");
-//            attenDisp.setText("");
-//        } else {
+
             attenDisp.setText(String.format("%4.1f", alpha));
             bwDisp.setText(String.format("%6.1f", bandwidth));
-//        }
-
-            //       redraw.setEnabled(true);
-
 
         }
 
@@ -471,15 +458,10 @@ public class AliasPanel extends JPanel {
             panel.setLayout(new GridBagLayout());
             GridBagConstraints c = new GridBagConstraints();
 
-
-
-            //      c.gridy = row++;
             c.gridx = 0;
             c.anchor = GridBagConstraints.EAST;
             c.fill = GridBagConstraints.HORIZONTAL;
             c.gridwidth = GridBagConstraints.REMAINDER;
-
-
 
             final JComboBox comboF = new JComboBox(new FiltType[]{FiltType.LPF, FiltType.BPF, FiltType.HPF});
 
@@ -491,11 +473,8 @@ public class AliasPanel extends JPanel {
                     update();
                 }
             });
-            //    c.gridwidth = GridBagConstraints.REMAINDER;
             panel.add(comboF, c);
 
-
-            // ------------------------
             c.gridwidth = 1;
             c.gridy = row++;
 
@@ -503,17 +482,10 @@ public class AliasPanel extends JPanel {
             c.gridx = 0;
             c.gridwidth = 1;
 
-            //  frequency
-
-
             final DoubleJSlider freqSlide = new DoubleJSlider(0.0, targetSampleRate / 2, frequency, 100);
-            //freqSlide.setPreferredSize(new Dimension(1000, 20));
             freqDisp = new JLabel((String) null, JLabel.RIGHT);
-//        freqDisp.setPreferredSize(new Dimension(80, 20));
-
 
             freqSlide.addChangeListener(new ChangeListener() {
-
                 public void stateChanged(ChangeEvent e) {
                     frequency = (float) freqSlide.getDoubleValue();
                     update();
@@ -528,26 +500,17 @@ public class AliasPanel extends JPanel {
             panel.add(freqSlide, c);
             panel.add(freqDisp, c);
 
-
-
-
-            //  trans frequency
-
             c.gridy = row++;
             c.gridx = 0;
 
             transSlide = new DoubleJSlider(10.0, targetSampleRate / 4.0, bandwidth, 10);
-            ///  transSlide.setPreferredSize(new Dimension(1000, 20));
             bwDisp = new JLabel((String) null, JLabel.RIGHT);
-            //      bwDisp.setPreferredSize(new Dimension(80, 20));
-
 
             transSlide.addChangeListener(new ChangeListener() {
 
                 public void stateChanged(ChangeEvent e) {
                     bandwidth = (float) transSlide.getDoubleValue();
                     update();
-
                 }
             });
             transSlide.setEnabled(false);
@@ -558,19 +521,13 @@ public class AliasPanel extends JPanel {
             panel.add(transSlide, c);
             panel.add(bwDisp, c);
 
-
             // ---- attenuation
 
             c.gridy = row++;
             c.gridx = 0;
 
             aphaSlide = new DoubleJSlider(0.0, 25.0, alpha, 0.5);
-            // attenSlide.setPreferredSize(new Dimension(1000, 20));
             attenDisp = new JLabel((String) null, JLabel.RIGHT);
-            //   attenDisp.setPreferredSize(new Dimension(80, 20));
-
-
-
 
             aphaSlide.addChangeListener(new ChangeListener() {
 
@@ -587,7 +544,6 @@ public class AliasPanel extends JPanel {
 
             panel.add(aphaSlide, c);
             panel.add(attenDisp, c);
-
 
             // ---- order
 
