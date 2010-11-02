@@ -3,9 +3,10 @@ import random
 import array
 import copy
 
-POPSIZE      = 1000          # population size	  
-MAXITER      = 100            # maximum iterations
-MUTATEPROB   = 0.5	      # mutation rate
+POPSIZE       = 1000          # population size	  
+MAXITER       = 100            # maximum iterations
+MUTATEPROB    = 0.5	      # mutation rate
+CROSSOVERPROB = .5
 
 target="Hello World!"
 size=len(target)
@@ -66,17 +67,21 @@ class RouletteWheel:
         print "OOOOOPS"
     
 def breedPopulation(wheel):
+    
     newpop=[]
 
     for i in range(POPSIZE):
         dad=wheel.select()
-        mum=wheel.select()
-       
-        child=Gene(mate(dad.string,mum.string))
-        newpop.append(child)
-
+        if random.random() < CROSSOVERPROB:
+            mum=wheel.select()
+            child=Gene(mate(dad.string,mum.string))
+        else:
+            child=Gene(dad.string)
+                
         if random.random() < MUTATEPROB:
             mutate(child.string)
+            
+        newpop.append(child)
     
             
     return newpop
