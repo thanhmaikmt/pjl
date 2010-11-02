@@ -27,7 +27,7 @@ def testNet():
         print x,t,y
 
 #net = buildNetwork(2, 3, 1, bias=True, hiddenclass=TanhLayer)
-trainer = BackpropTrainer(net, ds,.6) #,.01,momentum=.01,verbose=True,weightdecay=0.01)  # ,.01,1.0,0)
+trainer = BackpropTrainer(net, ds,learningrate=0.01,momentum=.01) # ,.6) #,.01,momentum=.01,verbose=True,weightdecay=0.01)  # ,.01,1.0,0)
 
 tol=0.5*.25*.25/4.0
 print tol
