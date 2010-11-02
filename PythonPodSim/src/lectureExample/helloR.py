@@ -109,7 +109,7 @@ if __name__ == '__main__':
         
         wheel=RouletteWheel(pop)
 
-        print count,best.string.tostring()
+        print count,best.string.tostring(),fitmax
         
         if  fitmax >=  target_fitness:
             break

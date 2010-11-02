@@ -7,8 +7,11 @@
 
 from backpropbrain import *
 
-# 3 layers   2 inputs  1 hidden layer with 2 neurons  1 output
-layerSizes = [2, 2, 2]
+ninputs=2
+nhidden=2
+nout=2
+
+layerSizes = [ninputs, nhidden, nout]
 
 
 # These make a lot of difference
