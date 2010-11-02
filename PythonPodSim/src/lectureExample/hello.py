@@ -8,7 +8,6 @@ MUTATEPROB   = 0.5;	      # mutation rate
 NELITE       = 200;           # top of population survive
 NBREED       = 500;           # how many are bred
 
-
 target="Hello World!"
 size=len(target);
 
@@ -29,17 +28,17 @@ def seed():
         string.append(randomChar())
     return string
 
-def evaluate1(string):
+def evaluate1(string):   # number correct
     sum=0
     for a,b in zip(string,target):
         if a == b:
             sum += 1
     return sum
 
-def evaluate2(string):
+def evaluate2(string):    # sum of diff in char codes
     sum=0
     for a,b in zip(string,target):
-        sum -= abs(ord(a)-ord(b))
+            sum -= abs(ord(a)-ord(b))
     return sum
 
 def mate(a,b):
@@ -47,11 +46,11 @@ def mate(a,b):
     ret = a[0:i]+b[i:size]
     return ret
 
-def mutate1(a):
+def mutate1(a): # randomly replace a character
     i=random.randint(0,size-1)
     a[i]=randomChar()
 
-def mutate2(a):
+def mutate2(a):    # add/subtract 1 from the character code
     i=random.randint(0,size-1)
     ic = ord(a[i])
     im=random.randint(0,1)
@@ -99,12 +98,9 @@ if __name__ == '__main__':
     for i in range(POPSIZE):
         pop.append(Gene(seed()))
 
-
     count=0    
 
-
-
-    while  count< range(MAXITER):
+    while  count< MAXITER:
 
         for m in pop:
             m.fitness=evaluate(m.string)
