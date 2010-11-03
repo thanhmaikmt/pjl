@@ -525,8 +525,7 @@ class Simulation:
                         self.painter.preDraw(self.screen)
                     
                 self.world.draw(self.screen)
-                
-           
+                      
                 
                 if self.painter != None:
                     if self.painter.postDraw != None:

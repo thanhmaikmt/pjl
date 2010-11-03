@@ -10,8 +10,17 @@ class CursorControl:
 
     def process(self,sensor,state,dt):
         control=Control()
-        keyinput = pygame.key.get_pressed()    
-    
+        keyinput = pygame.key.get_pressed()
+        
+        if keyinput[pg.K_KP_PLUS]:
+            sim.frameskipfactor = sim.frameskipfactor+1
+            print "skip factor" ,sim.frameskipfactor
+            
+        if keyinput[pg.K_MINUS]:
+            sim.frameskipfactor = max(1,sim.frameskipfactor-1)
+            print "skip factor" ,sim.frameskipfactor
+            
+
         if keyinput[pg.K_LEFT]:
             control.left=.4
 
@@ -33,15 +42,15 @@ brain       = CursorControl()
 nSensors    = 40
 sensorRange = 2000
 pod         = CarPod(nSensors,sensorRange,brain,(255,0,0))
-
 # pod.slip_speed_max=1     # testing ice
 #pod         = GravityPod(nSensors,sensorRange,brain,(255,0,0))
-
 pods        = [pod]
 world       = World("world.txt",pods)
 sim         = Simulation(world,dt)
 
 #uncomment the next line to hide the walls.
+
+
 #sim.world.blind=True
 #sim.frameskipfactor=10
 
