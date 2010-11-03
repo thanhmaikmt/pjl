@@ -10,7 +10,7 @@ def toString(sensors,state,control):
     for s in sensors:
         ret = ret + str(s.val) + " "
         
-    ret=ret + str(control.up)+" "+ str(control.left)+ " "+ str(control.right) +"\n"
+    ret=ret + str(control.up) + " " + str(control.down)+" "+ str(control.left)+ " "+ str(control.right) +"\n"
         
     return ret
 
