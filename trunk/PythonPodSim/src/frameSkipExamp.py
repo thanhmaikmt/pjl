@@ -5,7 +5,6 @@ import pygame
 #    Manual drive a car around a track
 #
 
-
 class CursorControl:
 
     def process(self,sensor,state,dt):
