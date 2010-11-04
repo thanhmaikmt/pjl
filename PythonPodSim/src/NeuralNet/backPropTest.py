@@ -64,6 +64,7 @@ while True:   # loop until happiness is found or we exceed maxIter
         
 
 # I get faster convergence if I make the learning rate greater once the error starts to fall
+# but this might not always be a good idea!!!! 
     if dodecay:
         if error < errorlast:
             brain.beta *= 1.0/decayFact
@@ -93,23 +94,4 @@ print "--- checking output for training set . . . "
 print "    input         target           actual     "
 for td in TD:
     o=brain.ffwd(td[0])
-    print td[0],td[1],o
-
-#  We can save the state of a brain to a file
-#
-file=open("greystuff","w")
-brain.save(file)
-file.close()
-
-# and we can reload it
-
-file=open("greystuff","r")
-clone=loadBrain(file)     #   clone should be a copy of the brain we just  
-file.close()
-
-# sanity check !!!
-print "--- checking reloaded brain . . . "
-print "    input         target           actual     "
-for td in TD:
-    o=clone.ffwd(td[0])
     print td[0],td[1],o
