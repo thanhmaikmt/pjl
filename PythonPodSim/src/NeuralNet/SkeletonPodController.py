@@ -1,11 +1,12 @@
 from simulation import *
+from backpropbrain import  *
 import pygame 
 
 #  
 #
 # WARNING UNTESTED CODE   .   . .  .  . . .
 #
-#    Brain to  drive a car around a track
+#    Brain to drive a car around a track
 #
 
 
@@ -23,17 +24,17 @@ class BrainControl:
         # create the input for the brain 
         input=[state.dxdt,state.dydt,state.ang]
         
-        for s in sensors:
+        for s in sensor:
             input.append(s.val)
             
         # activate the brain to get output    
-        output=brain.ffwd(input)
+        output=self.brain.ffwd(input)
        
         # assign values to the controllers
         control.up=output[0]
         control.down=output[1]
-        control.left=output[2]
-        control.right=output[3]
+     #   control.left=output[2]
+     #   control.right=output[3]
         
         return control
 
