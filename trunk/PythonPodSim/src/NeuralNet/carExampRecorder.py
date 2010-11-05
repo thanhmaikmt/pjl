@@ -7,6 +7,7 @@ from math import *
 #    Manual drive a car around a track
 #
 
+fileName="carTraining.txt"
 
 recording=False
 
@@ -47,7 +48,7 @@ class CursorControl:
         if keyinput[pg.K_r]:
             recording = True
             print " recording "
-            self.file = open("traingData","wa")
+            self.file = open(fileName,"w")
      
         if keyinput[pg.K_s]:
                       
@@ -79,7 +80,7 @@ class CursorControl:
 
 dt          =.1
 brain       = CursorControl()
-nSensors    = 4
+nSensors    = 6
 sensorRange = 2000
 pod         = CarPod(nSensors,sensorRange,brain,(255,0,0))
 # pod.slip_speed_max=1     # testing ice
