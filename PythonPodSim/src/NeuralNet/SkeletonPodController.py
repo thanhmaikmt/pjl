@@ -9,6 +9,7 @@ import pygame
 #    Brain to drive a car around a track
 #
 
+fileName="carTraining.txt"
 
 class BrainControl:
 
@@ -42,15 +43,17 @@ class BrainControl:
 
 dt          =.1
 brain       = BrainControl()
-nSensors    = 40
+nSensors    = 6
 sensorRange = 2000
 pod         = CarPod(nSensors,sensorRange,brain,(255,0,0))
+
+pod.ang=pi/2
 
 # pod.slip_speed_max=1     # testing ice
 #pod         = GravityPod(nSensors,sensorRange,brain,(255,0,0))
 
 pods        = [pod]
-world       = World("world.txt",pods)
+world       = World("car_world.txt",pods)
 sim         = Simulation(world,dt)
 
 #uncomment the next line to hide the walls.

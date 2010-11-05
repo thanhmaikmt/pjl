@@ -35,12 +35,12 @@ def readTrainingData(file,nin,nout):
     
 
 #  Use your own numbers here
-ninputs= 3  
-nhidden=4
-nout=2   
+ninputs =9 
+nhidden =6
+nout    =4   
 
-
-file=open("trainingData.txt","r")
+ 
+file=open("carTraining.txt","r")
 
 TD = readTrainingData(file,ninputs,nout)
 
@@ -51,8 +51,8 @@ layerSizes = [ninputs, nhidden, nout]
 
 # These make a lot of difference
 # I found these by trail and error.
-beta = .001    # learning rate
-alpha = 1000.0    # momentum
+beta = .1    # learning rate
+alpha = 10.0    # momentum
 
 #Create a brain
 brain =BackPropBrain(layerSizes, beta, alpha)
@@ -73,6 +73,7 @@ errorlast=0.0
 #
 #   now loop until convergence.
 #
+
 while True:   # loop until happiness is found or we exceed maxIter 
     
     iter += 1
@@ -93,8 +94,7 @@ while True:   # loop until happiness is found or we exceed maxIter
 #            brain.beta *= 1.0/decayFact
 #            brain.alpha *=decayFact
       
-        
-            
+                
     errorlast=error
     
     # if it takes ages you should comment out this line because io to terminal is not that fast with idle

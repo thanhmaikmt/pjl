@@ -8,6 +8,9 @@ import copy
 import pickle
 
 def sigmoid(x):
+        if x < -100:
+            return 0.0
+        
         return 1.0 / (1.0 + exp(-x))
     
 def randomSeed():
