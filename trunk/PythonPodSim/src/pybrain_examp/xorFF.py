@@ -3,7 +3,7 @@ from pybrain.structure.modules.sigmoidlayer import SigmoidLayer
 from pybrain.structure.modules.tanhlayer import TanhLayer
 from pybrain.structure.modules import SoftmaxLayer
 
-net=buildNetwork(2,2,1,outclass=SigmoidLayer)
+net=buildNetwork(2,1,outclass=SigmoidLayer)
 net.sortModules()
 
 print net
