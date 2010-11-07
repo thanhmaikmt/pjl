@@ -27,13 +27,14 @@ class Painter:   # use me to display stuff
         self.preDraw=None       # define this function to draw on top!
         self.fontMgr = cFontManager(((None, 20), (None, 48), ('arial', 24)))
     
-        
     def postDraw(self,screen):
         Y=20
         X=20
-        DY=30
-        
-        self.fontMgr.Draw(screen, None, 20, ' pool size:'+ str(POOL_SIZE)+' ticks:'+ str(sim.world.ticks) +' best:'+ str(pool.best_fitness())+' average:'+ str(pool.average_fitness()), (X,Y), (0,255,0))
+        self.fontMgr.Draw(screen, None, 20,\
+                          ' pool size:'+ str(POOL_SIZE)+\
+                          ' ticks:'+ str(sim.world.ticks) +\
+                          ' best:'+ str(pool.best_fitness())+\
+                          ' average:'+ str(pool.average_fitness()), (X,Y), (0,255,0))
     
         
         
@@ -46,8 +47,9 @@ class Admin:  # use me to control the simulation
 
             global pods,reaping
 
+             # output to a log file
             if reaping and log_file!=None and touched:
-                log_file.writeline(str(sim.world.ticks) +','+ str(pool.best_fitness())+','+str(pool.average_fitness()))
+                log_file.write(str(sim.world.ticks) +','+ str(pool.best_fitness())+','+str(pool.average_fitness())+'\n')
                 
                                 
             keyinput = pygame.key.get_pressed()
@@ -67,8 +69,7 @@ class Admin:  # use me to control the simulation
                 
                 if reaping:    # if reaping copy existing to allow restore
                     self.pods_copy=copy(pods)
-                    spod=pods[0]
-                
+                    pod=pods[0]
                     del pods[:]
                     pods.append(pod)
                 else:
@@ -79,6 +80,24 @@ class Admin:  # use me to control the simulation
                 pod.ang += random()-0.5    # randomize the intial angle
                 pod.control.brain=pool.create_best()
                 reaping=False
+             
+            # display the performance of the best pod
+            if  keyinput[pg.K_p]:
+                
+                
+                if reaping:    # if reaping copy existing to allow restore
+                    self.pods_copy=copy(pods)
+                    pod=pods[0]
+                    del pods[:]
+                    pods.append(pod)
+                else:
+                    pod=pods[0]
+                    
+                    
+                world.init_pod(pod)
+                pod.ang += random()-0.5    # randomize the intial angle
+                pod.control.brain=pool.create_most_proven()
+                reaping=False   
                 
             # go back into evolution mode    
             if not reaping and keyinput[pg.K_r]:
@@ -160,9 +179,9 @@ class Pool:  #  use me to store the best brains and create new brains
     
     
     def create_best(self):
-        return self.list[0].brain.clone()
-    
-
+        clone=self.list[0].brain.clone()
+        #clone.proof_count=self.list[0].brain.proof_count
+        return clone
 
     def select1(self):
         
@@ -219,6 +238,7 @@ class Pool:  #  use me to store the best brains and create new brains
         for i in range(n):
             f=pickle.load(file)
             b=loadBrain(file)
+            b.proof_count=0    # sorry we lost the proof count when we saved it
             self.add(Gene(b,f))
          
         print "RELOADED POOL"   
@@ -231,13 +251,13 @@ class Gene:
         self.fitness=fitness
         
 
-        
 
 class GAControl:
 
     def __init__(self):
         self.brain=pool.create_new()
-            
+    
+    # decide if we want to kill a pod        
     def reap_pod(self,state):
         pod=state.pod
         
@@ -249,18 +269,17 @@ class GAControl:
     
         return False
     
-
-    
+    # calculate the fitness of a pod
     def calc_fitness(self,state,brain):
-        " Calculate the fitness of the pod "
+        
         
         fitness = state.pod.pos_trips-state.pod.neg_trips
         
         return fitness    
         
+    # normal process called every time step    
     def process(self,sensor,state,dt):
     
-        
                     
         if reaping and self.reap_pod(state):
             " here then time to replace the pod"
@@ -299,7 +318,7 @@ class GAControl:
 
 
 
-dt          =.1
+dt          =.05
 nSensors    = 12
 sensorRange = 2000
 
@@ -312,9 +331,9 @@ pods=[]
 
 for i in range(NPODS):
     control=GAControl()
-    b=random()*256.0
-    g=random()*256.0
-    r=random()*256.0
+    b=255-(i*167)%256
+    g=(i*155)%256
+    r=255-(i*125)%256
     
     pod = CarPod(nSensors,sensorRange,control,((r,g,b)))
     pods.append(pod)
