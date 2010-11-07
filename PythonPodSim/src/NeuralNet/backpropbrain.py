@@ -43,7 +43,7 @@ class BackPropBrain:
     
   
     
-    def __init__(self,sz, b, a):
+    def __init__(self,sz, b=.01, a=100):
 
         self.beta = b
         self.alpha = a
@@ -99,6 +99,22 @@ class BackPropBrain:
                     r.append(0.0)
                 r.append(0.0)
         
+        
+    def clone(self):
+        clone=BackPropBrain(self.layer_size,self.alpha,self.beta)
+        clone.weight=copy.deepcopy(self.weight)
+        return clone
+            
+    def mutate(self,amount):    
+        for i in range(1,self.num_layer):
+            a=self.weight[i]  
+            for j in range(self.layer_size[i]):            
+                r=a[j]
+                for k in range(self.layer_size[i]):
+                    r[k]=r[k]+randomSeed()*amount
+                    
+        
+            
 #//  I did this intentionaly to maintains consistancy in numbering the layers.
 #//  Since for a net having n layers, input layer is refered to as 0th layer,
 #//  first hidden layer as 1st layer and the nth layer as output layer. And 

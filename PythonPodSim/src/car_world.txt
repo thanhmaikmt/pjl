@@ -7,10 +7,17 @@ wall boundary
 	570,150,520,190,460,190,250,10,100,150,100,350,250,500,250,550,
 	50,550,50,700
 
+
+
 # define landinding platform
 wall end
-	900,690,950,690
+	950,690,950,600
+
+
+wall trip
+    		
+
 
 # pod initial position
 pod
-        60,660
+        60,660,90

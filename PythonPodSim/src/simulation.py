@@ -59,12 +59,12 @@ def intersect(p0_x,p0_y,p1_x,p1_y,p2_x,p2_y,p3_x,p3_y):
         fact = (-s2_x * s1_y + s1_x * s2_y)
 
         if fact == 0:
-            return (huge,huge)
+            return (huge,huge,0)
 
         s = (-s1_y * (p0_x - p2_x) + s1_x * (p0_y - p2_y)) / fact
         t = ( s2_x * (p0_y - p2_y) - s2_y * (p0_x - p2_x)) / fact
 
-        return (s,t)
+        return (s,t,fact)
 
 
 class Control:
@@ -104,6 +104,8 @@ class State:
         self.dydt=pod.dydt
         self.ang=pod.ang
         self.dangdt=pod.dangdt
+        self.collide=pod.collide
+        self.pod=pod
 
  
 class Wall:
@@ -144,6 +146,9 @@ class Wall:
 
         self.rect=pg.Rect(self.minX,self.minY,self.maxX-self.minX,self.maxY-self.minY)
 
+    def len(self):
+        return len(self.segments)
+    
 
 
 class World:
@@ -152,6 +157,8 @@ class World:
 
         self.pods=pods
         self.walls=[]
+        self.trips=[]
+        
         fin=open(fileName,"r")
         self.rect=pg.Rect(0,0,0,0)
         self.ticks=0
@@ -159,7 +166,7 @@ class World:
         while True:
             line = fin.readline()
             if len(line)==0:
-                return
+                break
             if line[0] == '#':
                 continue
                 
@@ -175,19 +182,51 @@ class World:
             if  "pod" in line:
                 self.read_pod_pos(fin)
 
+        self.build_trip_wires()
+        
+
+    def build_trip_wires(self):
+        left=None
+        right=None
+        for w in self.walls:
+            if "left" in w.name:
+                left=w
+            if  "right" in w.name:
+                right=w
+                
+        if left != None :
+            if len(left.segments) != len(right.segments):
+                print " Left and right must have equal number of points"
+                
+            else:
+               for l,r in zip(left.segments,right.segments):
+                  self.trips.append(((l[0],l[1]),(r[0],r[1])))
+                
                 # print "POD OK"
 
+    def init_pod(self,pod):
+            pod.init()
+            pod.x=self.podx
+            pod.y=self.pody
+            pod.ang=self.podang
+            pod.dxt=0
+            pod.dydt=0
+            pod.dangdt=0
+            pod.collide=False
+            
     def read_pod_pos(self,fin):
         line = fin.readline()
         linelist=line.split(',')
 
-        x = float(linelist[0])
-        y = float(linelist[1])
+        self.podx = float(linelist[0])
+        self.pody = float(linelist[1])
+        if len(linelist)>2:
+            self.podang=float(linelist[2])*pi/180.0
+            
         
         for pod in self.pods:
-            pod.x=x
-            pod.y=y
-
+            self.init_pod(pod)
+        
     def find_closest_intersect(self,p0_x,p0_y,p1_x,p1_y):
         tMin=2
         wallMin=None
@@ -197,7 +236,7 @@ class World:
                 p2_y=seg[1]
                 p3_x=seg[2]
                 p3_y=seg[3]
-                (s,t)=intersect(p0_x,p0_y,p1_x,p1_y,p2_x,p2_y,p3_x,p3_y)
+                (s,t,dmy)=intersect(p0_x,p0_y,p1_x,p1_y,p2_x,p2_y,p3_x,p3_y)
 
                 if t >= -small and t <= 1+small and s >= -small and s <= 1+small:
                     if t < tMin:
@@ -220,11 +259,40 @@ class World:
                 p3_x=seg[2]
                 p3_y=seg[3]
 
-                (s,t)=intersect(p0_x,p0_y,p1_x,p1_y,p2_x,p2_y,p3_x,p3_y)
+                (s,t,dmy)=intersect(p0_x,p0_y,p1_x,p1_y,p2_x,p2_y,p3_x,p3_y)
 
                 if s >= 0 and s <= 1 and t >= 0 and t <= 1:
                     return wall
         return None
+
+    def count_trips(self,p0_x,p0_y,p1_x,p1_y):
+  
+  
+        # print p0_x,p0_y,p1_x,p1_y
+              
+        if p0_x==p1_x and p1_y==p0_y:
+            return (0,0)
+
+
+        count_pos = 0
+        count_neg = 0
+        
+        for t in self.trips:
+                p2_x=t[0][0]
+                p2_y=t[0][1]
+                p3_x=t[1][0]
+                p3_y=t[1][1]
+
+                (s,t,fact)=intersect(p0_x,p0_y,p1_x,p1_y,p2_x,p2_y,p3_x,p3_y)
+
+                if s >= 0 and s <= 1 and t >= 0 and t <= 1:
+                    if fact > 0:
+                        count_pos += 1
+                    else:
+                        count_neg += 1
+                        
+        return (count_pos,count_neg)
+
 
     def step(self,dt):
         self.ticks += 1
@@ -234,7 +302,7 @@ class World:
 
     def draw(self,screen):
         if not self.blind:
-         for wall in self.walls:
+            for wall in self.walls:
                 if "start" in wall.name:
                     col=(255,255,0)
                 elif "end" in wall.name:
@@ -244,9 +312,15 @@ class World:
 
                 for seg in wall.segments:
                     pg.draw.line(screen,col,(seg[0],seg[1]),(seg[2],seg[3]),6)
-
+        
+            col=(100,30,30)
+            for t in self.trips:
+                pg.draw.line(screen,col,t[0],t[1],2)
+                
+        
+        
         for pod in self.pods:
-            pod.draw(screen)
+            pod.draw(screen) #@IndentOk
 
 #        fontobject = pg.font.Font(None,20)
 #        message=" Ticks: " + str(self.ticks)
@@ -260,9 +334,19 @@ class Pod:
     right_poly_ref=[(5,5),(9,4),(12,5),(9,6)]
 
     def __init__(self,nSensor,sensorRange,brain,col):
-        self.col=col
-        self.ang=pi
+       
+        self.sensors=[]
+        self.control=Control()
+        for i in range(nSensor):
+            ang_ref=i*pi*2/nSensor
+            self.sensors.append(Sensor(ang_ref,sensorRange,"sensor"+str(i)))
+        self.base_init()    
         self.brain=brain
+        self.col=col
+        self.base_init()
+        
+    def base_init(self):
+        self.ang=pi
         self.dangdt=0
         self.x=0
         self.y=0
@@ -271,12 +355,7 @@ class Pod:
         self.vel=0
         self.collide=False
         self.collide_count=0
-        self.sensors=[]
-        self.control=Control()
-        for i in range(nSensor):
-            ang_ref=i*pi*2/nSensor
-            self.sensors.append(Sensor(ang_ref,sensorRange,"sensor"+str(i)))
-
+        
     def update_sensors(self,world):
         for sensor in self.sensors:
             ang=sensor.ang_ref+self.ang
@@ -304,6 +383,10 @@ class Pod:
         else:
             col=self.col
         pg.draw.polygon(screen,col,outline)
+        
+        if self.control == None:
+            return
+        
         if self.control.up > 0.0:
             outline=rotate_poly(self.thrust_poly_ref, self.ang, self)
             pg.draw.polygon(screen,red,outline)
@@ -336,21 +419,36 @@ class CarPod(Pod):
  
     def __init__(self,nSensor,sensorRange,brain,col):
         Pod.__init__(self,nSensor,sensorRange,brain,col)
-        self.mass  = 20
-        self.brake = 0
+        self.init()
+        
+    def init(self):
+        self.base_init()
+        self.mass  = 20.
+        self.brake = 0.
         self.steer_factor=.05
-        self.thrust_max=200
-        self.slip_thrust_max=200
-        self.slip_speed_thresh=80
+        self.thrust_max=200.
+        self.slip_thrust_max=200.
+        self.slip_speed_thresh=80.
         self.slip_speed_max=200
         self.slip=0.0
         self.damp=.0001
-        self.vel=0
-       
-    
+        self.vel=0.0
+        self.fuel=0.0
+        self.distanceTravelled=0.0
+        self.age=0.0
+        self.pos_trips=0
+        self.neg_trips=0
+        
+        
     def step(self,dt,world):
         state=State(self)
         self.control=self.brain.process(self.sensors,state,dt)
+        if self.control == None:
+            return
+        
+        self.fuel -= self.control.up*dt
+        self.age += dt
+        
         self.control.limit()
 
         slipThrust = (self.control.up-self.control.down)*self.slip*self.slip_thrust_max
@@ -367,6 +465,13 @@ class CarPod(Pod):
         ang_prev=self.ang
         
         if wall == None:
+
+            (p,n)=world.count_trips(self.x,self.y,xNext,yNext)
+            self.pos_trips += p
+            self.neg_trips += n
+        
+            #nprint self.pos_trips,self.neg_trips
+            
             self.x = xNext
             self.y = yNext
             if self.vel > 0:
@@ -386,6 +491,8 @@ class CarPod(Pod):
             else:
                 self.slip=0
 
+            
+
         else:
             self.dydt = 0
             self.dxdt = 0
@@ -393,6 +500,7 @@ class CarPod(Pod):
             self.collide = True
             self.ang += (-self.control.right+self.control.left)*self.vel*self.steer_factor*dt
 
+        self.distanceTravelled += sqrt(self.dxdt**2+self.dydt**2)*dt
         self.dangdt=(self.ang-ang_prev)/dt
  
 
@@ -462,9 +570,10 @@ class SimplePod(Pod):
 
 class Simulation:
 
-    def __init__(self,world,dt):
+    def __init__(self,world,dt,admin=None):
 
         pg.init()
+        self.admin=admin
         self.dt=dt
         self.slowMotionFactor=1.0
         self.world = world
@@ -495,19 +604,23 @@ class Simulation:
 
         clock = pg.time.Clock()
         frameRate=1.0/self.dt/self.slowMotionFactor
-
+        self.tick_count=0
+        
        # the event loop also loops the animation code
         while True:
-
+            
             self.frameskipcount -= 1
-
+            self.tick_count += 1
             display= self.frameskipcount == 0 and self.frameskipfactor != 0
 
             if display:
                 clock.tick(frameRate)
                 self.frameskipcount=self.frameskipfactor
 
-            pg.event.pump()
+            if display or (self.tick_count%10)==0:
+                pg.event.pump()
+                
+                
             keyinput = pg.key.get_pressed()
 
             if keyinput[pg.K_ESCAPE] or pg.event.peek(pg.QUIT):
@@ -515,8 +628,13 @@ class Simulation:
                 break
                 # raise SystemExit
 
-
+            if self.admin != None:
+                self.admin.process()
+                
+                
             self.world.step(self.dt)
+            
+            
             if display:
                 self.screen.fill((0,0,0))
                 
