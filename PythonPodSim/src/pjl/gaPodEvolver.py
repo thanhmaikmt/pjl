@@ -18,7 +18,7 @@ log_file=open("log_file.txt","w")
 #log_file=None              # do this to turn off logging
 
 reaping=True
-touched=True
+
 
 
 class Painter:   # use me to display stuff
@@ -45,12 +45,12 @@ class Admin:  # use me to control the simulation
             # this is called just before each time step
             # do admin tasks here
 
-            global pods,reaping
+            global pods,reaping,touched
 
              # output to a log file
-            if reaping and log_file!=None and touched:
+            if reaping and log_file!=None and pool.touched:
                 log_file.write(str(sim.world.ticks) +','+ str(pool.best_fitness())+','+str(pool.average_fitness())+'\n')
-                
+                pool.touched=False
                                 
             keyinput = pygame.key.get_pressed()
         
@@ -129,9 +129,11 @@ class Pool:  #  use me to store the best brains and create new brains
         self.layerSizes=[nin,nhidden,nout]
         self.elite_bias=0.5
         self.reprover=None
-        
+        self.touched=True
+
     def add(self,x):  
         
+
         
         if len(self.list) >= self.maxMembers:
             if x.fitness < self.list[self.maxMembers-1].fitness:
@@ -139,7 +141,7 @@ class Pool:  #  use me to store the best brains and create new brains
           
         for i in range(len(self.list)):
             if x.fitness > self.list[i].fitness:
-                touched=True
+                self.touched=True
                 self.list.insert(i,x)
                 if len(self.list) > self.maxMembers:
                     self.list.pop()
@@ -147,7 +149,7 @@ class Pool:  #  use me to store the best brains and create new brains
             
         if len(self.list) < self.maxMembers:
             self.list.append(x)    
-            touched=True
+            self.touched=True
              
     def create_new(self):
         
@@ -180,6 +182,20 @@ class Pool:  #  use me to store the best brains and create new brains
     
     def create_best(self):
         clone=self.list[0].brain.clone()
+        #clone.proof_count=self.list[0].brain.proof_count
+        return clone
+
+    def create_most_proven(self):
+        
+      
+        maxProof=-1
+        
+        for g in self.list:
+            if g.brain.proof_count > maxProof:
+                maxProof=g.brain.proof_count
+                cloneMe=g.brain
+                
+        clone=cloneMe.clone()
         #clone.proof_count=self.list[0].brain.proof_count
         return clone
 
