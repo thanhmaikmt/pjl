@@ -7,10 +7,10 @@ from fontmanager import  *
     
     
 POOL_SIZE=50               # size of pool of best brains
-POP_SIZE=20                # number of pod on circuit
+POP_SIZE=10                # number of pod on circuit
 SENSOR_SCALE=1.0/10.0      # scale sensors (make more like 0-1)
 VELOCITY_SCALE=1.0/80      # pod starts to slip at 80
-MAX_AGE=80                 # pods live for 40 seconds   
+MAX_AGE=40                 # pods live for 40 seconds   
 POOL_FILE_NAME="pool.txt"  # file to save/restore the pool
 REPROVE_PROB=.2            # probability that selection we trigger a reprove of the best gene
 
