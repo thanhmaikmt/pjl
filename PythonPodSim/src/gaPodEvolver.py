@@ -9,16 +9,12 @@ from fontmanager import  *
 POOL_SIZE=50               # size of pool of best brains
 POP_SIZE=10                # number of pod on circuit
 SENSOR_SCALE=1.0/10.0      # scale sensors (make more like 0-1)
-VELOCITY_SCALE=1.0/80      # pod starts to slip at 80
+VELOCITY_SCALE=1.0/80      # scale velocity (pod starts to slip at 80)
 MAX_AGE=40                 # pods live for 40 seconds   
 POOL_FILE_NAME="pool.txt"  # file to save/restore the pool
 REPROVE_PROB=.2            # probability that selection we trigger a reprove of the best gene
 
 log_file=open("log_file.txt","w")
-#log_file=None              # do this to turn off logging
-
-reaping=True
-
 
 
 class Painter:   # use me to display stuff
@@ -45,17 +41,17 @@ class Admin:  # use me to control the simulation
             # this is called just before each time step
             # do admin tasks here
 
-            global pods,reaping,touched
+            global pods,touched
 
              # output to a log file
-            if reaping and log_file!=None and pool.touched:
+            if pool.reaping and log_file!=None and pool.touched:
                 log_file.write(str(sim.world.ticks) +','+ str(pool.best_fitness())+','+str(pool.average_fitness())+'\n')
                 pool.touched=False
                                 
             keyinput = pygame.key.get_pressed()
         
             # speed up/down  display
-            if keyinput[pg.K_KP_PLUS]:
+            if keyinput[pg.K_KP_PLUS] or keyinput[pg.K_EQUALS]:
                 sim.frameskipfactor = sim.frameskipfactor+1
                 print "skip factor" ,sim.frameskipfactor
             
@@ -67,7 +63,7 @@ class Admin:  # use me to control the simulation
             if  keyinput[pg.K_b]:
                 
                 
-                if reaping:    # if reaping copy existing to allow restore
+                if pool.reaping:    # if reaping copy existing to allow restore
                     self.pods_copy=copy(pods)
                     pod=pods[0]
                     del pods[:]
@@ -79,13 +75,13 @@ class Admin:  # use me to control the simulation
                 world.init_pod(pod)
                 pod.ang += random()-0.5    # randomize the intial angle
                 pod.control.brain=pool.create_best()
-                reaping=False
+                pool.reaping=False
              
             # display the performance of the best pod
             if  keyinput[pg.K_p]:
                 
                 
-                if reaping:    # if reaping copy existing to allow restore
+                if pool.reaping:    # if reaping copy existing to allow restore
                     self.pods_copy=copy(pods)
                     pod=pods[0]
                     del pods[:]
@@ -97,13 +93,13 @@ class Admin:  # use me to control the simulation
                 world.init_pod(pod)
                 pod.ang += random()-0.5    # randomize the intial angle
                 pod.control.brain=pool.create_most_proven()
-                reaping=False   
+                pool.reaping=False   
                 
             # go back into evolution mode    
-            if not reaping and keyinput[pg.K_r]:
+            if not pool.reaping and keyinput[pg.K_r]:
                 del pods[:]
                 pods.extend(self.pods_copy)
-                reaping=True
+                pool.reaping=True
 
             
             if keyinput[pg.K_s]:
@@ -130,7 +126,8 @@ class Pool:  #  use me to store the best brains and create new brains
         self.elite_bias=0.5
         self.reprover=None
         self.touched=True
-
+        self.reaping=True
+        
     def add(self,x):  
         
 
@@ -297,7 +294,7 @@ class GAControl:
     def process(self,sensor,state,dt):
     
                     
-        if reaping and self.reap_pod(state):
+        if pool.reaping and self.reap_pod(state):
             " here then time to replace the pod"
             
             # save the brain and fitness
@@ -357,7 +354,7 @@ for i in range(NPODS):
 
 admin       = Admin()
 
-world       = World("../car_circuit2.txt",pods)
+world       = World("car_circuit.txt",pods)
 sim         = Simulation(world,dt,admin)
 sim.painter=Painter()
 
