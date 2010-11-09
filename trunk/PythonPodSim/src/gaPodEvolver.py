@@ -123,7 +123,7 @@ class Pool:  #  use me to store the best brains and create new brains
         self.list=[]
         self.maxMembers=POOL_SIZE
         self.layerSizes=[nin,nhidden,nout]
-        self.elite_bias=0.5
+        self.elite_bias=1.0/POOL_SIZE
         self.reprover=None
         self.touched=True
         self.reaping=True
@@ -346,15 +346,12 @@ for i in range(NPODS):
     control=GAControl()
     b=255-(i*167)%256
     g=(i*155)%256
-    r=255-(i*125)%256
-    
+    r=255-(i*125)%256    
     pod = CarPod(nSensors,sensorRange,control,((r,g,b)))
     pods.append(pod)
 
-
 admin       = Admin()
-
-world       = World("car_circuit.txt",pods)
+world       = World("world.txt",pods)
 sim         = Simulation(world,dt,admin)
 sim.painter=Painter()
 
