@@ -163,6 +163,8 @@ class World:
         self.rect=pg.Rect(0,0,0,0)
         self.ticks=0
         self.blind=False
+        self.podang=pi
+        
         while True:
             line = fin.readline()
             if len(line)==0:
