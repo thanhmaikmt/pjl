@@ -24,7 +24,6 @@
 #
 # For more information on the working of this code see in line comments 
 # and look at the code. 
-
 from simulation import *
 from backpropbrain import  *
 import pygame 
@@ -36,15 +35,15 @@ from fontmanager import  *
 
 
 RUN_NAME="pjl"             # used for file names so you can tag different experiments
-WORLD_FILE="world.txt"     # world to use
+WORLD_FILE="trip_world.txt"     # world to use
 
 #  parameters that could be varied
     
 POOL_SIZE=50               # size of pool of best brains
 POP_SIZE=10                # number of pod on circuit
-SENSOR_SCALE=1.0/10.0      # scale sensors (make more like 0-1)
+SENSOR_SCALE=1.0/100.0      # scale sensors (make more like 0-1)
 VELOCITY_SCALE=1.0/80      # scale velocity (pod starts to slip at 80)
-MAX_AGE=40                 # pods live for 40 seconds   
+MAX_AGE=80                 # pods live for 40 seconds   
 REPROVE_PROB=.2            # probability that selection we trigger a reprove of the best gene
 N_HIDDEN=5                 # number of neurons in hidden layer
 N_SENSORS=12               # number of sensors
@@ -396,22 +395,20 @@ class GAControl:
 
 dt          =.1       
 sensorRange = 2000
-
-
 pool=Pool(N_SENSORS+1,N_HIDDEN,4)
-
-NPODS=POP_SIZE
-
 pods=[]
 
 
-for i in range(NPODS):
+for i in range(POP_SIZE):
     control=GAControl()
+    # random colours
     b=255-(i*167)%256
     g=(i*155)%256
     r=255-(i*125)%256    
     pod = CarPod(N_SENSORS,sensorRange,control,((r,g,b)))
+    
     pods.append(pod)
+
 
 admin       = Admin()
 world       = World(WORLD_FILE,pods)
@@ -421,9 +418,5 @@ sim         = Simulation(world,dt,admin)
 sim.painter = Painter()
 
 
-#uncomment the next line to hide the walls.
-#sim.world.blind=True
-#sim.frameskipfactor=10
-
-
+# go go go  ..........
 sim.run()
