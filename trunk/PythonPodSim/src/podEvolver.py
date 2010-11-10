@@ -6,6 +6,7 @@
 #  Pods have a finite life.
 #  Pods die when they reach the age limit or crash into a wall
 #  The fitness of a pod is measured by the distance around track when it dies.
+#      if it has completed the circuit I also use the age of pod to encourage speed.
 #  A list (Pool) of the best pods is kept.
 #  When a pod dies its neural net is added to the pool (if it is good enough)
 #    it net is then replaced by a new one created from the pool.
@@ -35,7 +36,17 @@ from fontmanager import  *
 
 
 RUN_NAME="pjl"             # used for file names so you can tag different experiments
+
+
+# The world
 WORLD_FILE="trip_world.txt"     # world to use
+N_TRIP=21        # to avoid end wall remove pod after hitting this (last) trip
+
+# An alternative world!!!
+#WORLD_FILE="car_circuit.txt"     # world to use
+#N_TRIP=200                       # big number because it is a loop
+
+
 
 #  parameters that could be varied
     
@@ -43,10 +54,11 @@ POOL_SIZE=50               # size of pool of best brains
 POP_SIZE=10                # number of pod on circuit
 SENSOR_SCALE=1.0/100.0      # scale sensors (make more like 0-1)
 VELOCITY_SCALE=1.0/80      # scale velocity (pod starts to slip at 80)
-MAX_AGE=80                 # pods live for 40 seconds   
+MAX_AGE=80                 # pods life span   
 REPROVE_PROB=.2            # probability that selection we trigger a reprove of the best gene
 N_HIDDEN=5                 # number of neurons in hidden layer
 N_SENSORS=12               # number of sensors
+
 
 # files used by program
 
@@ -73,6 +85,7 @@ class Painter:   # use me to display stuff
     
         
 class Admin:  # use me to control the simulation
+              # see comments to see what key hits do
         
     def process(self):   
         
@@ -88,7 +101,7 @@ class Admin:  # use me to control the simulation
                                 
             keyinput = pygame.key.get_pressed()
         
-            # speed up/down  display
+            # speed up/down  display      
             if keyinput[pg.K_KP_PLUS] or keyinput[pg.K_EQUALS]:
                 sim.frameskipfactor = sim.frameskipfactor+1
                 print "skip factor" ,sim.frameskipfactor
@@ -97,7 +110,7 @@ class Admin:  # use me to control the simulation
                 sim.frameskipfactor = max(1,sim.frameskipfactor-1)
                 print "skip factor" ,sim.frameskipfactor
 
-            # display the performance of the best pod
+            # display the performance of the best pod in pool
             if  keyinput[pg.K_b]:
                 
                 
@@ -115,7 +128,7 @@ class Admin:  # use me to control the simulation
                 pod.control.brain=pool.create_best()
                 pool.reaping=False
              
-            # display the performance of the best pod
+            # display the performance of the most proven pod
             if  keyinput[pg.K_p]:
                 
                 
@@ -133,26 +146,24 @@ class Admin:  # use me to control the simulation
                 pod.control.brain=pool.create_most_proven()
                 pool.reaping=False   
                 
-            # go back into evolution mode    
+            # go back into evolution mode after looking at best pod   
             if not pool.reaping and keyinput[pg.K_r]:
                 del pods[:]
                 pods.extend(self.pods_copy)
                 pool.reaping=True
 
-            
+            # save the pool to a file
             if keyinput[pg.K_s]:
                 file=open(POOL_FILE_NAME,"w")
                 pool.save(file)
                 file.close()
                 
+            # reload the pool from a file
             if keyinput[pg.K_l]:
                 file=open(POOL_FILE_NAME,"r")
                 pool.load(file)
                 file.close()
                 
-                
-                
-                    
 
 class Pool:  #  use me to store the best brains and create new brains
   
@@ -168,27 +179,28 @@ class Pool:  #  use me to store the best brains and create new brains
         self.touched=True
         self.reaping=True
         
-    
-    # add a new Gene to the Pool
-    def add(self,x):  
+    # add a new Gene to the Pool  (if better than the worst one in pool)
+    # 
+    def add(self,gene):  
         
         if len(self.list) >= self.maxMembers:
-            if x.fitness < self.list[self.maxMembers-1].fitness:
+            if gene.fitness < self.list[self.maxMembers-1].fitness:
                 return
           
         for i in range(len(self.list)):
-            if x.fitness > self.list[i].fitness:
+            if gene.fitness > self.list[i].fitness:
                 self.touched=True
-                self.list.insert(i,x)
+                self.list.insert(i,gene)
                 if len(self.list) > self.maxMembers:
                     self.list.pop()
                 return
             
         if len(self.list) < self.maxMembers:
-            self.list.append(x)    
+            self.list.append(gene)    
             self.touched=True
              
-    # create a neural net
+    # create a neural net from the pool or maybe random
+    # might return best net to be reproven
     def create_new(self):
         
     
@@ -324,6 +336,7 @@ class Gene:
 
 # Pod controller
 # Note that these are resused with new neural nets during the simulation
+# also has a little bit of responsibiltiy for managing the evolution of pods
 class GAControl:
 
     def __init__(self):
@@ -333,19 +346,27 @@ class GAControl:
     def reap_pod(self,state):
         pod=state.pod
         
+        
         if pod.collide:
             return True
         
         if pod.age > MAX_AGE:
             return True 
     
+        if pod.pos_trips >= N_TRIP:
+            return True
+        
         return False
     
     # calculate the fitness of a pod
     def calc_fitness(self,state,brain):
       
+        # encourage them to go fast once they get round the path
+        if state.pod.pos_trips == N_TRIP:
+            fitness = N_TRIP + MAX_AGE-state.pod.age
+        else:    
         # just count the trip wires we have passed        
-        fitness = state.pod.pos_trips-state.pod.neg_trips
+            fitness = state.pod.pos_trips-state.pod.neg_trips
         
         return fitness    
         
@@ -367,6 +388,7 @@ class GAControl:
             self.brain=pool.create_new()
             return
             
+        # normal control stuff
         
         control=Control()
             
