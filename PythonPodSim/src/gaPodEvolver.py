@@ -1,3 +1,30 @@
+#  demonstration of Evolving pods using a randomish search.
+#
+#   uses the idea of a population selection and mutatation (does not try crossover)
+#
+#  Each pod is controlled with a neural net.
+#  Pods have a finite life.
+#  Pods die when they reach the age limit or crash into a wall
+#  The fitness of a pod is measured by the distance around track when it dies.
+#  A list (Pool) of the best pods is kept.
+#  When a pod dies its neural net is added to the pool (if it is good enough)
+#    it net is then replaced by a new one created from the pool.
+#  The Pool creates new neural nets by mutating one of the brains in the pool.
+#  mutation in this version 
+#      -  all the weights are changed by a random amount. 
+#      -  I also use a random scaling factor so some new pods are small changes whilst
+#         others are large changes. 
+#  
+# Notes: the initial angle of a pod has got a random pertubation.
+#        Just because a pod can has achieved a good score does not mean it is the best
+#        I keep "re-testing" the best pod in case its score was by chance.
+#
+#  A log file is written out which could be used to plot graphs of performance to compare different 
+#  configurations (e.g. change the size of the POOL)
+#
+# For more information on the working of this code see in line comments 
+# and look at the code. 
+
 from simulation import *
 from backpropbrain import  *
 import pygame 
@@ -5,17 +32,30 @@ from random import  *
 from copy import *
 from fontmanager import  *
     
+
+
+
+RUN_NAME="pjl"             # used for file names so you can tag different experiments
+WORLD_FILE="world.txt"     # world to use
+
+#  parameters that could be varied
     
 POOL_SIZE=50               # size of pool of best brains
 POP_SIZE=10                # number of pod on circuit
 SENSOR_SCALE=1.0/10.0      # scale sensors (make more like 0-1)
 VELOCITY_SCALE=1.0/80      # scale velocity (pod starts to slip at 80)
 MAX_AGE=40                 # pods live for 40 seconds   
-POOL_FILE_NAME="pool.txt"  # file to save/restore the pool
 REPROVE_PROB=.2            # probability that selection we trigger a reprove of the best gene
+N_HIDDEN=5                 # number of neurons in hidden layer
+N_SENSORS=12               # number of sensors
 
-log_file=open("log_file.txt","w")
+# files used by program
 
+POOL_FILE_NAME=RUN_NAME+"_pool.txt"      # file to save/restore the pool
+log_file=open(RUN_NAME+"log.txt","w")    # keep a record of the performance
+
+
+# Define some classes
 
 class Painter:   # use me to display stuff
     
@@ -33,7 +73,6 @@ class Painter:   # use me to display stuff
                           ' average:'+ str(pool.average_fitness()), (X,Y), (0,255,0))
     
         
-        
 class Admin:  # use me to control the simulation
         
     def process(self):   
@@ -41,7 +80,7 @@ class Admin:  # use me to control the simulation
             # this is called just before each time step
             # do admin tasks here
 
-            global pods,touched
+            global pods
 
              # output to a log file
             if pool.reaping and log_file!=None and pool.touched:
@@ -119,6 +158,8 @@ class Admin:  # use me to control the simulation
 class Pool:  #  use me to store the best brains and create new brains
   
   
+    # create a pool
+    # specify the neural net parameters with nin nhidden and nout
     def __init__(self,nin,nhidden,nout):
         self.list=[]
         self.maxMembers=POOL_SIZE
@@ -128,9 +169,9 @@ class Pool:  #  use me to store the best brains and create new brains
         self.touched=True
         self.reaping=True
         
+    
+    # add a new Gene to the Pool
     def add(self,x):  
-        
-
         
         if len(self.list) >= self.maxMembers:
             if x.fitness < self.list[self.maxMembers-1].fitness:
@@ -148,15 +189,21 @@ class Pool:  #  use me to store the best brains and create new brains
             self.list.append(x)    
             self.touched=True
              
+    # create a neural net
     def create_new(self):
         
     
+        # if pool is not full create a random brain 
         if len(self.list) < self.maxMembers:         
             #Create a brain
             brain=BackPropBrain(self.layerSizes)
             brain.proof_count=0
             return brain
 
+
+        # keep testing the best brain in case it was a fluke!!!
+        # this removes the best net from the pool 
+        # it will get back in if it scores OK 
         if random() < REPROVE_PROB:
             brain=self.list[0].brain
             del self.list[0]
@@ -164,27 +211,31 @@ class Pool:  #  use me to store the best brains and create new brains
             return brain
             
             
+        # Otherwise just select a random brain from the pool
         clone=self.select2()
 
+        # if this returned None create a new random brain
         if clone==None:
             brain=BackPropBrain(self.layerSizes)
             brain.proof_count=0
             return brain
         
         
+        # mutate the cloned brain by a random amount.
         clone.mutate(random())
         clone.proof_count=0
         return clone
     
     
+    # return top of the pool
     def create_best(self):
         clone=self.list[0].brain.clone()
         #clone.proof_count=self.list[0].brain.proof_count
         return clone
 
+    # return the one that has been RETESTED the most.
     def create_most_proven(self):
         
-      
         maxProof=-1
         
         for g in self.list:
@@ -196,6 +247,7 @@ class Pool:  #  use me to store the best brains and create new brains
         #clone.proof_count=self.list[0].brain.proof_count
         return clone
 
+    # OLD version of selection that I did not like
     def select1(self):
         
         for x in self.list:
@@ -206,7 +258,8 @@ class Pool:  #  use me to store the best brains and create new brains
         return None
 
 
-    
+    # random selection from the pool
+    # can also return None to trigger a new random brain    
     def select2(self):
         
         id=randint(0,len(self.list))
@@ -216,13 +269,15 @@ class Pool:  #  use me to store the best brains and create new brains
         
         return self.list[id].brain.clone()
         
-        
+    # return the best fitness in the pool
+    # since I retest the best this value can fall
     def best_fitness(self):
         if len(self.list) == 0:
             return 0
         else:
             return self.list[0].fitness
        
+    # return average fitness
     def average_fitness(self):
         if len(self.list) == 0:
             return 0
@@ -233,7 +288,8 @@ class Pool:  #  use me to store the best brains and create new brains
 
             return sum/len(self.list)
         
-            
+    # save the pool to a file
+    # (note reproof count is not saved)
     def save(self,file):       
         n=len(self.list)
         pickle.dump(n,file)
@@ -244,6 +300,7 @@ class Pool:  #  use me to store the best brains and create new brains
             x.brain.save(file)
         print "POOL SAVED"
         
+    # load pool from a file
     def load(self,file):
         self.list=[]
         n=pickle.load(file)
@@ -257,6 +314,7 @@ class Pool:  #  use me to store the best brains and create new brains
         print "RELOADED POOL"   
             
 
+# Simple class to store the brain and fitness
 class Gene:
     
     def __init__(self,brain,fitness):
@@ -265,6 +323,8 @@ class Gene:
         
 
 
+# Pod controller
+# Note that these are resused with new neural nets during the simulation
 class GAControl:
 
     def __init__(self):
@@ -284,8 +344,8 @@ class GAControl:
     
     # calculate the fitness of a pod
     def calc_fitness(self,state,brain):
-        
-        
+      
+        # just count the trip wires we have passed        
         fitness = state.pod.pos_trips-state.pod.neg_trips
         
         return fitness    
@@ -294,10 +354,11 @@ class GAControl:
     def process(self,sensor,state,dt):
     
                     
+        # If we are trying to evolve and pod dies
         if pool.reaping and self.reap_pod(state):
             " here then time to replace the pod"
             
-            # save the brain and fitness
+            # save current  brain and fitness in the pool
             fitness=self.calc_fitness(state,self.brain)
             pool.add(Gene(self.brain,fitness)) 
             
@@ -310,9 +371,12 @@ class GAControl:
         
         control=Control()
             
-        # create the input for the brain 
+        # create the input for the brain
+        # first the velocity of the pod 
         input=[sqrt(state.dxdt**2+state.dydt**2)*VELOCITY_SCALE]
         
+        # and all the sensors
+        # (note: possibly rear pointing sensors are redundant?)
         for s in sensor:
             input.append(s.val*SENSOR_SCALE)
             
@@ -322,20 +386,19 @@ class GAControl:
         # assign values to the controllers
         control.up=output[0]
         control.down=output[1]
-        
-        
         control.left=output[2]
         control.right=output[3]
         
         return control
 
 
+###  START OF PROGRAM
 
-dt          =.05
-nSensors    = 12
+dt          =.1       
 sensorRange = 2000
 
-pool=Pool(nSensors+1,5,4)
+
+pool=Pool(N_SENSORS+1,N_HIDDEN,4)
 
 NPODS=POP_SIZE
 
@@ -347,13 +410,15 @@ for i in range(NPODS):
     b=255-(i*167)%256
     g=(i*155)%256
     r=255-(i*125)%256    
-    pod = CarPod(nSensors,sensorRange,control,((r,g,b)))
+    pod = CarPod(N_SENSORS,sensorRange,control,((r,g,b)))
     pods.append(pod)
 
 admin       = Admin()
-world       = World("world.txt",pods)
+world       = World(WORLD_FILE,pods)
 sim         = Simulation(world,dt,admin)
-sim.painter=Painter()
+
+# register the painter to display stuff
+sim.painter = Painter()
 
 
 #uncomment the next line to hide the walls.

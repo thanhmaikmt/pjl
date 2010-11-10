@@ -21,6 +21,10 @@ def rotate_poly(poly,ang,pos):
         ret.append((x,y))
     return ret
 
+
+def dist(x1,y1,x2,y2):
+    return sqrt((x1-x2)**2+(y1-y2)**2)
+
 def limit(x,min,max):
     if x > max:
         return 1
@@ -145,7 +149,8 @@ class Wall:
 
 
         self.rect=pg.Rect(self.minX,self.minY,self.maxX-self.minX,self.maxY-self.minY)
-
+       
+    
     def len(self):
         return len(self.segments)
     
@@ -190,6 +195,8 @@ class World:
     def build_trip_wires(self):
         left=None
         right=None
+        trips=self.trips
+        
         for w in self.walls:
             if "left" in w.name:
                 left=w
@@ -201,8 +208,55 @@ class World:
                 print " Left and right must have equal number of points"
                 
             else:
-               for l,r in zip(left.segments,right.segments):
-                  self.trips.append(((l[0],l[1]),(r[0],r[1])))
+                for l,r in zip(left.segments,right.segments):
+                    trips.append(((l[0],l[1]),(r[0],r[1])))
+           
+        
+        for w in self.walls:
+            if "tube" in w.name:
+                segs=w.segments
+                isegA1=2
+                isegB1=len(segs)-2
+                cntA=0
+                cntB=0
+                
+                while True:
+                    a1=segs[isegA1]
+                    b1=segs[isegB1]
+                    trips.append(((b1[0],b1[1]),(a1[0],a1[1])))
+                    
+                    isegA2=isegA1+1
+                    isegB2=isegB1-1
+                    
+                    if isegA2>=isegB2:
+                        break
+                    
+                    a2=segs[isegA2]
+                    b2=segs[isegB2]
+                    
+                    a1b2=dist(a1[0],a1[1],b2[0],b2[1])
+                    
+                    b1a2=dist(b1[0],b1[1],a2[0],a2[1])
+                    
+                    a2b2=dist(a2[0],a2[1],b2[0],b2[1])
+                    
+                    
+                    if cntB < 1 and a1b2 < b1a2 and a1b2 < a2b2:
+                        isegB1=isegB2
+                        cntB += 1
+                        cntA  = 0
+
+                    elif cntA < 1 and b1a2 < a1b2 and b1a2 < a2b2:
+                        isegA1=isegA2
+                        cntA += 1
+                        cntB  = 0 
+                        
+                    else:
+                        isegA1=isegA2
+                        isegB1=isegB2
+                        cntA=0
+                        cntB=0
+                
                 
                 # print "POD OK"
 
