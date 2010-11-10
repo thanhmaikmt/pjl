@@ -125,7 +125,7 @@ class Admin:  # use me to control the simulation
                     
                 world.init_pod(pod)
                 pod.ang += random()-0.5    # randomize the intial angle
-                pod.control.brain=pool.create_best()
+                pod.control.net=pool.create_best()
                 pool.reaping=False
              
             # display the performance of the most proven pod
@@ -143,7 +143,7 @@ class Admin:  # use me to control the simulation
                     
                 world.init_pod(pod)
                 pod.ang += random()-0.5    # randomize the intial angle
-                pod.control.brain=pool.create_most_proven()
+                pod.control.net=pool.create_most_proven()
                 pool.reaping=False   
                 
             # go back into evolution mode after looking at best pod   
@@ -204,35 +204,35 @@ class Pool:  #  use me to store the best brains and create new brains
     def create_new(self):
         
     
-        # if pool is not full create a random brain 
+        # if pool is not full create a random net 
         if len(self.list) < self.maxMembers:         
-            #Create a brain
-            brain=BackPropBrain(self.layerSizes)
-            brain.proof_count=0
-            return brain
+            #Create a net
+            net=BackPropBrain(self.layerSizes)
+            net.proof_count=0
+            return net
 
 
-        # keep testing the best brain in case it was a fluke!!!
+        # keep testing the best net in case it was a fluke!!!
         # this removes the best net from the pool 
         # it will get back in if it scores OK 
         if random() < REPROVE_PROB:
-            brain=self.list[0].brain
+            net=self.list[0].net
             del self.list[0]
-            brain.proof_count += 1
-            return brain
+            net.proof_count += 1
+            return net
             
             
-        # Otherwise just select a random brain from the pool
+        # Otherwise just select a random net from the pool
         clone=self.select2()
 
-        # if this returned None create a new random brain
+        # if this returned None create a new random net
         if clone==None:
-            brain=BackPropBrain(self.layerSizes)
-            brain.proof_count=0
-            return brain
+            net=BackPropBrain(self.layerSizes)
+            net.proof_count=0
+            return net
         
         
-        # mutate the cloned brain by a random amount.
+        # mutate the cloned net by a random amount.
         clone.mutate(random())
         clone.proof_count=0
         return clone
@@ -240,8 +240,8 @@ class Pool:  #  use me to store the best brains and create new brains
     
     # return top of the pool
     def create_best(self):
-        clone=self.list[0].brain.clone()
-        #clone.proof_count=self.list[0].brain.proof_count
+        clone=self.list[0].net.clone()
+        #clone.proof_count=self.list[0].net.proof_count
         return clone
 
     # return the one that has been RETESTED the most.
@@ -250,12 +250,12 @@ class Pool:  #  use me to store the best brains and create new brains
         maxProof=-1
         
         for g in self.list:
-            if g.brain.proof_count > maxProof:
-                maxProof=g.brain.proof_count
-                cloneMe=g.brain
+            if g.net.proof_count > maxProof:
+                maxProof=g.net.proof_count
+                cloneMe=g.net
                 
         clone=cloneMe.clone()
-        #clone.proof_count=self.list[0].brain.proof_count
+        #clone.proof_count=self.list[0].net.proof_count
         return clone
 
     # OLD version of selection that I did not like
@@ -263,14 +263,14 @@ class Pool:  #  use me to store the best brains and create new brains
         
         for x in self.list:
             if random() < self.elite_bias:
-                clone=x.brain.clone()
+                clone=x.net.clone()
                 return clone
         
         return None
 
 
     # random selection from the pool
-    # can also return None to trigger a new random brain    
+    # can also return None to trigger a new random net    
     def select2(self):
         
         id=randint(0,len(self.list))
@@ -278,7 +278,7 @@ class Pool:  #  use me to store the best brains and create new brains
         if id ==len(self.list):
             return None
         
-        return self.list[id].brain.clone()
+        return self.list[id].net.clone()
         
     # return the best fitness in the pool
     # since I retest the best this value can fall
@@ -308,7 +308,7 @@ class Pool:  #  use me to store the best brains and create new brains
         for x in self.list:
             o=deepcopy(x.fitness)
             pickle.dump(o,file)
-            x.brain.save(file)
+            x.net.save(file)
         print "POOL SAVED"
         
     # load pool from a file
@@ -318,18 +318,23 @@ class Pool:  #  use me to store the best brains and create new brains
         print n
         for i in range(n):
             f=pickle.load(file)
-            b=loadBrain(file)
-            b.proof_count=0    # sorry we lost the proof count when we saved it
-            self.add(Gene(b,f))
+            net=loadBrain(file)
+            net.proof_count=0    # sorry we lost the proof count when we saved it
+            self.add(Gene(net,f))
          
         print "RELOADED POOL"   
-            
+        for pod in pods:
+            # reset the pod and give it a new net from the pool
+            world.init_pod(pod)
+            pod.ang += random()-0.5    # randomize the intial angle
+            pod.net.net=pool.create_new()
+        
 
-# Simple class to store the brain and fitness
+# Simple class to store the net and fitness
 class Gene:
     
-    def __init__(self,brain,fitness):
-        self.brain=brain
+    def __init__(self,net,fitness):
+        self.net=net
         self.fitness=fitness
         
 
@@ -340,13 +345,12 @@ class Gene:
 class GAControl:
 
     def __init__(self):
-        self.brain=pool.create_new()
+        self.net=pool.create_new()
     
     # decide if we want to kill a pod        
     def reap_pod(self,state):
         pod=state.pod
-        
-        
+                
         if pod.collide:
             return True
         
@@ -359,7 +363,7 @@ class GAControl:
         return False
     
     # calculate the fitness of a pod
-    def calc_fitness(self,state,brain):
+    def calc_fitness(self,state,net):
       
         # encourage them to go fast once they get round the path
         if state.pod.pos_trips == N_TRIP:
@@ -378,21 +382,21 @@ class GAControl:
         if pool.reaping and self.reap_pod(state):
             " here then time to replace the pod"
             
-            # save current  brain and fitness in the pool
-            fitness=self.calc_fitness(state,self.brain)
-            pool.add(Gene(self.brain,fitness)) 
+            # save current  net and fitness in the pool
+            fitness=self.calc_fitness(state,self.net)
+            pool.add(Gene(self.net,fitness)) 
             
-            # reset the pod and give it a new brain
+            # reset the pod and give it a new net
             world.init_pod(state.pod)
             state.pod.ang += random()-0.5    # randomize the intial angle
-            self.brain=pool.create_new()
+            self.net=pool.create_new()
             return
             
         # normal control stuff
         
         control=Control()
             
-        # create the input for the brain
+        # create the input for the net
         # first the velocity of the pod 
         input=[sqrt(state.dxdt**2+state.dydt**2)*VELOCITY_SCALE]
         
@@ -401,8 +405,8 @@ class GAControl:
         for s in sensor:
             input.append(s.val*SENSOR_SCALE)
             
-        # activate the brain to get output    
-        output=self.brain.ffwd(input)
+        # activate the net to get output    
+        output=self.net.ffwd(input)
        
         # assign values to the controllers
         control.up=output[0]
