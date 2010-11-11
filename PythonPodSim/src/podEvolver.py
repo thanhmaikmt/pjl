@@ -26,12 +26,12 @@
 # For more information on the working of this code see in line comments 
 # and look at the code. 
 from simulation import *
-from backpropbrain import  *
+import backpropbrain 
 import pygame 
 from random import  *
 from copy import *
 from fontmanager import  *
-    
+import pickle
 
 
 
@@ -65,7 +65,18 @@ N_SENSORS=12               # number of sensors
 POOL_FILE_NAME=RUN_NAME+"_pool.txt"      # file to save/restore the pool
 log_file=open(RUN_NAME+"log.txt","w")    # keep a record of the performance
 
+nin=N_SENSORS+1    # velocoty + sensors are inputs
+nout=4             # controls
 
+# specify the neural net parameters with nin nhidden and nout
+layerSizes=[nin,N_HIDDEN,nout]
+
+def createBrain(): 
+    return  backpropbrain.BackPropBrain(layerSizes)
+
+def loadBrain():
+    return backpropbrain.loadBrain()   
+    
 # Define some classes
 
 class Painter:   # use me to display stuff
@@ -169,11 +180,10 @@ class Pool:  #  use me to store the best brains and create new brains
   
   
     # create a pool
-    # specify the neural net parameters with nin nhidden and nout
-    def __init__(self,nin,nhidden,nout):
+   
+    def __init__(self):
         self.list=[]
-        self.maxMembers=POOL_SIZE
-        self.layerSizes=[nin,nhidden,nout]
+        self.maxMembers=POOL_SIZE        
         self.elite_bias=1.0/POOL_SIZE
         self.reprover=None
         self.touched=True
@@ -207,7 +217,7 @@ class Pool:  #  use me to store the best brains and create new brains
         # if pool is not full create a random net 
         if len(self.list) < self.maxMembers:         
             #Create a net
-            net=BackPropBrain(self.layerSizes)
+            net=createBrain()
             net.proof_count=0
             return net
 
@@ -227,7 +237,7 @@ class Pool:  #  use me to store the best brains and create new brains
 
         # if this returned None create a new random net
         if clone==None:
-            net=BackPropBrain(self.layerSizes)
+            net=createBrain()
             net.proof_count=0
             return net
         
@@ -421,11 +431,11 @@ class GAControl:
 
 dt          =.1       
 sensorRange = 2000
-pool=Pool(N_SENSORS+1,N_HIDDEN,4)
-pods=[]
+pool=Pool()    #  create a pool for fittest networks
+pods=[]        #  pods on the circuits
 
 
-for i in range(POP_SIZE):
+for i in range(POP_SIZE):     # create initial population on the circuit
     control=GAControl()
     # random colours
     b=255-(i*167)%256
