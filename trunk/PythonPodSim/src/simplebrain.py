@@ -19,24 +19,16 @@ def randomSeed():
     return 0.5 - random()
 
 def loadBrain(stream):
-        b=pickle.load(stream)
-        a=pickle.load(stream)
         sz=pickle.load(stream)
-        brain=BackPropBrain(sz, b, a) 
+        brain=SimpleBrain(sz) 
         brain.weight=pickle.load(stream)    
         return brain
     
     
-class BackPropBrain:
+class SimpleBrain:
   
   
-    def save(self,stream):
-            bb=copy.deepcopy(self.beta)
-            pickle.dump(bb,stream)
-            
-            aa=copy.deepcopy(self.alpha)  
-            pickle.dump(aa,stream)
-            
+    def save(self,stream):     
             ssz=copy.deepcopy(self.layer_size)
             pickle.dump(ssz,stream)
             
@@ -67,14 +59,7 @@ class BackPropBrain:
                 a.append(0.0)
 
         
-        self.delta = []
-        for  i in range(self.num_layer):  
-            self.delta.append([]);
-            a=self.delta[i]
-            for k in range(self.layer_size[i]):
-                a.append(0.0)
-
-
+     
         self.weight=[]
         self.weight.append([])
         
@@ -88,22 +73,11 @@ class BackPropBrain:
                     r.append(randomSeed())
                 r.append(randomSeed())
     
-        self.prevDwt=[]
-        self.prevDwt.append([])
-        
-        for i in range(1,self.num_layer):  
-            self.prevDwt.append([])
-            a=self.prevDwt[i]
-            for j in range(self.layer_size[i]):
-                a.append([])
-                r=a[j]
-                for k in range(self.layer_size[i - 1]):   
-                    r.append(0.0)
-                r.append(0.0)
+      
         
         
     def clone(self):
-        clone=BackPropBrain(self.layer_size,self.alpha,self.beta)
+        clone=SimpleBrain(self.layer_size)
         clone.weight=copy.deepcopy(self.weight)
         return clone
             
@@ -116,13 +90,6 @@ class BackPropBrain:
                     r[k]=r[k]+randomSeed()*amount
                     
         
-            
-#//  I did this intentionaly to maintains consistancy in numbering the layers.
-#//  Since for a net having n layers, input layer is refered to as 0th layer,
-#//  first hidden layer as 1st layer and the nth layer as output layer. And 
-#//  first (0th) layer just stores the inputs hence there is no delta or weigth
-#//  values corresponding to it.
- 
  
     def output(self):
         return self.out[self.num_layer - 1];
@@ -162,48 +129,3 @@ class BackPropBrain:
     
         return self.out[self.num_layer - 1];
     
-    #	backpropogate errors from output.
-    #   modify weights
-    def bpgt(self,x, tgt):
-        
-        #	update output values for each neuron
-        self.ffwd(x);
-
-        #    find delta for output layer
-        for i in range(self.layer_size[self.num_layer - 1]):  
-            self.delta[self.num_layer - 1][i] = self.out[self.num_layer - 1][i] * \
-                    (1 - self.out[self.num_layer - 1][i]) * (tgt[i] - self.out[self.num_layer - 1][i])
-        
-
-        #   find delta for hidden layers	
-        for i in range(self.num_layer-2,0,-1) : 
-            for  j  in range(self.layer_size[i]):
-                sum = 0.0;
-                for k in range(self.layer_size[i + 1]):
-                    sum += self.delta[i + 1][k] * self.weight[i + 1][k][j];
-                
-                self.delta[i][j] = self.out[i][j] * (1 - self.out[i][j]) * sum;
-         
-         
-        #	apply momentum ( does nothing if alpha=0 )
-        for i in range(1,self.num_layer):
-            for j in range(self.layer_size[i]):
-                for k in range(self.layer_size[i - 1]):
-                    self.weight[i][j][k] += self.alpha * self.prevDwt[i][j][k];
-                
-                self.weight[i][j][self.layer_size[i - 1]] += self.alpha * self.prevDwt[i][j][self.layer_size[i - 1]];
-            
-        #	adjust weights using steepest descent	
-        for i in range(1,self.num_layer):
-            for j in range(self.layer_size[i]):
-                for  k in range(self.layer_size[i - 1]):
-                    self.prevDwt[i][j][k] = (float) (self.beta * self.delta[i][j] * self.out[i - 1][k]);
-                    self.weight[i][j][k] += self.prevDwt[i][j][k];
-                
-                self.prevDwt[i][j][self.layer_size[i - 1]] = self.beta * self.delta[i][j];
-                self.weight[i][j][self.layer_size[i - 1]] += self.prevDwt[i][j][self.layer_size[i - 1]];
-    
-        return self.mse(tgt)
-            
-            
-            
