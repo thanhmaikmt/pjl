@@ -26,12 +26,13 @@
 # For more information on the working of this code see in line comments 
 # and look at the code. 
 from simulation import *
-import backpropbrain 
+
 import pygame 
 from random import  *
 from copy import *
 from fontmanager import  *
 import pickle
+import time
 
 
 
@@ -71,11 +72,21 @@ nout=4             # controls
 # specify the neural net parameters with nin nhidden and nout
 layerSizes=[nin,N_HIDDEN,nout]
 
+"""
+def createBrain(): 
+    return  simplebrain.SimpleBrain(layerSizes)
+
+def loadBrain():
+    return simplebrain.loadBrain()   
+"""
+
+import backpropbrain 
 def createBrain(): 
     return  backpropbrain.BackPropBrain(layerSizes)
 
 def loadBrain():
     return backpropbrain.loadBrain()   
+
     
 # Define some classes
 
@@ -84,16 +95,34 @@ class Painter:   # use me to display stuff
     def __init__(self):
         self.preDraw=None       # define this function to draw on top!
         self.fontMgr = cFontManager(((None, 20), (None, 48), ('arial', 24)))
-    
+        self.last_time=time.time()
+        self.last_ticks = 0
+        
     def postDraw(self,screen):
         Y=20
         X=20
-        self.fontMgr.Draw(screen, None, 20,\
-                          ' pool size:'+ str(POOL_SIZE)+\
+        tot_ticks=sim.world.ticks
+        ticks=tot_ticks-self.last_ticks
+        
+        tot_time=time.time()
+        
+        delta=tot_time-self.last_time
+        ticks_per_sec=ticks/delta
+        
+        self.last_time=tot_time
+        self.last_ticks=tot_ticks
+                
+        avFit="%4.1f" % pool.average_fitness()
+        tickRate="%8.1f" % ticks_per_sec
+        
+        str1=' pool size:'+ str(POOL_SIZE)+\
                           ' ticks:'+ str(sim.world.ticks) +\
                           ' best:'+ str(pool.best_fitness())+\
-                          ' average:'+ str(pool.average_fitness()), (X,Y), (0,255,0))
-    
+                          ' average:'+ avFit+\
+                          ' ticks/sec:'+tickRate+"    "+str(tot_time)
+                          
+       # print str1
+        self.fontMgr.Draw(screen, None, 20,str1,(X,Y), (0,255,0) )
         
 class Admin:  # use me to control the simulation
               # see comments to see what key hits do

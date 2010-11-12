@@ -7,7 +7,10 @@ from random import  *
 import copy
 import pickle
 
-    
+#
+# multilayer network
+#
+#     
 
 def sigmoid(x):
         if x < -100:
