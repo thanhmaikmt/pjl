@@ -6,7 +6,7 @@ from math import  *
 from random import  *
 import copy
 import pickle
-
+import numpy  
     
 
 def sigmoid(x):
@@ -57,8 +57,8 @@ class SimpleBrain:
             a=self.out[i]
             for k in range(self.layer_size[i]):
                 a.append(0.0)
-
-        
+            a.append(1.0)
+            self.out[i]=numpy.array(a)
      
         self.weight=[]
         self.weight.append([])
@@ -72,8 +72,10 @@ class SimpleBrain:
                 for k in range(self.layer_size[i - 1]):
                     r.append(randomSeed())
                 r.append(randomSeed())
-    
-      
+                self.weight[i][j]=numpy.array(r)
+            
+        #self.weight=numpy.array(self.weight)
+        #self.out=numpy.array(self.out)
         
         
     def clone(self):
@@ -107,25 +109,45 @@ class SimpleBrain:
         
         return mse / 2.0;
    
+    #  feed forward one set of input
+    def ffwd1(self,x):
+        
+        #    assign content to input layer
+        for  i in range(self.layer_size[0]):
+                 self.out[0][i] = x[i]       # output_from_neuron(i,j) Jth neuron in Ith Layer
+
+        #    assign output(activation) value 
+        #    to each neuron usng sigmoid func
+        
+        for i in range(1,self.num_layer):         #  For each layer
+            
+            for j in range(self.layer_size[i]):   #  For each neuron in current layer
+              #  print self.weight[i][j]
+              #  print self.out[i-1]
+                sum = numpy.dot(self.weight[i][j],self.out[i-1])
+               # print sum                
+                self.out[i][j] = sigmoid(sum);                            # Apply sigmoid function
+    
+        return self.out[self.num_layer - 1];
 
     #  feed forward one set of input
     def ffwd(self,x):
         
-        #	assign content to input layer
+        #    assign content to input layer
         for  i in range(self.layer_size[0]):
                  self.out[0][i] = x[i]       # output_from_neuron(i,j) Jth neuron in Ith Layer
 
-        #	assign output(activation) value 
-        #	to each neuron usng sigmoid func
+        #    assign output(activation) value 
+        #    to each neuron usng sigmoid func
         
         for i in range(1,self.num_layer):         #  For each layer
             for j in range(self.layer_size[i]):   #  For each neuron in current layer
                 sum = 0.0;
                 for k  in range(self.layer_size[i - 1]):                     # For input from each neuron in preceeding layer
-                    sum += self.out[i - 1][k] * self.weight[i][j][k];	# Apply weight to inputs and add to sum
+                    sum += self.out[i - 1][k] * self.weight[i][j][k];    # Apply weight to inputs and add to sum
                 
-                sum += self.weight[i][j][self.layer_size[i - 1]];	    	# Apply bias
-                self.out[i][j] = sigmoid(sum);				            # Apply sigmoid function
+                sum += self.weight[i][j][self.layer_size[i - 1]];            # Apply bias
+                self.out[i][j] = sigmoid(sum);                            # Apply sigmoid function
     
         return self.out[self.num_layer - 1];
     
