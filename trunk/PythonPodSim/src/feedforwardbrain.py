@@ -6,8 +6,37 @@ from math import  *
 from random import  *
 import copy
 import pickle
-import numpy  
-    
+
+#
+# multilayer network
+#
+#
+#
+
+
+def printOutWeights(brain):
+    print " Layer size (input  hidden  . . .  output : ",
+    for n in brain.layer_size:
+        print n," ",
+
+            
+    #  For each layer
+    for i in range(1,brain.num_layer):         
+        print " conections to layer ",i
+        
+        #  For each neuron in current layer
+        for j in range(brain.layer_size[i]):   
+           
+            # For input from each neuron in preceeding layer
+            # NOTE: bias connection is weight[i][j][brain.layer_size[i - 1]]
+            # this is not included in the count so we have to have +1  
+            for k  in range(brain.layer_size[i - 1]+1):
+                    print brain.weight[i][j][k]," ",
+                
+          
+        
+        
+         
 
 def sigmoid(x):
         if x < -100:
@@ -19,16 +48,25 @@ def randomSeed():
     return 0.5 - random()
 
 def loadBrain(stream):
+        # dummy to make compatible with backprop saved brains
+        b=pickle.load(stream)
+        a=pickle.load(stream)
         sz=pickle.load(stream)
-        brain=SimpleBrain(sz) 
+        brain=FeedForwardBrain(sz) 
         brain.weight=pickle.load(stream)    
         return brain
     
     
-class SimpleBrain:
+class FeedForwardBrain:
   
   
-    def save(self,stream):     
+    def save(self,stream):
+            bb=1
+            pickle.dump(bb,stream)
+            
+            aa=1  
+            pickle.dump(aa,stream)
+            
             ssz=copy.deepcopy(self.layer_size)
             pickle.dump(ssz,stream)
             
@@ -37,10 +75,7 @@ class SimpleBrain:
     
   
     
-    def __init__(self,sz, b=.01, a=100):
-
-        self.beta = b
-        self.alpha = a
+    def __init__(self,sz):
 
         #//	set no of layers and their sizes
         self.num_layer = len(sz)
@@ -57,9 +92,11 @@ class SimpleBrain:
             a=self.out[i]
             for k in range(self.layer_size[i]):
                 a.append(0.0)
-            a.append(1.0)
-            self.out[i]=numpy.array(a)
-     
+
+        
+        
+
+
         self.weight=[]
         self.weight.append([])
         
@@ -72,14 +109,12 @@ class SimpleBrain:
                 for k in range(self.layer_size[i - 1]):
                     r.append(randomSeed())
                 r.append(randomSeed())
-                self.weight[i][j]=numpy.array(r)
-            
-        #self.weight=numpy.array(self.weight)
-        #self.out=numpy.array(self.out)
+    
+      
         
         
     def clone(self):
-        clone=SimpleBrain(self.layer_size)
+        clone=FeedForwardBrain(self.layer_size)
         clone.weight=copy.deepcopy(self.weight)
         return clone
             
@@ -92,6 +127,13 @@ class SimpleBrain:
                     r[k]=r[k]+randomSeed()*amount
                     
         
+            
+#//  I did this intentionaly to maintains consistancy in numbering the layers.
+#//  Since for a net having n layers, input layer is refered to as 0th layer,
+#//  first hidden layer as 1st layer and the nth layer as output layer. And 
+#//  first (0th) layer just stores the inputs hence there is no delta or weigth
+#//  values corresponding to it.
+ 
  
     def output(self):
         return self.out[self.num_layer - 1];
@@ -109,45 +151,28 @@ class SimpleBrain:
         
         return mse / 2.0;
    
-    #  feed forward one set of input
-    def ffwd1(self,x):
-        
-        #    assign content to input layer
-        for  i in range(self.layer_size[0]):
-                 self.out[0][i] = x[i]       # output_from_neuron(i,j) Jth neuron in Ith Layer
-
-        #    assign output(activation) value 
-        #    to each neuron usng sigmoid func
-        
-        for i in range(1,self.num_layer):         #  For each layer
-            
-            for j in range(self.layer_size[i]):   #  For each neuron in current layer
-              #  print self.weight[i][j]
-              #  print self.out[i-1]
-                sum = numpy.dot(self.weight[i][j],self.out[i-1])
-               # print sum                
-                self.out[i][j] = sigmoid(sum);                            # Apply sigmoid function
-    
-        return self.out[self.num_layer - 1];
 
     #  feed forward one set of input
     def ffwd(self,x):
         
-        #    assign content to input layer
+        #	assign content to input layer
         for  i in range(self.layer_size[0]):
                  self.out[0][i] = x[i]       # output_from_neuron(i,j) Jth neuron in Ith Layer
 
-        #    assign output(activation) value 
-        #    to each neuron usng sigmoid func
+        #	assign output(activation) value 
+        #	to each neuron usng sigmoid func
         
         for i in range(1,self.num_layer):         #  For each layer
             for j in range(self.layer_size[i]):   #  For each neuron in current layer
                 sum = 0.0;
                 for k  in range(self.layer_size[i - 1]):                     # For input from each neuron in preceeding layer
-                    sum += self.out[i - 1][k] * self.weight[i][j][k];    # Apply weight to inputs and add to sum
+                    sum += self.out[i - 1][k] * self.weight[i][j][k];	# Apply weight to inputs and add to sum
                 
-                sum += self.weight[i][j][self.layer_size[i - 1]];            # Apply bias
-                self.out[i][j] = sigmoid(sum);                            # Apply sigmoid function
+                sum += self.weight[i][j][self.layer_size[i - 1]];	    	# Apply bias
+                self.out[i][j] = sigmoid(sum);				            # Apply sigmoid function
     
         return self.out[self.num_layer - 1];
     
+    
+            
+            
