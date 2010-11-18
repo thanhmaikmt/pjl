@@ -59,7 +59,8 @@ MAX_AGE=80                 # pods life span
 REPROVE_PROB=.2            # probability that selection we trigger a reprove of the best gene
 N_HIDDEN=5                 # number of neurons in hidden layer
 N_SENSORS=12               # number of sensors
-
+MUTATE_SCALE=1.0          # amount of mutation
+MIN_AGE=0.2
 
 # files used by program
 
@@ -72,20 +73,36 @@ nout=4             # controls
 # specify the neural net parameters with nin nhidden and nout
 layerSizes=[nin,N_HIDDEN,nout]
 
-"""
-def createBrain(): 
-    return  simplebrain.SimpleBrain(layerSizes)
 
-def loadBrain():
-    return simplebrain.loadBrain()   
+#    This section allows you experiment with different brain implementations
+
+
+# Feedforward with output=sigmoid(sum)
+# if in doubt do not change
+import feedforwardbrain
+def createBrain(): 
+    return  feedforwardbrain.FeedForwardBrain(layerSizes)
+
+def loadBrain(file):
+    return feedforwardbrain.loadBrain(file)   
+
 """
+# Feedforward with out=trheshold(sum)
+import perceptronbrain
+def createBrain(): 
+    return  perceptronbrain.PerceptronBrain(layerSizes)
+
+def loadBrain(file):
+    return perceptronbrain.loadBrain(file)   
+
 
 import backpropbrain 
 def createBrain(): 
     return  backpropbrain.BackPropBrain(layerSizes)
 
-def loadBrain():
-    return backpropbrain.loadBrain()   
+def loadBrain(file):
+    return backpropbrain.loadBrain(file)   
+"""
 
     
 # Define some classes
@@ -272,7 +289,7 @@ class Pool:  #  use me to store the best brains and create new brains
         
         
         # mutate the cloned net by a random amount.
-        clone.mutate(random())
+        clone.mutate(random()*MUTATE_SCALE)
         clone.proof_count=0
         return clone
     
@@ -393,6 +410,9 @@ class GAControl:
         if pod.collide:
             return True
         
+        if pod.age > MIN_AGE and pod.distanceTravelled == 0:
+            return True
+        
         if pod.age > MAX_AGE:
             return True 
     
@@ -458,7 +478,7 @@ class GAControl:
 
 ###  START OF PROGRAM
 
-dt          =.1       
+dt          =.05       
 sensorRange = 2000
 pool=Pool()    #  create a pool for fittest networks
 pods=[]        #  pods on the circuits
