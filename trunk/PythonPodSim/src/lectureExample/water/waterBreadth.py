@@ -111,7 +111,7 @@ visited=[state]
 def done(leaf):
     list=[]
     while leaf.parent != None:
-        list.append(str(leaf.move.name)+"  "+str(leaf.state))1
+        list.append(str(leaf.move.name)+"  "+str(leaf.state))
         leaf=leaf.parent
         
     # reverse to get moves in order
