@@ -3,6 +3,8 @@ import sys
 state=[0,0]               # state[0]  is 3l    state[1] is 4l
 UNKNOWN,FAIL=range(2)
 
+
+
 class Node:
 
     def __init__(self,parent,move,state):
@@ -107,9 +109,15 @@ visited=[state]
 
 
 def done(leaf):
+    list=[]
     while leaf.parent != None:
-        print leaf.move.name,"  ", leaf.state
+        list.append(str(leaf.move.name)+"  "+str(leaf.state))1
         leaf=leaf.parent
+        
+    # reverse to get moves in order
+    list.reverse()
+    for x in list:
+        print x    
     sys.exit(0)    
 
 def explore(depth,node):
