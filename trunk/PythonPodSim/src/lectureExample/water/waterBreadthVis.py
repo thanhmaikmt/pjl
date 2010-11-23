@@ -1,5 +1,7 @@
 import sys
 from visuals import *
+from copy import *
+
 state=[0,0]               # state[0]  is 3l    state[1] is 4l
 UNKNOWN,FAIL,DONE=range(3)
 
@@ -16,7 +18,7 @@ class Node:
         self.move=move
         self.label_str="("+str(state[0])+","+str(state[1])+")"
 
-        self.state=[state[0],state[1]]   # copy current state
+        self.state=deepcopy(state)   # copy current state
         if not parent == None:
             parent.children.append(self)
         self.children=[]
@@ -27,25 +29,8 @@ class Node:
 
     def shapeOf(self):
         return "ellipse"
-
-    def expand(self):
-
-        print "expand", self.state,depth
-        global state
-
-        for move in moves:
-            state=[self.state[0],self.state[1]]
-            if move.isValid():
-                move.do()
-                print "add1", state
-           
-                if not state in visited:
-                    print "add2", state
-                    child=Node(self,move,state)
-                    visited.append(child.state)
-                    self.children.append(child)
-                    if state[1] == 2:
-                        done(child)
+                   # if state[1] == 2:
+                   #     done(child)
 class Move1:
     
     def __init__(self):
@@ -118,8 +103,10 @@ class Move6:
         return state[1] > 0 and state[0] < 3
 
 
-moves=[Move1(),Move2(),Move3(),Move4(),Move5(),Move6()]
-visited=[state]
+file_name="breadthMoveOrder2"
+#moves=[Move1(),Move2(),Move3(),Move4(),Move5(),Move6()]
+moves=[Move2(),Move3(),Move1(),Move4(),Move5(),Move6()]
+visited=[deepcopy(state)]
 
 
 def done(leaf):
@@ -134,7 +121,26 @@ def explore(depth,node):
     global state,history,visited
 
     if depth == 0:
-        node.expand()
+
+        # we are on a leaf so expand the node
+        for move in moves:
+            #state=deepcopy(state)
+            if move.isValid():
+                move.do()
+             #  print "add1", state
+           
+                if not state in visited:
+                    print "add2", state
+                    child=Node(node,move,state)
+                    visited.append(deepcopy(child.state))
+                    node.children.append(child)
+                    if state[0]==2 and state[1]==0:
+                        done(child)
+                        return DONE
+       
+                state=deepcopy(node.state)
+                
+         
         if len(node.children) == 0:
             return FAIL
 
@@ -144,14 +150,11 @@ def explore(depth,node):
     for child in node.children:
             if child.stat == FAIL:
                 continue
-            state=[node.state[0],node.state[1]]
+            state=deepcopy(node.state)
             child.move.do()
             # print state
 
-            if state[1]==2 :
-                done(child)
-                return DONE
-
+        
             stat=explore(depth-1,child)
             if stat == FAIL:
                 child.stat=FAIL
@@ -166,17 +169,18 @@ def explore(depth,node):
     
 
 root=Node(None,None,state)
-depth=0
+global_depth=0
    
-while  explore(depth,root) != DONE:
-    print "Exploring to depth:" ,depth
-    depth=depth+1
+while  True:
+    print "Exploring to depth:" ,global_depth
+    stat=explore(global_depth,root)
+    if  stat== DONE or stat == FAIL:
+        break
+    global_depth=global_depth+1
 
 
-printTree("finalTree.ps",root)
+printTree(file_name+".ps",root)
 
-
-print "FAILED TO FIND GOAL"
 
 
 
