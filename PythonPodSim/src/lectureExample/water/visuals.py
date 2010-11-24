@@ -2,9 +2,9 @@ from pygraphviz import *
 
 
 def printTree(file,root):
-   tree=buildTree(root)
-   tree.layout(prog='dot')
-   tree.draw(file) # ,prog='circo')
+    tree=buildTree(root)
+    tree.layout(prog='dot')
+    tree.draw(file) # ,prog='circo')
 
 
 #def shapeOf(node):
