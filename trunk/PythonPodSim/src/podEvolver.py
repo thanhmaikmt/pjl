@@ -57,7 +57,7 @@ SENSOR_SCALE=1.0/100.0      # scale sensors (make more like 0-1)
 VELOCITY_SCALE=1.0/80      # scale velocity (pod starts to slip at 80)
 MAX_AGE=80                 # pods life span   
 REPROVE_PROB=.2            # probability that selection we trigger a reprove of the best gene
-N_HIDDEN=5                 # number of neurons in hidden layer
+N_HIDDEN=2                # number of neurons in hidden layer
 N_SENSORS=12               # number of sensors
 MUTATE_SCALE=1.0          # amount of mutation
 MIN_AGE=0.2
@@ -79,6 +79,16 @@ layerSizes=[nin,N_HIDDEN,nout]
 
 # Feedforward with output=sigmoid(sum)
 # if in doubt do not change
+
+import combobrain
+def createBrain(): 
+    return  combobrain.ComboBrain(layerSizes)
+
+def loadBrain(file):
+    return combobrain.loadBrain(file)   
+
+
+"""
 import feedforwardbrain
 def createBrain(): 
     return  feedforwardbrain.FeedForwardBrain(layerSizes)
@@ -86,7 +96,6 @@ def createBrain():
 def loadBrain(file):
     return feedforwardbrain.loadBrain(file)   
 
-"""
 # Feedforward with out=trheshold(sum)
 import perceptronbrain
 def createBrain(): 
@@ -402,7 +411,7 @@ class GAControl:
 
     def __init__(self):
         self.net=pool.create_new()
-    
+            
     # decide if we want to kill a pod        
     def reap_pod(self,state):
         pod=state.pod
@@ -478,7 +487,7 @@ class GAControl:
 
 ###  START OF PROGRAM
 
-dt          =.05       
+dt          =.1      
 sensorRange = 2000
 pool=Pool()    #  create a pool for fittest networks
 pods=[]        #  pods on the circuits

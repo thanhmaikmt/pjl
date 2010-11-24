@@ -130,7 +130,7 @@ def explore(depth,node):
              #  print "add1", state
            
                 if not state in visited:
-                    print "add2", state
+                    print "add node", state
                     child=Node(node,move,state)
                     visited.append(deepcopy(child.state))
                     node.children.append(child)
