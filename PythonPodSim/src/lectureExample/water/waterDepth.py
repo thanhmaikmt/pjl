@@ -70,6 +70,7 @@ visited=[state]
 def done():
     for x in history:
         print x
+    print state
     sys.exit(0)    
 
 def explore():

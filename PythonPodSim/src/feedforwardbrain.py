@@ -13,7 +13,7 @@ import pickle
 #
 #
 
-
+"""
 def printOutWeights(brain):
     print " Layer size (input  hidden  . . .  output : ",
     for n in brain.layer_size:
@@ -32,7 +32,7 @@ def printOutWeights(brain):
             # this is not included in the count so we have to have +1  
             for k  in range(brain.layer_size[i - 1]+1):
                     print brain.weight[i][j][k]," ",
-                
+"""                
           
         
         
@@ -151,25 +151,28 @@ class FeedForwardBrain:
         
         return mse / 2.0;
    
+       
+       
+       
 
     #  feed forward one set of input
     def ffwd(self,x):
         
         #	assign content to input layer
-        for  i in range(self.layer_size[0]):
-                 self.out[0][i] = x[i]       # output_from_neuron(i,j) Jth neuron in Ith Layer
+        for  layer in range(self.layer_size[0]):
+                 self.out[0][layer] = x[layer]       # output_from_neuron(layer,j) Jth neuron in Ith Layer
 
         #	assign output(activation) value 
         #	to each neuron usng sigmoid func
         
-        for i in range(1,self.num_layer):         #  For each layer
-            for j in range(self.layer_size[i]):   #  For each neuron in current layer
+        for layer in range(1,self.num_layer):         #  For each layer
+            for j in range(self.layer_size[layer]):   #  For each neuron in current layer
                 sum = 0.0;
-                for k  in range(self.layer_size[i - 1]):                     # For input from each neuron in preceeding layer
-                    sum += self.out[i - 1][k] * self.weight[i][j][k];	# Apply weight to inputs and add to sum
+                for k  in range(self.layer_size[layer - 1]):                     # For input from each neuron in preceeding layer
+                    sum += self.out[layer - 1][k] * self.weight[layer][j][k];	# Apply weight to inputs and add to sum
                 
-                sum += self.weight[i][j][self.layer_size[i - 1]];	    	# Apply bias
-                self.out[i][j] = sigmoid(sum);				            # Apply sigmoid function
+                sum += self.weight[layer][j][self.layer_size[layer - 1]];	    	# Apply bias
+                self.out[layer][j] = sigmoid(sum);				            # Apply sigmoid function
     
         return self.out[self.num_layer - 1];
     

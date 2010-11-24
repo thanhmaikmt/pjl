@@ -70,18 +70,17 @@ class Move6:
     def isValid(self):
         return state[1] > 0 and state[0] < 3
 
-"""
+
 file_name="depthOrder1.ps"
 moves=[Move1(),Move2(),Move3(),Move4(),Move5(),Move6()]
-"""
 
-file_name="depthOrder2.ps"
-moves=[Move4(),Move5(),Move6(),Move1(),Move2(),Move3()]
 
-"""
-file_name="depthOrder3.ps"
-moves=[Move2(),Move3(),Move4(),Move5(),Move6(),Move1()]
-"""
+#file_name="depthOrder2.ps"
+#moves=[Move4(),Move5(),Move6(),Move1(),Move2(),Move3()]
+
+
+#file_name="depthOrder3.ps"
+#moves=[Move2(),Move3(),Move4(),Move5(),Move6(),Move1()]
 
 visited=[deepcopy(state)]
 
@@ -93,6 +92,8 @@ def done():
     printTree(file_name,root)        
     sys.exit(0)
     
+    
+# this is to draw the tree (cosmetic)
 class Node:
 
     hash_count=-1
@@ -129,8 +130,6 @@ def explore():
         if move.isValid():
             
             move.do()
-            
-                
             
             if not state in visited:
                 print history[len(history)-1]
