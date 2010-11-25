@@ -566,11 +566,14 @@ class GravityPod(Pod):
 
     def __init__(self,nSensor,sensorRange,brain,col):
         Pod.__init__(self,nSensor,sensorRange,brain,col)
+        self.init()
+     
+    def init(self):     
         self.mass=2
         self.inertia=.5     # angluar inertia
         self.thrustMax=20
         self.spinThrustMax=.11
-
+        self.collide=False
 
     def step(self,dt,world):
 
