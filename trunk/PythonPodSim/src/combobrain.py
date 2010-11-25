@@ -21,6 +21,7 @@ def breed(mum,dad):
     brain=ComboBrain()
     brain.net1=mum.net1.clone()
     brain.net2=dad.net2.clone()
+    return brain
     
     
     
@@ -28,25 +29,36 @@ class ComboBrain:
   
   
     def save(self,stream):
-            net1.save(stream)
-            net2.save(stream)
+            self.net1.save(stream)
+            self.net2.save(stream)
      
   
     
     def __init__(self,sz1=None,sz2=None):
         
-        if sz1 != None and sz2 == None:
-             #//    set no of layers and their sizes
-            num_layer = len(sz1)
-            layer_size = []   # new int[num_layer];
-
-            for  i in range(num_layer-1):
-                layer_size.append(sz1[i])
-
-            layer_size.append(sz1[num_layer-1]/2)
-            
-            sz1=layer_size
-            sz2=layer_size 
+        
+       # print "---------------------------"
+        
+       # print sz1 , sz2
+        
+        
+        if True:
+            if sz1 != None and sz2 == None:
+            #//    set no of layers and their sizes
+                num_layer = len(sz1)
+                layer_size = []   # new int[num_layer];
+    
+                for  i in range(num_layer-1):
+                    layer_size.append(sz1[i])
+    
+                layer_size.append(sz1[num_layer-1]/2)
+                
+                sz1=layer_size
+                sz2=layer_size 
+        else:
+            sz2=sz1
+        
+       # print sz1,sz2
                 
         if sz1 != None:
             self.net1=feedforwardbrain.FeedForwardBrain(sz1)
@@ -64,17 +76,24 @@ class ComboBrain:
     
     def mutate(self,amount):
         # mutate net1 or net2
-        self.net1.mutate(amount)
-        self.net2.mutate(amount)     
+        
+        
+        if random() < 0.5:
+            self.net1.mutate(amount)
+        else:
+            self.net2.mutate(amount)     
         
         
     #  feed forward one set of input
     def ffwd(self,x):
         
         
-        out=self.net1.ffwd(x)
+        out1=self.net1.ffwd(x)
         out2=self.net2.ffwd(x)
-            
+    
+    
+        out=[]
+        out.extend(out1)
         out.extend(out2)
         
         return out

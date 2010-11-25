@@ -36,7 +36,7 @@ import time
 
 
 
-RUN_NAME="pjl"             # used for file names so you can tag different experiments
+RUN_NAME="comobo_breed"             # used for file names so you can tag different experiments
 
 
 # The world
@@ -57,10 +57,13 @@ SENSOR_SCALE=1.0/100.0      # scale sensors (make more like 0-1)
 VELOCITY_SCALE=1.0/80      # scale velocity (pod starts to slip at 80)
 MAX_AGE=80                 # pods life span   
 REPROVE_PROB=.2            # probability that selection we trigger a reprove of the best gene
-N_HIDDEN=2                # number of neurons in hidden layer
+N_HIDDEN=5                # number of neurons in hidden layer
 N_SENSORS=12               # number of sensors
 MUTATE_SCALE=1.0          # amount of mutation
-MIN_AGE=0.2
+MIN_AGE=0.2               # Allow to live this long before reaping for not moving
+BREED_PROB=0.5            # prob that new entity is from breeding           
+CAN_BREED=False           # by default assume can not breed
+SEED_PROB=0.1             # probability a new thing is created from nothing
 
 # files used by program
 
@@ -80,6 +83,7 @@ layerSizes=[nin,N_HIDDEN,nout]
 # Feedforward with output=sigmoid(sum)
 # if in doubt do not change
 
+
 import combobrain
 def createBrain(): 
     return  combobrain.ComboBrain(layerSizes)
@@ -87,14 +91,19 @@ def createBrain():
 def loadBrain(file):
     return combobrain.loadBrain(file)   
 
+CAN_BREED=True
+def breed(mum,dad):
+    return combobrain.breed(mum,dad)
 
 """
+
 import feedforwardbrain
 def createBrain(): 
     return  feedforwardbrain.FeedForwardBrain(layerSizes)
 
 def loadBrain(file):
     return feedforwardbrain.loadBrain(file)   
+
 
 # Feedforward with out=trheshold(sum)
 import perceptronbrain
@@ -141,12 +150,12 @@ class Painter:   # use me to display stuff
         avFit="%4.1f" % pool.average_fitness()
         tickRate="%8.1f" % ticks_per_sec
         
-        str1=' pool size:'+ str(POOL_SIZE)+\
+        str1=RUN_NAME+' pool size:'+ str(POOL_SIZE)+\
                           ' ticks:'+ str(sim.world.ticks) +\
                           ' best:'+ str(pool.best_fitness())+\
                           ' average:'+ avFit+\
-                          ' ticks/sec:'+tickRate+"    "+str(tot_time)
-                          
+                          ' ticks/sec:'+tickRate+"    "
+                                                    
        # print str1
         self.fontMgr.Draw(screen, None, 20,str1,(X,Y), (0,255,0) )
         
@@ -247,7 +256,7 @@ class Pool:  #  use me to store the best brains and create new brains
     # add a new Gene to the Pool  (if better than the worst one in pool)
     # 
     def add(self,gene):  
-        
+                
         if len(self.list) >= self.maxMembers:
             if gene.fitness < self.list[self.maxMembers-1].fitness:
                 return
@@ -273,7 +282,7 @@ class Pool:  #  use me to store the best brains and create new brains
         if len(self.list) < self.maxMembers:         
             #Create a net
             net=createBrain()
-            net.proof_count=0
+            net.proof_count=0   # add proof count field
             return net
 
 
@@ -285,18 +294,22 @@ class Pool:  #  use me to store the best brains and create new brains
             del self.list[0]
             net.proof_count += 1
             return net
-            
-            
-        # Otherwise just select a random net from the pool
-        clone=self.select2()
-
-        # if this returned None create a new random net
-        if clone==None:
+        
+        if random() < SEED_PROB:
             net=createBrain()
             net.proof_count=0
             return net
+            
+        if CAN_BREED and random() < BREED_PROB:
+            mum=self.select2()
+            dad=self.select2()
+            net=breed(mum,dad)
+            net.proof_count=0
+    
         
-        
+        # Otherwise just select a random net from the pool
+        clone=self.select2()
+  
         # mutate the cloned net by a random amount.
         clone.mutate(random()*MUTATE_SCALE)
         clone.proof_count=0
@@ -338,10 +351,10 @@ class Pool:  #  use me to store the best brains and create new brains
     # can also return None to trigger a new random net    
     def select2(self):
         
-        id=randint(0,len(self.list))
+        id=randint(0,len(self.list)-1)
         
-        if id ==len(self.list):
-            return None
+        #if id ==len(self.list):
+        #    return None
         
         return self.list[id].net.clone()
         
@@ -417,6 +430,10 @@ class GAControl:
         pod=state.pod
                 
         if pod.collide:
+            return True
+        
+        if  pod.vel < 0:
+            # print "backwards"
             return True
         
         if pod.age > MIN_AGE and pod.distanceTravelled == 0:
