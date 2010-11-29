@@ -17,7 +17,7 @@ import uk.org.toot.audio.server.JavaSoundAudioServer;
  */
 public class AudioSystem {
 
-    AudioServer server;
+    JavaSoundAudioServer server;
     IOAudioProcess out;
     boolean inited=false;
 

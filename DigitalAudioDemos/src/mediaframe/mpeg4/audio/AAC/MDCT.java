@@ -60,13 +60,13 @@ public final class MDCT {
     /* In-place forward MDCT transform */
     /* PJL maded these public */
     public static void Transform(float[] data, int N, int b) {
-        SMDCT_Transform(data, N, b, 1);
+        MDCT_Transform(data, N, b, 1);
     }
 
     /* In-place inverse MDCT transform */
     /* Note: 2/N factor ! */
     public static void ITransform(float[] data, int N, int b) {
-        SMDCT_Transform(data, N, b, -1);
+        MDCT_Transform(data, N, b, -1);
 
     }
     private static float[] FFTarray = null;                                   /* the array for in-place FFT */
