@@ -397,7 +397,7 @@ class Pod:
             ang_ref=i*pi*2/nSensor
             self.sensors.append(Sensor(ang_ref,sensorRange,"sensor"+str(i)))
         self.base_init()    
-        self.net=brain
+        self.brain=brain
         self.col=col
         self.base_init()
         
@@ -498,7 +498,7 @@ class CarPod(Pod):
         
     def step(self,dt,world):
         state=State(self)
-        self.control=self.net.process(self.sensors,state,dt)
+        self.control=self.brain.process(self.sensors,state,dt)
         if self.control == None:
             return
         
@@ -578,7 +578,7 @@ class GravityPod(Pod):
     def step(self,dt,world):
 
         state=State(self)
-        self.control=self.net.process(self.sensors,state,dt)
+        self.control=self.brain.process(self.sensors,state,dt)
         self.control.limit()
 
         xNext = self.x + self.dxdt*dt
@@ -611,7 +611,7 @@ class SimplePod(Pod):
 
     def step(self,dt,world):
         state=State(self)
-        self.control=self.net.process(self.sensors,state,dt)
+        self.control=self.brain.process(self.sensors,state,dt)
         self.control.limit()
 
     
