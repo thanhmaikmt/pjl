@@ -14,22 +14,22 @@ fileName="carTraining.txt"
 class BrainControl:
 
     def __init__(self):
-        # load the trained net       
+        # load the trained brain       
         file=open("greystuff","r")
-        self.net=loadBrain(file)
+        self.brain=loadBrain(file)
         
     def process(self,sensor,state,dt):
         control=Control()
             
     
-        # create the input for the net 
+        # create the input for the brain 
         input=[state.dxdt,state.dydt,state.ang]
         
         for s in sensor:
             input.append(s.val)
             
-        # activate the net to get output    
-        output=self.net.ffwd(input)
+        # activate the brain to get output    
+        output=self.brain.ffwd(input)
        
         # assign values to the controllers
         control.up=output[0]
@@ -50,7 +50,7 @@ pod         = CarPod(nSensors,sensorRange,brain,(255,0,0))
 pod.ang=pi/2
 
 # pod.slip_speed_max=1     # testing ice
-#pod         = GravityPod(nSensors,sensorRange,net,(255,0,0))
+#pod         = GravityPod(nSensors,sensorRange,brain,(255,0,0))
 
 pods        = [pod]
 world       = World("car_world.txt",pods)

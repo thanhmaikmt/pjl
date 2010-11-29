@@ -2,14 +2,14 @@
 #
 #   uses the idea of a population selection and mutatation (does not try crossover)
 #
-#  Each pod is controlled with a neural net.
+#  Each pod is controlled with a neural brain.
 #  Pods have a finite life.
 #  Pods die when they reach the age limit or crash into a wall
 #  The fitness of a pod is measured by the distance around track when it dies.
 #      if it has completed the circuit I also use the age of pod to encourage speed.
 #  A list (Pool) of the best pods is kept.
-#  When a pod dies its neural net is added to the pool (if it is good enough)
-#    it net is then replaced by a new one created from the pool.
+#  When a pod dies its neural brain is added to the pool (if it is good enough)
+#    it brain is then replaced by a new one created from the pool.
 #  The Pool creates new neural nets by mutating one of the brains in the pool.
 #  mutation in this version 
 #      -  all the weights are changed by a random amount. 
@@ -73,7 +73,7 @@ log_file=open(RUN_NAME+"log.txt","w")    # keep a record of the performance
 nin=N_SENSORS+1    # velocoty + sensors are inputs
 nout=4             # controls
 
-# specify the neural net parameters with nin nhidden and nout
+# specify the neural brain parameters with nin nhidden and nout
 layerSizes=[nin,N_HIDDEN,nout]
 
 
@@ -200,7 +200,7 @@ class Admin:  # use me to control the simulation
                     
                 world.init_pod(pod)
                 pod.ang += random()-0.5    # randomize the intial angle
-                pod.control.net=pool.create_best()
+                pod.control.brain=pool.create_best()
                 pool.reaping=False
              
             # display the performance of the most proven pod
@@ -218,7 +218,7 @@ class Admin:  # use me to control the simulation
                     
                 world.init_pod(pod)
                 pod.ang += random()-0.5    # randomize the intial angle
-                pod.control.net=pool.create_most_proven()
+                pod.control.brain=pool.create_most_proven()
                 pool.reaping=False   
                 
             # go back into evolution mode after looking at best pod   
@@ -273,24 +273,24 @@ class Pool:  #  use me to store the best brains and create new brains
             self.list.append(gene)    
             self.touched=True
              
-    # create a neural net from the pool or maybe random
-    # might return best net to be reproven
+    # create a neural brain from the pool or maybe random
+    # might return best brain to be reproven
     def create_new(self):
         
     
-        # if pool is not full create a random net 
+        # if pool is not full create a random brain 
         if len(self.list) < self.maxMembers:         
-            #Create a net
+            #Create a brain
             net=createBrain()
             net.proof_count=0   # add proof count field
             return net
 
 
-        # keep testing the best net in case it was a fluke!!!
-        # this removes the best net from the pool 
+        # keep testing the best brain in case it was a fluke!!!
+        # this removes the best brain from the pool 
         # it will get back in if it scores OK 
         if random() < REPROVE_PROB:
-            net=self.list[0].net
+            net=self.list[0].brain
             del self.list[0]
             net.proof_count += 1
             return net
@@ -307,10 +307,10 @@ class Pool:  #  use me to store the best brains and create new brains
             net.proof_count=0
     
         
-        # Otherwise just select a random net from the pool
+        # Otherwise just select a random brain from the pool
         clone=self.select2()
   
-        # mutate the cloned net by a random amount.
+        # mutate the cloned brain by a random amount.
         clone.mutate(random()*MUTATE_SCALE)
         clone.proof_count=0
         return clone
@@ -318,8 +318,8 @@ class Pool:  #  use me to store the best brains and create new brains
     
     # return top of the pool
     def create_best(self):
-        clone=self.list[0].net.clone()
-        #clone.proof_count=self.list[0].net.proof_count
+        clone=self.list[0].brain.clone()
+        #clone.proof_count=self.list[0].brain.proof_count
         return clone
 
     # return the one that has been RETESTED the most.
@@ -328,12 +328,12 @@ class Pool:  #  use me to store the best brains and create new brains
         maxProof=-1
         
         for g in self.list:
-            if g.net.proof_count > maxProof:
-                maxProof=g.net.proof_count
-                cloneMe=g.net
+            if g.brain.proof_count > maxProof:
+                maxProof=g.brain.proof_count
+                cloneMe=g.brain
                 
         clone=cloneMe.clone()
-        #clone.proof_count=self.list[0].net.proof_count
+        #clone.proof_count=self.list[0].brain.proof_count
         return clone
 
     # OLD version of selection that I did not like
@@ -341,14 +341,14 @@ class Pool:  #  use me to store the best brains and create new brains
         
         for x in self.list:
             if random() < self.elite_bias:
-                clone=x.net.clone()
+                clone=x.brain.clone()
                 return clone
         
         return None
 
 
     # random selection from the pool
-    # can also return None to trigger a new random net    
+    # can also return None to trigger a new random brain    
     def select2(self):
         
         id=randint(0,len(self.list)-1)
@@ -356,7 +356,7 @@ class Pool:  #  use me to store the best brains and create new brains
         #if id ==len(self.list):
         #    return None
         
-        return self.list[id].net.clone()
+        return self.list[id].brain.clone()
         
     # return the best fitness in the pool
     # since I retest the best this value can fall
@@ -386,7 +386,7 @@ class Pool:  #  use me to store the best brains and create new brains
         for x in self.list:
             o=deepcopy(x.fitness)
             pickle.dump(o,file)
-            x.net.save(file)
+            x.brain.save(file)
         print "POOL SAVED"
         
     # load pool from a file
@@ -402,17 +402,17 @@ class Pool:  #  use me to store the best brains and create new brains
          
         print "RELOADED POOL"   
         for pod in pods:
-            # reset the pod and give it a new net from the pool
+            # reset the pod and give it a new brain from the pool
             world.init_pod(pod)
             pod.ang += random()-0.5    # randomize the intial angle
-            pod.net.net=pool.create_new()
+            pod.brain.brain=pool.create_new()
         
 
-# Simple class to store the net and fitness
+# Simple class to store the brain and fitness
 class Gene:
     
     def __init__(self,net,fitness):
-        self.net=net
+        self.brain=net
         self.fitness=fitness
         
 
@@ -423,7 +423,7 @@ class Gene:
 class GAControl:
 
     def __init__(self):
-        self.net=pool.create_new()
+        self.brain=pool.create_new()
             
     # decide if we want to kill a pod        
     def reap_pod(self,state):
@@ -467,21 +467,21 @@ class GAControl:
         if pool.reaping and self.reap_pod(state):
             " here then time to replace the pod"
             
-            # save current  net and fitness in the pool
-            fitness=self.calc_fitness(state,self.net)
-            pool.add(Gene(self.net,fitness)) 
+            # save current  brain and fitness in the pool
+            fitness=self.calc_fitness(state,self.brain)
+            pool.add(Gene(self.brain,fitness)) 
             
-            # reset the pod and give it a new net
+            # reset the pod and give it a new brain
             world.init_pod(state.pod)
             state.pod.ang += random()-0.5    # randomize the intial angle
-            self.net=pool.create_new()
+            self.brain=pool.create_new()
             return
             
         # normal control stuff
         
         control=Control()
             
-        # create the input for the net
+        # create the input for the brain
         # first the velocity of the pod 
         input=[sqrt(state.dxdt**2+state.dydt**2)*VELOCITY_SCALE]
         
@@ -490,8 +490,8 @@ class GAControl:
         for s in sensor:
             input.append(s.val*SENSOR_SCALE)
             
-        # activate the net to get output    
-        output=self.net.ffwd(input)
+        # activate the brain to get output    
+        output=self.brain.ffwd(input)
        
         # assign values to the controllers
         control.up=output[0]
