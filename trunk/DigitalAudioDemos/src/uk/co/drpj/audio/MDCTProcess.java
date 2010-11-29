@@ -15,14 +15,13 @@ import uk.org.toot.audio.core.AudioProcess;
 public class MDCTProcess implements AudioProcess {
 
     int N;     // size of MDCT  (twice buffer size)
-    float out[];
-    CycliclyBufferedAudio buffer;
     float chunk[];
-    float lastChunk[];
+    float lastInChunk[];
     float outChunk[];
+    private float[] outBufNext;
+    private float[] quant;
+    private float[] base;
 
-
-    
     //  QuantizerVariables controls;
     public void open() throws Exception {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -30,29 +29,47 @@ public class MDCTProcess implements AudioProcess {
 
     public int processAudio(AudioBuffer buff) {
 
+        // if (true) return AUDIO_OK;
+
 
         int nSamp = buff.getSampleCount();
 
         if (nSamp * 2 != this.N) {
             this.N = nSamp * 2;
             chunk = new float[this.N];
-            lastChunk=new float[this.N];
+            lastInChunk = new float[this.N];
+            outBufNext = new float[this.N];
+            quant = new float[N];
+            base = new float[N];
+
         }
 
-        float b[]=buff.getChannel(0);
 
-        System.arraycopy(lastChunk, 0, chunk, 0, nSamp);
-        System.arraycopy(b, 0, chunk, nSamp, nSamp);
-
-        MDCT.Transform(chunk, N, N/2);
-        MDCT.ITransform(chunk, N, N/2);
+        float inChunk[] = buff.getChannel(0);
 
 
+        System.arraycopy(lastInChunk, 0, chunk, 0, nSamp);
+        System.arraycopy(inChunk, 0, chunk, nSamp, nSamp);
+        System.arraycopy(inChunk, 0, lastInChunk, 0, nSamp);
 
-        for (int j = 0; j < N; j++) {
-            out[i1 + j] += chunk[j] * 0.5;
+        MDCT.Transform(chunk, N, N / 2);
+
+        for (int i = 0; i < N; i++) {
+            chunk[i] = base[i] + Math.round((chunk[i] - base[i]) / quant[i]) * quant[i];
         }
 
+        MDCT.ITransform(chunk, N, N / 2);
+
+
+
+        float out[] = inChunk;
+
+        for (int j = 0; j < nSamp; j++) {
+            out[j] = (outBufNext[j] + chunk[j]) * 0.5f;
+        }
+
+        // Save the second half for the next call
+        System.arraycopy(chunk, nSamp, outBufNext, 0, nSamp);
 
         return AUDIO_OK;
     }
@@ -61,9 +78,11 @@ public class MDCTProcess implements AudioProcess {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setNumberOfLevels(int n) {
-        quant = (2.0f) / (n);
-        base = -1.0f + quant / 2.0f;
+    public void setNumberOfLevels(int n, int band) {
+
+
+        quant[band] = (2.0f) / (n);
+        base[band] = -1.0f + quant[band] / 2.0f;
 
 //            float tmp=base;
 //            for (int i=0;i<n;i++) {
@@ -74,7 +93,10 @@ public class MDCTProcess implements AudioProcess {
 
     }
 
-    public float getQuant() {
-        return quant;
+    public int getBandCount() {
+        return N;
     }
+//    public float getQuant() {
+//        return quant;
+//    }
 }

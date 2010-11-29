@@ -29,6 +29,8 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+//import uk.co.drpj.audio.CycliclyBufferedAudio;
+import uk.co.drpj.audio.CycliclyBufferedAudio1;
 import uk.org.toot.audio.core.AudioBuffer;
 import uk.org.toot.audio.core.AudioProcess;
 import uk.org.toot.audio.server.AudioClient;
@@ -42,7 +44,7 @@ public class MDCTPanel extends JPanel {
 
     //    private static JavaSoundAudioServer audioServer;
     private AudioBuffer chunk;
-    private AudioBuffer chunk2;
+   // private AudioBuffer chunk2;
     // private  JFrame frame;
     private AudioPeakMonitor peakIn;
     private MeterPanel meterPanel;
@@ -50,8 +52,8 @@ public class MDCTPanel extends JPanel {
     private MDCTProcess mdctizer;
 //    private DitherProcess ditherer;
     private boolean cancel;
-    private boolean quantizeOn=true;
-    private boolean ditherOn=true;
+    private boolean quantizeOn = true;
+    private boolean ditherOn = true;
     AudioSystem audioSystem;
     private JLabel qlab;
     final Object readerMuex = new Object();
@@ -63,70 +65,86 @@ public class MDCTPanel extends JPanel {
 
 
         audioSystem = AudioSystem.instance();
-
+        //    audioSystem.getServer().
 
         peakIn = new AudioPeakMonitor();
 
 
         mdctizer = new MDCTProcess();
-    //    ditherer = new DitherProcess();
+        //    ditherer = new DitherProcess();
 
         AudioServer server = audioSystem.getServer();
 
         final AudioProcess output = audioSystem.getOut();
-
+        final float sampleRate = 44100.0f;
+        final AudioBuffer readChunk = new AudioBuffer(null, 2, 128, sampleRate);
+        final AudioBuffer mdctChunk = new AudioBuffer(null, 2, 128, sampleRate);
 
         server.setClient(new AudioClient() {
 
             int frameSize = 0;
+            CycliclyBufferedAudio1 inbuff = new CycliclyBufferedAudio1(10000, sampleRate);
+            CycliclyBufferedAudio1 outbuff = new CycliclyBufferedAudio1(10000, sampleRate);
 
             public void work(int size) {
 
                 if (chunk == null || size != frameSize) {
                     frameSize = size;
                     chunk = new AudioBuffer(null, 2, size, 44100.0f);
-                    chunk2 = new AudioBuffer(null, 2, size, 44100.0f);
+                    // chunk2 = new AudioBuffer(null, 2, size, 44100.0f);
                     chunk.setRealTime(true);
                 }
 
                 chunk.makeSilence();
 
-                synchronized (readerMuex) {
-                    if (audioReader != null) {
-                        if ((audioReader instanceof AudioReader) && ((AudioReader) audioReader).eof()) {
-                        } else {
-                            audioReader.processAudio(chunk);
+
+                // Fill input buffer
+              //  System.out.println(" FILLING INPUT ");
+                while (inbuff.freeSpace() > size) {
+                    synchronized (readerMuex) {
+                        if (audioReader != null) {
+                            if ((audioReader instanceof AudioReader) && ((AudioReader) audioReader).eof()) {
+                            } else {
+                                readChunk.makeSilence();
+                                audioReader.processAudio(readChunk);
+                                inbuff.in.processAudio(readChunk);
+                            }
                         }
                     }
                 }
 
-                if (cancel) {
-                    int n = chunk.getSampleCount();
-                    for (int c = 0; c < chunk.getChannelCount(); c++) {
-                        System.arraycopy(chunk.getChannel(c), 0, chunk2.getChannel(c), 0, n);
-                    }
+
+           //     System.out.println(" FILLING OUTPUT ");
+
+                while(outbuff.avail() < chunk.getSampleCount()) {
+                    inbuff.out.processAudio(mdctChunk);  // grab chunk
+                    mdctizer.processAudio(mdctChunk);
+                    outbuff.in.processAudio(mdctChunk);
                 }
 
-//                if (ditherOn) {
-//                    ditherer.processAudio(chunk);
+                outbuff.out.processAudio(chunk);
+
+//                if (cancel) {
+//                    int n = chunk.getSampleCount();
+//                    for (int c = 0; c < chunk.getChannelCount(); c++) {
+//                        System.arraycopy(chunk.getChannel(c), 0, chunk2.getChannel(c), 0, n);
+//                    }
 //                }
 
-                if (quantizeOn) {
-                    mdctizer.processAudio(chunk);
-                }
+           //     System.out.println(" PLAYING OUTPUT ");
 
                 peakIn.processAudio(chunk);
 
-                if (cancel) {
-                    int n = chunk.getSampleCount();
-                    for (int c = 0; c < chunk.getChannelCount(); c++) {
-                        float a[] = chunk.getChannel(c);
-                        float b[] = chunk2.getChannel(c);
-                        for (int i = 0; i < n; i++) {
-                            a[i] = a[i] - b[i];
-                        }
-                    }
-                }
+//                if (cancel) {
+//                    int n = chunk.getSampleCount();
+//                    for (int c = 0; c < chunk.getChannelCount(); c++) {
+//                        float a[] = chunk.getChannel(c);
+//                        float b[] = chunk2.getChannel(c);
+//                        for (int i = 0; i < n; i++) {
+//                            a[i] = a[i] - b[i];
+//                        }
+//                    }
+//                }
 
                 output.processAudio(chunk);
 
@@ -226,7 +244,7 @@ public class MDCTPanel extends JPanel {
 
         tt.add(quant);
         tt.add(combo);
-        tt.add(qlab = new JLabel(String.format("(q=%7.2g)", mdctizer.getQuant())));
+        //   tt.add(qlab = new JLabel(String.format("(q=%7.2g)", mdctizer.getQuant())));
         //tt.add(Box.createHorizontalGlue());
 
         side.add(tt);
@@ -239,9 +257,11 @@ public class MDCTPanel extends JPanel {
                 int n = (Integer) (combo.getSelectedItem());
                 nLevel = (int) Math.pow(2, n);
                 if (mdctizer != null) {
-                    mdctizer.setNumberOfLevels(nLevel);
-            //        ditherer.setQuantizelevel(mdctizer.getQuant());
-                    qlab.setText(String.format("(q=%7.1g)", mdctizer.getQuant()));
+                    for (int i = 0; i < mdctizer.getBandCount(); i++) {
+                        mdctizer.setNumberOfLevels(nLevel, i);
+                    }
+                    //        ditherer.setQuantizelevel(mdctizer.getQuant());
+                    //         qlab.setText(String.format("(q=%7.1g)", mdctizer.getQuant()));
                 }
             }
         });
@@ -262,7 +282,7 @@ public class MDCTPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 ditherOn = dither.isSelected();
                 double val = amt.getDoubleValue();
-          //      ditherer.setDither((float) val);
+                //      ditherer.setDither((float) val);
                 if (ditherOn) {
                     amtDisp.setText(String.format("%6.3f*q", val));
                 } else {
@@ -277,7 +297,7 @@ public class MDCTPanel extends JPanel {
 
             public void stateChanged(ChangeEvent e) {
                 double val = amt.getDoubleValue();
-           //     ditherer.setDither((float) val);
+                //     ditherer.setDither((float) val);
                 if (ditherOn) {
                     amtDisp.setText(String.format("%6.3f*q", val));
                 } else {
@@ -301,7 +321,9 @@ public class MDCTPanel extends JPanel {
                 int n = (Integer) (combo.getSelectedItem());
                 nLevel = (int) Math.pow(2, n);
                 if (mdctizer != null) {
-                    mdctizer.setNumberOfLevels(nLevel);
+                    for (int i = 0; i < mdctizer.getBandCount(); i++) {
+                        mdctizer.setNumberOfLevels(nLevel, i);
+                    }
                 }
             }
         });
@@ -313,6 +335,6 @@ public class MDCTPanel extends JPanel {
     void dispose() {
         audioSystem.stop();
         timer.stop();
-        timer=null;
+        timer = null;
     }
 }

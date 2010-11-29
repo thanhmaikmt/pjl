@@ -13,7 +13,7 @@ import mediaframe.mpeg4.audio.AAC.MDCT;
 public class MDCTTest {
 
     public static void main(String args[]) {
-        test1();
+        test2();
     }
 
     static void test1() {
@@ -61,9 +61,25 @@ public class MDCTTest {
                 System.out.print(buff[k] + " ");
             }
             System.out.println();
-
-
-
         }
     }
+
+    static void test3() {
+        int N = 8;
+
+
+
+        for (int i = 0; i < N; i++) {
+
+            float buff[] = new float[N];
+            buff[i] = 1.0f;
+            MDCT.ITransform(buff, N, N/2);
+            for (int k = 0; k < N; k++) {
+                System.out.print(buff[k] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+
 }
