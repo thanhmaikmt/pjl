@@ -1,6 +1,6 @@
 from simulation import *
 from backpropbrain import  *
-import pygame 
+
 
 #  
 #
