@@ -7,7 +7,7 @@
 #  Pods die when they reach the age limit or crash into a wall
 #  The fitness of a pod is measured by the distance around track when it dies.
 #      if it has completed the circuit I also use the age of pod to encourage speed.
-#  A list (Pool) of the best pods is kept.
+#  A good_brain_list (Pool) of the best pods is kept.
 #  When a pod dies its neural brain is added to the pool (if it is good enough)
 #    it brain is then replaced by a new one created from the pool.
 #  The Pool creates new neural nets by mutating one of the brains in the pool.
@@ -58,19 +58,21 @@ VELOCITY_SCALE=1.0/80      # scale velocity (pod starts to slip at 80)
 MAX_AGE=80                 # pods life span   
 REPROVE_PROB=.2            # probability that selection we trigger a reprove of the best gene
 N_HIDDEN=5                # number of neurons in hidden layer
-N_SENSORS=12               # number of sensors
+N_SENSORS=14              # number of sensors
 MUTATE_SCALE=1.0          # amount of mutation
 MIN_AGE=0.2               # Allow to live this long before reaping for not moving
 BREED_PROB=0.5            # prob that new entity is from breeding           
 CAN_BREED=False           # by default assume can not breed
 SEED_PROB=0.1             # probability a new thing is created from nothing
+DANGDT_SCALE=1.0
+CHOOSE_FLUKE_PROB=0.2     # 20% chance we use a high scorer
 
 # files used by program
 
 POOL_FILE_NAME=RUN_NAME+"_pool.txt"      # file to save/restore the pool
 log_file=open(RUN_NAME+"log.txt","w")    # keep a record of the performance
 
-nin=N_SENSORS+1    # velocoty + sensors are inputs
+nin=N_SENSORS+2    # velocoty + sensors are inputs
 nout=4             # controls
 
 # specify the neural brain parameters with nin nhidden and nout
@@ -83,7 +85,7 @@ layerSizes=[nin,N_HIDDEN,nout]
 # Feedforward with output=sigmoid(sum)
 # if in doubt do not change
 
-
+"""
 import combobrain
 def createBrain(): 
     return  combobrain.ComboBrain(layerSizes)
@@ -104,6 +106,8 @@ def createBrain():
 def loadBrain(file):
     return feedforwardbrain.loadBrain(file)   
 
+
+"""
 
 # Feedforward with out=trheshold(sum)
 import perceptronbrain
@@ -151,10 +155,11 @@ class Painter:   # use me to display stuff
         tickRate="%8.1f" % ticks_per_sec
         
         str1=RUN_NAME+' pool size:'+ str(POOL_SIZE)+\
-                          ' ticks:'+ str(sim.world.ticks) +\
-                          ' best:'+ str(pool.best_fitness())+\
-                          ' average:'+ avFit+\
-                          ' ticks/sec:'+tickRate+"    "
+                          '   ticks:'+ str(sim.world.ticks) +\
+                          '   best:'+ str(pool.best_fitness())+\
+                          '   best(fluke):'+ str(pool.best_fluke_fitness())+\
+                          '   average:'+ avFit+\
+                          '   ticks/sec:'+tickRate+"    "
                                                     
        # print str1
         self.fontMgr.Draw(screen, None, 20,str1,(X,Y), (0,255,0) )
@@ -246,31 +251,49 @@ class Pool:  #  use me to store the best brains and create new brains
     # create a pool
    
     def __init__(self):
-        self.list=[]
-        self.maxMembers=POOL_SIZE        
+        self.good_brain_list=[]
+        self.fluke_gene_list=[]
+        self.maxMembers=POOL_SIZE
+        self.maxFlukeMembers=POOL_SIZE        
         self.elite_bias=1.0/POOL_SIZE
         self.reprover=None
         self.touched=True
         self.reaping=True
+
+        
+    # add a new Gene to the Pool  (if better than the worst one in pool)
+    # 
+    def add_fluke(self,gene):  
+                      
+        for i in range(len(self.fluke_gene_list)):
+            if gene.fitness > self.fluke_gene_list[i].fitness:
+                self.fluke_gene_list.insert(i,gene)
+                if len(self.fluke_gene_list) > self.maxFlukeMembers:
+                    self.fluke_gene_list.pop()
+                return
+            
+        if len(self.fluke_gene_list) < self.maxFlukeMembers:
+            self.fluke_gene_list.append(gene)    
+        
         
     # add a new Gene to the Pool  (if better than the worst one in pool)
     # 
     def add(self,gene):  
                 
-        if len(self.list) >= self.maxMembers:
-            if gene.fitness < self.list[self.maxMembers-1].fitness:
+        if len(self.good_brain_list) >= self.maxMembers:
+            if gene.fitness < self.good_brain_list[self.maxMembers-1].fitness:
                 return
           
-        for i in range(len(self.list)):
-            if gene.fitness > self.list[i].fitness:
+        for i in range(len(self.good_brain_list)):
+            if gene.fitness > self.good_brain_list[i].fitness:
                 self.touched=True
-                self.list.insert(i,gene)
-                if len(self.list) > self.maxMembers:
-                    self.list.pop()
+                self.good_brain_list.insert(i,gene)
+                if len(self.good_brain_list) > self.maxMembers:
+                    self.good_brain_list.pop()
                 return
             
-        if len(self.list) < self.maxMembers:
-            self.list.append(gene)    
+        if len(self.good_brain_list) < self.maxMembers:
+            self.good_brain_list.append(gene)    
             self.touched=True
              
     # create a neural brain from the pool or maybe random
@@ -279,32 +302,35 @@ class Pool:  #  use me to store the best brains and create new brains
         
     
         # if pool is not full create a random brain 
-        if len(self.list) < self.maxMembers:         
+        if len(self.good_brain_list) < self.maxMembers:         
             #Create a brain
-            net=createBrain()
-            net.proof_count=0   # add proof count field
-            return net
+            brain=createBrain()
+            brain.proof_count=0   # add proof count field
+            return brain
 
 
         # keep testing the best brain in case it was a fluke!!!
         # this removes the best brain from the pool 
         # it will get back in if it scores OK 
         if random() < REPROVE_PROB:
-            net=self.list[0].brain
-            del self.list[0]
-            net.proof_count += 1
-            return net
+            gene=self.good_brain_list[0]
+            brain=gene.brain
+            self.add_fluke(gene)
+            del self.good_brain_list[0]
+            brain.proof_count += 1
+            return brain
+        
         
         if random() < SEED_PROB:
-            net=createBrain()
-            net.proof_count=0
-            return net
+            brain=createBrain()
+            brain.proof_count=0
+            return brain
             
         if CAN_BREED and random() < BREED_PROB:
             mum=self.select2()
             dad=self.select2()
-            net=breed(mum,dad)
-            net.proof_count=0
+            brain=breed(mum,dad)
+            brain.proof_count=0
     
         
         # Otherwise just select a random brain from the pool
@@ -318,8 +344,8 @@ class Pool:  #  use me to store the best brains and create new brains
     
     # return top of the pool
     def create_best(self):
-        clone=self.list[0].brain.clone()
-        #clone.proof_count=self.list[0].brain.proof_count
+        clone=self.good_brain_list[0].brain.clone()
+        #clone.proof_count=self.good_brain_list[0].brain.proof_count
         return clone
 
     # return the one that has been RETESTED the most.
@@ -327,19 +353,19 @@ class Pool:  #  use me to store the best brains and create new brains
         
         maxProof=-1
         
-        for g in self.list:
+        for g in self.good_brain_list:
             if g.brain.proof_count > maxProof:
                 maxProof=g.brain.proof_count
                 cloneMe=g.brain
                 
         clone=cloneMe.clone()
-        #clone.proof_count=self.list[0].brain.proof_count
+        #clone.proof_count=self.good_brain_list[0].brain.proof_count
         return clone
 
     # OLD version of selection that I did not like
     def select1(self):
-        
-        for x in self.list:
+    
+        for x in self.good_brain_list:
             if random() < self.elite_bias:
                 clone=x.brain.clone()
                 return clone
@@ -351,39 +377,52 @@ class Pool:  #  use me to store the best brains and create new brains
     # can also return None to trigger a new random brain    
     def select2(self):
         
-        id=randint(0,len(self.list)-1)
+        if len(self.fluke_gene_list) > 0 and  random() < CHOOSE_FLUKE_PROB:
+            id=randint(0,len(self.fluke_gene_list)-1)
+            return self.fluke_gene_list[id].brain.clone()
         
-        #if id ==len(self.list):
+        id=randint(0,len(self.good_brain_list)-1)
+        
+        #if id ==len(self.good_brain_list):
         #    return None
         
-        return self.list[id].brain.clone()
+        return self.good_brain_list[id].brain.clone()
+        
+        
+    # return the best fitness in the pool
+    # since I retest the best this value can fall
+    def best_fluke_fitness(self):
+        if len(self.fluke_gene_list) == 0:
+            return 0
+        else:
+            return self.fluke_gene_list[0].fitness
         
     # return the best fitness in the pool
     # since I retest the best this value can fall
     def best_fitness(self):
-        if len(self.list) == 0:
+        if len(self.good_brain_list) == 0:
             return 0
         else:
-            return self.list[0].fitness
+            return self.good_brain_list[0].fitness
        
     # return average fitness
     def average_fitness(self):
-        if len(self.list) == 0:
+        if len(self.good_brain_list) == 0:
             return 0
         else:
             sum=0.0
-            for x in self.list:
+            for x in self.good_brain_list:
                 sum +=x.fitness
 
-            return sum/len(self.list)
+            return sum/len(self.good_brain_list)
         
     # save the pool to a file
     # (note reproof count is not saved)
     def save(self,file):       
-        n=len(self.list)
+        n=len(self.good_brain_list)
         pickle.dump(n,file)
         
-        for x in self.list:
+        for x in self.good_brain_list:
             o=deepcopy(x.fitness)
             pickle.dump(o,file)
             x.brain.save(file)
@@ -391,7 +430,7 @@ class Pool:  #  use me to store the best brains and create new brains
         
     # load pool from a file
     def load(self,file):
-        self.list=[]
+        self.good_brain_list=[]
         n=pickle.load(file)
         print n
         for i in range(n):
@@ -483,7 +522,7 @@ class GAControl:
             
         # create the input for the brain
         # first the velocity of the pod 
-        input=[sqrt(state.dxdt**2+state.dydt**2)*VELOCITY_SCALE]
+        input=[sqrt(state.dxdt**2+state.dydt**2)*VELOCITY_SCALE,state.dangdt*DANGDT_SCALE]
         
         # and all the sensors
         # (note: possibly rear pointing sensors are redundant?)
