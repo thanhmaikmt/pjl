@@ -39,7 +39,7 @@ collision_no = 0
 reset=False
 
 
-RUN_NAME="pjl"             # used for file names so you can tag different experiments
+RUN_NAME="ems"             # used for file names so you can tag different experiments
 
 
 # The world
@@ -62,10 +62,10 @@ MAX_AGE=80                 # pods life span
 REPROVE_PROB=.2            # probability that selection we trigger a reprove of the best gene
 N_HIDDEN=5                 # number of neurons in hidden layer
 N_SENSORS=0             # number of sensors
-XREF = 320
-YREF = 400
-Y_circ=250
-X_circ=250
+XREF = 280
+YREF = 280
+Y_circ=390
+X_circ=190
 RAD_circ=200
 X_scale=1/100
 Y_scale=1/100
@@ -402,12 +402,22 @@ class GAControl:
     def calc_fitness(self,state,brain):
       
         dist=sqrt((state.x-XREF)**2+(state.y-YREF)**2)
+        
+        # Encourage them to stay around the point
         if dist < 3:
             hover=1
         else:
             hover=0
-
-        fitness=-dist + hover*pod.age
+        
+        # Encourage them to be straight but only when they are close to the point
+        # as I found that otherwise they just fall straight down
+        if dist < 100:
+            y = (-2.533*(pod.ang)**2 + 15.915*pod.ang - 24)*50
+        else:
+            y = 0
+ 
+        print
+        fitness=-dist + hover*pod.age + y
     
         
         return fitness    
