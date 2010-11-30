@@ -5,4 +5,4 @@ wall boundary
 
 # pod: initial position
 pod
-    150,500
+    100,200
