@@ -62,9 +62,9 @@ MAX_AGE=80                 # pods life span
 REPROVE_PROB=.2            # probability that selection we trigger a reprove of the best gene
 N_HIDDEN=5                 # number of neurons in hidden layer
 N_SENSORS=0             # number of sensors
-XREF = 350
+XREF = 320
 YREF = 400
-Y_circ=450
+Y_circ=250
 X_circ=250
 RAD_circ=200
 X_scale=1/100
@@ -125,7 +125,7 @@ class Admin:  # use me to control the simulation
             # this is called just before each time step
             # do admin tasks here
 
-            global pods,reset
+            global pods
 
              # output to a log file
             if pool.reaping and log_file!=None and pool.touched:
@@ -139,10 +139,7 @@ class Admin:  # use me to control the simulation
                 sim.frameskipfactor = sim.frameskipfactor+1
                 print "skip factor" ,sim.frameskipfactor
                 
-            if keyinput[pg.K_q]:
-                reset=True
-            else:
-                reset=False
+
             
             if keyinput[pg.K_MINUS]:
                 sim.frameskipfactor = max(1,sim.frameskipfactor-1)
@@ -395,6 +392,7 @@ class GAControl:
         
         if dist>RAD_circ:
             return True
+        
         if state.ang<0.8*pi or state.ang>1.2*pi:
             return True
         
@@ -403,9 +401,14 @@ class GAControl:
     # calculate the fitness of a pod
     def calc_fitness(self,state,brain):
       
-        dist=sqrt((state.x-XREF)**2+(state.y-YREF))
-        fitness=-dist
-       
+        dist=sqrt((state.x-XREF)**2+(state.y-YREF)**2)
+        if dist < 3:
+            hover=1
+        else:
+            hover=0
+
+        fitness=-dist + hover*pod.age
+    
         
         return fitness    
         
@@ -442,8 +445,8 @@ class GAControl:
         input.append((state.y-YREF)*Y_scale)
         # and all the sensors
         # (note: possibly rear pointing sensors are redundant?)
-        for s in sensor:
-            input.append(s.val*SENSOR_SCALE)
+        #for s in sensor:
+            #input.append(s.val*SENSOR_SCALE)
             
         # activate the brain to get output    
         output=self.brain.ffwd(input)
