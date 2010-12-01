@@ -67,8 +67,8 @@ YREF = 280
 Y_circ=390
 X_circ=190
 RAD_circ=200
-X_scale=1/100
-Y_scale=1/100
+X_scale=1.0/100.0
+Y_scale=1.0/100.0
 
 
 # files used by program
@@ -405,19 +405,19 @@ class GAControl:
         
         # Encourage them to stay around the point
         if dist < 3:
-            hover=1
+            hover=10
         else:
             hover=0
         
         # Encourage them to be straight but only when they are close to the point
         # as I found that otherwise they just fall straight down
         if dist < 100:
-            y = (-2.533*(pod.ang)**2 + 15.915*pod.ang - 24)*50
+            angle_premimum = (-2.533*(pod.ang)**2 + 15.915*pod.ang - 24)*50
         else:
-            y = 0
- 
-        print
-        fitness=-dist + hover*pod.age + y
+            angle_premimum = 0
+            
+        print pod.age
+        fitness=-dist + hover*pod.age + angle_premimum
     
         
         return fitness    
