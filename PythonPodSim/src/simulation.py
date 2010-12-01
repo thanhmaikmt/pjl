@@ -568,19 +568,29 @@ class GravityPod(Pod):
         Pod.__init__(self,nSensor,sensorRange,brain,col)
         self.init()
      
-    def init(self):     
+    def init(self):
+        self.base_init()
         self.mass=2
         self.inertia=.5     # angluar inertia
         self.thrustMax=20
         self.spinThrustMax=.11
+        self.vel=0.0
+        self.fuel=0.0
+        self.distanceTravelled=0.0
+        self.age=0.0
+        self.pos_trips=0
+        self.neg_trips=0
         self.collide=False
 
     def step(self,dt,world):
 
         state=State(self)
         self.control=self.brain.process(self.sensors,state,dt)
+        if self.control == None:
+            return
+        
         self.control.limit()
-
+        self.age += dt
         xNext = self.x + self.dxdt*dt
         yNext = self.y + self.dydt*dt
 
