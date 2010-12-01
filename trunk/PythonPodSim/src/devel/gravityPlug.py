@@ -45,8 +45,8 @@ sensorRange = 2000
 
 #SENSOR_SCALE=1.0/100.0      # scale sensors (make more like 0-1)
 MAX_AGE=100                # pods life span   
-N_HIDDEN1=5                 # number of neurons in hidden layer
-N_HIDDEN2=5
+N_HIDDEN1=7                 # number of neurons in hidden layer
+#N_HIDDEN2=7
 N_SENSORS=0             # number of sensors
 VEL_SCALE=1/80.0
 XREF = 350
@@ -59,17 +59,22 @@ Y_scale=1/100.0
 DANGDT_SCALE=1.0/3.0
 
 
-layerSizes=[7,N_HIDDEN1,N_HIDDEN2,4]
+layerSizes=[7,N_HIDDEN1,4]
 
-
+#
+# 
+#
 class GravityPlug:
 
     RUN_NAME="plug"             # used for file names so you can tag different experiments
-
+    FIT_FMT=" %5.1f "
     # The world
     WORLD_FILE="rect_world.txt"     # world to use
     ###  START OF PROGRAM
     max_input=[0,0,0,0,0,0,0]
+    
+    def loadBrain(self,file):
+        return feedforwardbrain.loadBrain(file)
     
     def createBrain(self):
         return feedforwardbrain.FeedForwardBrain(layerSizes)
