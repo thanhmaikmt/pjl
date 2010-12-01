@@ -38,6 +38,7 @@ startx = 0
 collision_no = 0
 reset=False
 
+BIG=10000
 
 RUN_NAME="gravity"             # used for file names so you can tag different experiments
 
@@ -57,12 +58,13 @@ WORLD_FILE="rect_world.txt"     # world to use
 POOL_SIZE=50               # size of pool of best brains
 POP_SIZE=10               # number of pod on circuit
 SENSOR_SCALE=1.0/100.0      # scale sensors (make more like 0-1)
-X_VELOCITY_SCALE=1.0/10      # scale velocity (pod starts to slip at 80)
-Y_VELOCITY_SCALE=1.0/10
+#X_VELOCITY_SCALE=1.0/10      # scale velocity (pod starts to slip at 80)
+#Y_VELOCITY_SCALE=1.0/10
 MAX_AGE=100                # pods life span   
 REPROVE_PROB=.2            # probability that selection we trigger a reprove of the best gene
 N_HIDDEN=5                 # number of neurons in hidden layer
 N_HIDDEN2=5
+#N_HIDDEN2=0
 N_SENSORS=0             # number of sensors
 VEL_SCALE=1/80.0
 
@@ -309,16 +311,7 @@ class Pool:  #  use me to store the best brains and create new brains
         #clone.proof_count=self.list[0].brain.proof_count
         return clone
 
-    # OLD version of selection that I did not like
-    def select1(self):
-        
-        for x in self.list:
-            if random() < self.elite_bias:
-                clone=x.brain.clone()
-                return clone
-        
-        return None
-
+  
 
     # random selection from the pool
     # can also return None to trigger a new random brain    
@@ -392,63 +385,103 @@ class GAControl:
 
     def __init__(self):
         self.brain=pool.create_new()
-    
+ 
+ 
     # decide if we want to kill a pod        
-    def reap_pod(self,state):
+    def reap_pod(self,state,dt):
         pod=state.pod
+     
+       
+        # distance from centre of bounding circle
+        dist_BOUND=sqrt((state.x-X_circ)**2+(state.y-Y_circ)**2)
         
+        # distance from target
+        dist_TARGET= sqrt((state.x-XREF)**2+(state.y-YREF)**2)
+     
+        # integrate the error 
+        try:    
+            pod.error_integral += dist_TARGET*dt
+        except AttributeError:
+            pod.error_integral = 0.0
+ 
+       
+        # died of old age!
+        # fitness is current distance from the pod plus the average over it's life
+        # (this should encourage it to get close quickly)
+        if pod.age >= MAX_AGE:          
+            return -dist_TARGET - pod.error_integral/MAX_AGE
+    
+        # out of bounds
+        # fitness is pod age (offset so it is independent of natural death)
+        if dist_BOUND > RAD_circ:
+            fit=pod.age-BIG
+            return  fit
         
-        if pod.collide:
-            return True
+        # Same as above if it topples over
+        if state.ang<0.6*pi or state.ang>1.4*pi:
+            fit = pod.age-BIG
+            return fit
+    
+    """
+    # decide if we want to kill a pod        
+    def reap_pod_2(self,state,dt):
+        pod=state.pod
+    
+    
+        dist_BOUND=sqrt((state.x-X_circ)**2+(state.y-Y_circ)**2)
+        
+        dist_TARGET= sqrt((state.x-XREF)**2+(state.y-YREF)**2)
+     
+        if not hasattr(pod,'error_integral'):
+            pod.error_integral = 0.0
+            
+        pod.error_integral += dist_TARGET*dt
+        
+        fit =  -pod.error_integral  
+       
+        #if pod.collide:
+        #    return fit
         
         if pod.age > MAX_AGE:          
-            return True 
+            return fit 
     
-        dist=sqrt((state.x-X_circ)**2+(state.y-Y_circ)**2)
         
-        if dist>RAD_circ:
-            return True
+        if dist_BOUND > RAD_circ:
+            fit=(fit*MAX_AGE)/pod.age
+            return fit
         
         
         #if state.ang<0.6*pi or state.ang>1.4*pi:
         #    pod.collide=True
         #    return True
         
-        return False
+        return None
+    """
     
-    # calculate the fitness of a pod
-    def calc_fitness(self,state,brain):
-        
-        #dist1 = sqrt((XREF)**2+(YREF)**2)
-        
-        dist= sqrt((state.x-XREF)**2+(state.y-YREF)**2)
-        
-        """
-        fitness = -dist + state.pod.age
-       
-        if state.pod.collide:
-            fitness -= 100
-        """
-        
-        return  state.pod.age - dist - MAX_AGE    
+  
         
     # normal process called every time step    
     def process(self,sensor,state,dt):
     
-                    
+        
+                   
         # If we are trying to evolve and pod dies
-        if pool.reaping and self.reap_pod(state):
-            " here then time to replace the pod"
+        if pool.reaping:
+            fitness=self.reap_pod(state,dt)
+            if fitness != None:
             
-            # save current  brain and fitness in the pool
-            fitness=self.calc_fitness(state,self.brain)
-            pool.add(Gene(self.brain,fitness)) 
+                " here then time to replace the pod"
             
-            # reset the pod and give it a new brain
-            world.init_pod(state.pod)
-            state.pod.ang = pi+(0.5 - random())*pi*0.2    # randomize the intial angle
-            self.brain=pool.create_new()
-            return
+                # save current  brain and fitness in the pool
+                #fitness=self.calc_fitness(state,self.brain)
+                pool.add(Gene(self.brain,fitness)) 
+            
+                # reset the pod and give it a new brain
+                world.init_pod(state.pod)
+                state.pod.ang = pi+(0.5 - random())*pi*0.2    # randomize the intial angle
+                self.brain=pool.create_new()
+                state.pod.error_integral=0.0
+                return None
             
         # normal control stuff
         
@@ -467,7 +500,7 @@ class GAControl:
         
         doit=False
         for i in range(len(input)):
-            if abs(input[i] > max_input[i]):
+            if abs(input[i]) > max_input[i]:
                 doit=True
                 max_input[i]=abs(input[i])
                 
@@ -495,7 +528,7 @@ class GAControl:
 ###  START OF PROGRAM
 
 max_input=[0,0,0,0,0,0,0]
-dt          =.1       
+dt          =.1   
 sensorRange = 1000
 pool=Pool(7,N_HIDDEN,4)
 pods=[]
