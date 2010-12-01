@@ -64,7 +64,7 @@ REPROVE_PROB=.2            # probability that selection we trigger a reprove of 
 N_HIDDEN=5                 # number of neurons in hidden layer
 N_HIDDEN2=5
 N_SENSORS=0             # number of sensors
-
+VEL_SCALE=1/80.0
 
 XREF = 350
 YREF = 400
@@ -76,9 +76,9 @@ Y_circ=400
 RAD_circ=100
 
 
-X_scale=1/100
-Y_scale=1/100
-DANGDT_SCALE=1.0
+X_scale=1/100.0
+Y_scale=1/100.0
+DANGDT_SCALE=1.0/3.0
 
 
 # files used by program
@@ -456,13 +456,25 @@ class GAControl:
             
         # create the input for the brain
         # first the velocity of the pod 
-        input=[state.dxdt]
-        input.append(state.dydt)
+        input=[state.dxdt*VEL_SCALE]
+        input.append(state.dydt*VEL_SCALE)
         input.append(sin(state.ang))
         input.append(cos(state.ang))
         input.append(state.dangdt*DANGDT_SCALE)
         input.append((state.x-XREF)*X_scale)
         input.append((state.y-YREF)*Y_scale)
+        
+        
+        doit=False
+        for i in range(len(input)):
+            if abs(input[i] > max_input[i]):
+                doit=True
+                max_input[i]=abs(input[i])
+                
+                
+        if doit:
+            print max_input
+            
         # and all the sensors
         # (note: possibly rear pointing sensors are redundant?)
         for s in sensor:
@@ -482,6 +494,7 @@ class GAControl:
 
 ###  START OF PROGRAM
 
+max_input=[0,0,0,0,0,0,0]
 dt          =.1       
 sensorRange = 1000
 pool=Pool(7,N_HIDDEN,4)
@@ -498,15 +511,6 @@ for i in range(POP_SIZE):
     
     pods.append(pod)
     
-
-        
-
-            
-    
-    
-    
-    
-
 #brain       = CarControl()
 #pod         = CarPod(8,sensorRange,brain,(255,255,255))
 
