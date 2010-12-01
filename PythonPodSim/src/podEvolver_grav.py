@@ -227,8 +227,8 @@ class Pool:  #  use me to store the best brains and create new brains
             self.layerSizes=[nin,nhidden,nout]
         else:
             self.layerSizes=[nin,nhidden,N_HIDDEN2,nout]
-        self.elite_bias=1.0/POOL_SIZE
-        self.reprover=None
+        #self.elite_bias=1.0/POOL_SIZE
+        # self.reprover=None
         self.touched=True
         self.reaping=True
         
