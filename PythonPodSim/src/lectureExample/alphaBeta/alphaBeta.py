@@ -121,7 +121,7 @@ root=MaxNode()
 if len(sys.argv) > 1:
    net=sys.argv[1]
 else:
-   net="net2"
+   net="net2best"
 
 
 readNet(net+".txt",root)
