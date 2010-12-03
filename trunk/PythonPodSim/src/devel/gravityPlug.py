@@ -4,34 +4,6 @@ Created on 1 Dec 2010
 @author: pjl
 '''
 
-#  demonstration of Evolving pods using a randomish search.
-#
-#   uses the idea of a population selection and mutatation (does not try crossover)
-#
-#  Each pod is controlled with a neural net.
-#  Pods have a finite life.
-#  Pods die when they reach the age limit or crash into a wall
-#  The fitness of a pod is measured by the distance around track when it dies.
-#      if it has completed the circuit I also use the age of pod to encourage speed.
-#  A list (Pool) of the best pods is kept.
-#  When a pod dies its neural net is added to the pool (if it is good enough)
-#    it net is then replaced by a new one created from the pool.
-#  The Pool creates new neural nets by mutating one of the brains in the pool.
-#  mutation in this version 
-#      -  all the weights are changed by a random amount. 
-#      -  I also use a random scaling factor so some new pods are small changes whilst
-#         others are large changes. 
-#  
-# Notes: the initial angle of a pod has got a random pertubation.
-#        Just because a pod can has achieved a good score does not mean it is the best
-#        I keep "re-testing" the best pod in case its score was by chance.
-#
-#  A log file is written out which could be used to plot graphs of performance to compare different 
-#  configurations (e.g. change the size of the POOL)
-#
-# For more information on the working of this code see in line comments 
-# and look at the code. 
-
 import pygame 
 from simulation import *
 from random import  *
@@ -43,7 +15,7 @@ import feedforwardbrain
 BIG=10000
 sensorRange = 2000
 
-#SENSOR_SCALE=1.0/100.0      # scale sensors (make more like 0-1)
+
 MAX_AGE=100                # pods life span   
 N_HIDDEN1=7                 # number of neurons in hidden layer
 #N_HIDDEN2=7
@@ -68,8 +40,8 @@ class GravityPlug:
 
     RUN_NAME="plug"             # used for file names so you can tag different experiments
     FIT_FMT=" %5.1f "
-    # The world
     WORLD_FILE="rect_world.txt"     # world to use
+    CAN_BREED=True
     ###  START OF PROGRAM
     max_input=[0,0,0,0,0,0,0]
     
@@ -78,6 +50,27 @@ class GravityPlug:
     
     def createBrain(self):
         return feedforwardbrain.FeedForwardBrain(layerSizes)
+        
+    def breed(self,mum,dad):
+        
+        child=mum.clone()
+        for i in range(1,child.num_layer):  
+            a=child.weight[i]
+            d=dad.weight[i]
+            
+            n=child.layer_size[i]
+            
+            split=randrange(n+1)
+            #print "split",split
+            for j in range(split,n):
+                childW=a[j]
+                dW=d[j]
+                
+                for k in range(child.layer_size[i - 1]+1):
+                    childW[k]=dW[k]
+                    
+                    
+        return child
         
     def postDraw(self,screen,fontMgr):
         fontMgr.Draw(screen, None, 20,"x",(XREF,YREF), (255,255,255) )       
@@ -140,6 +133,7 @@ class GravityPlug:
         input.append((state.x-XREF)*X_scale)
         input.append((state.y-YREF)*Y_scale)
         
+        """
         doit=False
         for i in range(len(input)):
             if abs(input[i]) > GravityPlug.max_input[i]:
@@ -149,6 +143,7 @@ class GravityPlug:
                 
         if doit:
             print GravityPlug.max_input
+        """
             
         # and all the sensors (in this case none!!!)
         #for s in sensor:
@@ -167,3 +162,7 @@ class GravityPlug:
     def createPod(self,control,color):
         return GravityPod(N_SENSORS,sensorRange,control,color)
 
+    def init_pod(self,pod,world):
+        world.init_pod(pod)
+        pod.ang += random()-0.5    # randomize the intial angle
+           
