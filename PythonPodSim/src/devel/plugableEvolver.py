@@ -47,10 +47,10 @@ RUN_NAME=plug.RUN_NAME
     
 POOL_SIZE=50               # size of pool of best brains
 POP_SIZE=10                # number of pod on circuit
-REPROVE_PROB=.2            # probability that selection we trigger a reprove of the best gene
+REPROVE_PROB=.1            # probability that selection we trigger a reprove of the best gene
 MUTATE_SCALE=4             # amount of mutation
-BREED_PROB=0.0             # prob that new entity is from breeding           
-CAN_BREED=False            # by default assume can not breed
+BREED_PROB=0.4             # prob that new entity is from breeding           
+#CAN_BREED=False            # by default assume can not breed
 SEED_PROB=0.1              # probability a new thing is created from nothing
 CHOOSE_FLUKE_PROB=0.0      # chance we use a high scorer
 CHOOSE_PROVEN_PROB=0.0     # chance we use a high scorer
@@ -60,6 +60,14 @@ CHOOSE_PROVEN_PROB=0.0     # chance we use a high scorer
 POOL_FILE_NAME=RUN_NAME+"_pool.txt"      # file to save/restore the pool
 log_file=open(RUN_NAME+"log.txt","w")    # keep a record of the performance
 
+
+
+def topToString(list):
+    if len(list) ==0:
+        return "null"
+    
+    x=list[0]
+    return " %4.0f " % x.fitness +  " %4.0f" % x.flukeness + "( %d )"  %  x.proof_count
     
 # Define some classes
 
@@ -88,14 +96,19 @@ class Painter:   # use me to display stuff
         FMT=plug.FIT_FMT
         avFitStr=FMT % pool.average_fitness()
         tickRateStr="%8.1f" % ticks_per_sec
-        bestFlukeStr = FMT % pool.best_fluke_fitness()
-        bestStr=FMT  % pool.best_fitness()
+        
+        bestStr=topToString(pool.good_list)
+        
+        flukeStr=topToString(pool.fluke_list)
+        
+        provenStr=topToString(pool.proven_list)
+        
         
         str1=RUN_NAME+' pool size :'+ str(POOL_SIZE)+\
                           '   ticks :'+ str(sim.world.ticks) +\
                           '   best :'+ bestStr +\
-                          '   best(fluke) :'+ bestFlukeStr +\
-                          '   best(proven) :'+ pool.proven_string(FMT) +\
+                          '   best(fluke) :'+ flukeStr +\
+                          '   best(proven) :'+ provenStr +\
                           '   average :'+ avFitStr+\
                           '   ticks/sec :'+tickRateStr+"    "
                                                     
@@ -147,9 +160,7 @@ class Admin:  # use me to control the simulation
                 else:
                     pod=pods[0]
                     
-                    
-                world.init_pod(pod)
-                pod.ang += random()-0.5    # randomize the intial angle
+                plug.init_pod(pod,world)    
                 pod.control.brain=pool.create_best()
                 pool.reaping=False
              
@@ -211,7 +222,7 @@ class Pool:  #  use me to store the best brains and create new brains
         self.good_list=[]
         self.fluke_list=[]
         self.proven_list=[]
-        self.maxMembers=POOL_SIZE
+        self.maxGoodMembers=POOL_SIZE
         self.maxFlukeMembers=POOL_SIZE    
         self.maxProvenMembers=POOL_SIZE    
         #self.elite_bias=1.0/POOL_SIZE
@@ -236,94 +247,107 @@ class Pool:  #  use me to store the best brains and create new brains
         for i in range(len(self.proven_list)):
             if brain.proof_count > self.proven_list[i].proof_count:
                 self.proven_list.insert(i,brain)
+                self.touched=True
+ 
                 if len(self.proven_list) > self.maxProvenMembers:
                     self.proven_list.pop()
                 return
             
         if len(self.proven_list) < self.maxProvenMembers:
             self.proven_list.append(brain)    
+            self.touched=True
         
     # add a new Gene to the Pool  (if better than the worst one in pool)
     # 
     def add_fluke(self,brain):  
                     
         for i in range(len(self.fluke_list)):
-            if brain.fitness > self.fluke_list[i].fitness:
+            if brain.flukeness > self.fluke_list[i].flukeness:
                 self.fluke_list.insert(i,brain)
+                self.touched=True
                 if len(self.fluke_list) > self.maxFlukeMembers:
                     self.fluke_list.pop()
                 return
             
         if len(self.fluke_list) < self.maxFlukeMembers:
             self.fluke_list.append(brain)    
-        
+            self.touched=True
         
     # add a new Gene to the Pool  (if better than the worst one in pool)
     # 
-    def add(self,brain):  
-                
-        if len(self.good_list) >= self.maxMembers:
-            if brain.fitness < self.good_list[self.maxMembers-1].fitness:
-                return
-          
+    def add_good(self,brain):  
+                    
         for i in range(len(self.good_list)):
             if brain.fitness > self.good_list[i].fitness:
                 self.touched=True
                 self.good_list.insert(i,brain)
-                if len(self.good_list) > self.maxMembers:
+                if len(self.good_list) > self.maxGoodMembers:
                     self.good_list.pop()
                 return
             
-        if len(self.good_list) < self.maxMembers:
+        if len(self.good_list) < self.maxGoodMembers:
             self.good_list.append(brain)    
             self.touched=True
+ 
+        
+    # add a new Gene to the Pool  (if better than the worst one in pool)
+    # 
+    def add(self,brain,fitness):  
+        
+    
+        if fitness > brain.flukeness or brain.flukeness == None:
+           brain.flukeness=fitness
+        
+        brain.proof_count+=1
+                                                         
+        if fitness < brain.fitness or brain.fitness == None:
+           brain.fitness=fitness
+             
+        # add brain to the fluke with fitness value
+        self.add_fluke(brain)
+               
+        self.add_good(brain)
+        
+        self.add_proven(brain)
+        
+ 
              
     # create a neural brain from the pool or maybe random
     # might return best brain to be reproven
     def create_new(self):
         
         # if pool is not full create a random brain 
-        if len(self.good_list) < self.maxMembers or random() < SEED_PROB:         
+        if len(self.good_list) < self.maxGoodMembers or random() < SEED_PROB:         
             #Create a brain
             brain=plug.createBrain()
-            brain.proof_count=0   # add proof count field
-            return brain
-
-
+  
         # keep testing the best brain in case it was a fluke!!!
         # this removes the best brain from the pool 
         # it will get back in if it scores OK 
-        if random() < REPROVE_PROB:
-        
-            brain=self.good_list[0]
-            brain.proof_count += 1
-        
-            fluke=brain.clone();    
-            fluke.fitness=brain.fitness
-            
-            self.add_fluke(fluke)
-            
+        elif random() < REPROVE_PROB:     
+            brain=self.good_list[0] 
             del self.good_list[0]
-            self.add_proven(brain)
             return brain
         
-            
-        if CAN_BREED and random() < BREED_PROB:
+        elif plug.CAN_BREED and random() < BREED_PROB:
             mum=self.select()
             dad=self.select()
             brain=plug.breed(mum,dad)
-            brain.proof_count=0
-            return brain
-        
+            
+        else:
+          
         # Otherwise just select a random brain from the pool
-        clone=self.select().clone()
-  
+            brain=self.select().clone()
         # mutate the cloned brain by a random amount.
-        fact=random()
-        fact *= fact*MUTATE_SCALE
-        clone.mutate(fact)
-        clone.proof_count=0
-        return clone
+            fact=random()
+            fact *= fact*MUTATE_SCALE
+            brain.mutate(fact)
+            
+            
+        brain.proof_count=0
+        brain.fitness=None
+        brain.flukeness=None
+        return brain
     
     
     # return top of the pool
@@ -376,7 +400,7 @@ class Pool:  #  use me to store the best brains and create new brains
         if len(self.fluke_list) == 0:
             return 0
         else:
-            return self.fluke_list[0].fitness
+            return self.fluke_list[0].flukeness
         
     # return the best fitness in the pool
     # since I retest the best this value can fall
@@ -448,11 +472,9 @@ class GAControl:
             if fitness != None:
             
                 " here then time to replace the pod"
-            
-                self.brain.fitness=fitness
                 # save current  brain and fitness in the pool
                 #fitness=self.calc_fitness(state,self.brain)
-                pool.add(self.brain) 
+                pool.add(self.brain,fitness) 
                 world.init_pod(state.pod)
                 plug.initPod(state.pod)
                 self.brain=pool.create_new()
