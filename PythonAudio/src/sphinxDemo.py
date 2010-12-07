@@ -37,9 +37,16 @@ class DemoApp(object):
         self.pipeline = gst.parse_launch('gconfaudiosrc ! audioconvert ! audioresample '
                                          + '! vader name=vad auto-threshold=true '
                                          + '! pocketsphinx name=asr ! fakesink')
+        
+
         asr = self.pipeline.get_by_name('asr')
+
+        asr.set_property('lm', '/home/pjl/mylanguagemodel.lm')
+        asr.set_property('dict', '/home/pjl/mylanguagemodel.dic')
+
         asr.connect('partial_result', self.asr_partial_result)
         asr.connect('result', self.asr_result)
+
         asr.set_property('configured', True)
 
         bus = self.pipeline.get_bus()
