@@ -10,20 +10,11 @@ import pickle
 #
 # multilayer network
 #
-#
-#
-
-
-                
-          
-        
-        
-         
+           
 
 def sigmoid(x):
         if x < -100:
-            return 0.0
-        
+            return 0.0      
         return 1.0 / (1.0 + exp(-x))
     
 def randomSeed():
@@ -74,9 +65,6 @@ class FeedForwardBrain:
             a=self.out[i]
             for k in range(self.layer_size[i]):
                 a.append(0.0)
-
-        
-        
 
 
         self.weight=[]

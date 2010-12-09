@@ -73,29 +73,6 @@ log_file=open(RUN_NAME+"log.txt","w")    # keep a record of the performance
 nin=N_SENSORS+1    # velocoty + sensors are inputs
 nout=4             # controls
 
-# specify the neural brain parameters with nin nhidden and nout
-layerSizes=[nin,N_HIDDEN,nout]
-
-
-#    This section allows you experiment with different brain implementations
-
-# Feedforward with output=sigmoid(sum)
-# if in doubt do not change
-
-"""
-import combobrain
-def createBrain(): 
-    return  combobrain.ComboBrain(layerSizes)
-
-def loadBrain(file):
-    return combobrain.loadBrain(file)   
-
-CAN_BREED=True
-def breed(mum,dad):
-    return combobrain.breed(mum,dad)
-
-"""
-
 
 CAN_BREED=False
 
@@ -129,24 +106,6 @@ def breed(mum,dad):
         pass
  
 
-
-"""
-# Feedforward with out=trheshold(sum)
-import perceptronbrain
-def createBrain(): 
-    return  perceptronbrain.PerceptronBrain(layerSizes)
-
-def loadBrain(file):
-    return perceptronbrain.loadBrain(file)   
-
-
-import backpropbrain 
-def createBrain(): 
-    return  backpropbrain.BackPropBrain(layerSizes)
-
-def loadBrain(file):
-    return backpropbrain.loadBrain(file)   
-"""
 
     
 # Define some classes
