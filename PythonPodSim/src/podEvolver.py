@@ -40,12 +40,12 @@ RUN_NAME="comobo_breed"             # used for file names so you can tag differe
 
 
 # The world
-WORLD_FILE="trip_world.txt"     # world to use
-N_TRIP=21        # to avoid end wall remove pod after hitting this (last) trip
+#WORLD_FILE="trip_world.txt"     # world to use
+#N_TRIP=21        # to avoid end wall remove pod after hitting this (last) trip
 
 # An alternative world!!!
-#WORLD_FILE="car_circuit.txt"     # world to use
-#N_TRIP=200                       # big number because it is a loop
+WORLD_FILE="car_circuit.txt"     # world to use
+N_TRIP=200                       # big number because it is a loop
 
 
 
