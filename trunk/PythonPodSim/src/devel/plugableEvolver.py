@@ -49,7 +49,7 @@ POOL_SIZE=50               # size of pool of best brains
 POP_SIZE=10                # number of pod on circuit
 REPROVE_PROB=.1            # probability that selection we trigger a reprove of the best gene
 MUTATE_SCALE=4             # amount of mutation
-BREED_PROB=0.4             # prob that new entity is from breeding           
+BREED_PROB=0.1             # prob that new entity is from breeding           
 #CAN_BREED=False            # by default assume can not breed
 SEED_PROB=0.1              # probability a new thing is created from nothing
 CHOOSE_FLUKE_PROB=0.0      # chance we use a high scorer
@@ -443,7 +443,9 @@ class Pool:  #  use me to store the best brains and create new brains
             brain=plug.loadBrain(file)
             brain.proof_count=0    # sorry we lost the proof count when we saved it
             brain.fitness=f
-            self.add(brain)
+            brain.proof_count=0
+            brain.flukeness=f
+            self.add(brain,f)
          
         print "RELOADED POOL"   
         for pod in pods:
