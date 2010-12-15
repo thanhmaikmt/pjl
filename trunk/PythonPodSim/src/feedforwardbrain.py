@@ -81,7 +81,15 @@ class FeedForwardBrain:
                 r.append(randomSeed())
     
       
+    def resize_inputs(self,nIn):
         
+        
+        for a in self.weight[1]:                 
+            for j in range(nIn-self.layer_size[0]):    
+                a.append(0.0)
+            
+        if self.layer_size[0]<nIn:
+            self.layer_size[0]=nIn
         
     def clone(self):
         clone=FeedForwardBrain(self.layer_size)
