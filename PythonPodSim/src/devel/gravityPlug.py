@@ -38,7 +38,7 @@ layerSizes=[7,N_HIDDEN1,4]
 #
 class GravityPlug:
 
-    RUN_NAME="plug"             # used for file names so you can tag different experiments
+    RUN_NAME="plugSpin"             # used for file names so you can tag different experiments
     FIT_FMT=" %5.1f "
     WORLD_FILE="rect_world.txt"     # world to use
     CAN_BREED=True
@@ -105,10 +105,12 @@ class GravityPlug:
             fit=pod.age-BIG
             return  fit
         
+        """
         # Same as above if it topples over
         if state.ang<0.6*pi or state.ang>1.4*pi:
             fit = pod.age-BIG
             return fit
+        """
         
         return None
           

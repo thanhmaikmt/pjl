@@ -53,7 +53,9 @@ BREED_PROB=0.1             # prob that new entity is from breeding
 #CAN_BREED=False            # by default assume can not breed
 SEED_PROB=0.1              # probability a new thing is created from nothing
 CHOOSE_FLUKE_PROB=0.0      # chance we use a high scorer
-CHOOSE_PROVEN_PROB=0.0     # chance we use a high scorer
+CHOOSE_PROVEN_PROB=0.0
+dt = .01      
+
 
 # files used by program
 
@@ -489,8 +491,6 @@ class GAControl:
 
 
 ###  START OF PROGRAM
-
-dt = .1      
 
 pool=Pool()    #  create a pool for fittest networks
 pods=[]        #  pods on the circuits

@@ -84,9 +84,15 @@ class FeedForwardBrain:
     def resize_inputs(self,nIn):
         
         
-        for a in self.weight[1]:                 
-            for j in range(nIn-self.layer_size[0]):    
+        for j in range(nIn-self.layer_size[0]):    
+            self.out[0].append(0.0)
+                
+        for a in self.weight[1]:
+            wLast=a.pop()
+            a.append(0.0)                 
+            for j in range(nIn-self.layer_size[0]-1):    
                 a.append(0.0)
+            a.append(wLast)
             
         if self.layer_size[0]<nIn:
             self.layer_size[0]=nIn
@@ -97,11 +103,12 @@ class FeedForwardBrain:
         return clone
             
     def mutate(self,amount):    
+        
         for i in range(1,self.num_layer):
             a=self.weight[i]  
             for j in range(self.layer_size[i]):            
                 r=a[j]
-                for k in range(self.layer_size[i]):
+                for k in range(self.layer_size[i-1]+1):
                     r[k]=r[k]+randomSeed()*amount
                     
         

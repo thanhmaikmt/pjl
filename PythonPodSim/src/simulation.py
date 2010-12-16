@@ -401,6 +401,7 @@ class Pod:
         self.col=col
         self.base_init()
         
+        
     def base_init(self):
         self.ang=pi
         self.dangdt=0
@@ -596,6 +597,10 @@ class GravityPod(Pod):
 
         wall=world.check_collide_with_wall(self.x,self.y,xNext,yNext)
         if wall == None:
+            (p,n)=world.count_trips(self.x,self.y,xNext,yNext)
+            self.pos_trips += p
+            self.neg_trips += n
+        
             self.x=xNext
             self.y=yNext
             thrust=self.thrustMax*self.control.up
