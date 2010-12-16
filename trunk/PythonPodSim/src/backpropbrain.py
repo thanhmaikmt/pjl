@@ -115,7 +115,7 @@ class BackPropBrain:
             a=self.weight[i]  
             for j in range(self.layer_size[i]):            
                 r=a[j]
-                for k in range(self.layer_size[i]):
+                for k in range(self.layer_size[i-1]+1):
                     r[k]=r[k]+randomSeed()*amount
                     
         
