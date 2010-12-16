@@ -1,0 +1,5 @@
+import pickle
+
+f=open("maze_ems_pool.txt","r")
+
+print pickle.load(f)
