@@ -108,11 +108,21 @@ class FeedForwardBrain:
             a=self.weight[i]  
             for j in range(self.layer_size[i]):            
                 r=a[j]
-                k=randint(0, self.layer_size[i-1])
+                for k in range(self.layer_size[i-1]+1):
+                    r[k]=r[k]+randomSeed()*amount
+                    
+    def radom_mutate(self,amount):    
+        
+        for i in range(1,self.num_layer):
+            a=self.weight[i]  
+            for j in range(self.layer_size[i]):            
+                r=a[j]
+                k=randint(0, self.layer_size[i-1]+1)
                 z=randint(0, (self.layer_size[i-1]+1))
                 while k < z:
                     r[k]=r[k]+randomSeed()*amount
                     k=k+1
+                
                     
         
             
