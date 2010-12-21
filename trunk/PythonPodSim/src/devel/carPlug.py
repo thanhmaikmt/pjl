@@ -5,7 +5,7 @@ Created on 1 Dec 2010
 '''
 
 import pygame 
-from simulationMP import *
+from simulation import *
 from random import  *
 from copy import *
 from math import *
@@ -38,9 +38,9 @@ layerSizes=[7,N_HIDDEN1,4]
 #
 class GravityPlug:
 
-    RUN_NAME="plugSpin"             # used for file names so you can tag different experiments
+    RUN_NAME="car"             # used for file names so you can tag different experiments
     FIT_FMT=" %5.1f "
-    WORLD_FILE="rect_world.txt"     # world to use
+    WORLD_FILE="world.txt"     # world to use
     CAN_BREED=True
     ###  START OF PROGRAM
     max_input=[0,0,0,0,0,0,0]
@@ -73,18 +73,19 @@ class GravityPlug:
         return child
         
     def postDraw(self,screen,fontMgr):
-        fontMgr.Draw(screen, None, 20,"x",(XREF,YREF), (255,255,255) )       
-        pygame.draw.circle(screen,(255,255,255),(X_circ,Y_circ),RAD_circ,2)
+        pass
+        #fontMgr.Draw(screen, None, 20,"x",(XREF,YREF), (255,255,255) )       
+        #pygame.draw.circle(screen,(255,255,255),(X_circ,Y_circ),RAD_circ,2)
         
     # decide if we want to kill a pod        
     def reap_pod(self,pod):
        
         dt=pod.world.dt
         # distance from centre of bounding circle
-        dist_BOUND=sqrt((pod.state.x-X_circ)**2+(pod.state.y-Y_circ)**2)
+        dist_BOUND=sqrt((pod.x-X_circ)**2+(pod.y-Y_circ)**2)
         
         # distance from target
-        dist_TARGET= sqrt((pod.state.x-XREF)**2+(pod.state.y-YREF)**2)
+        dist_TARGET= sqrt((pod.x-XREF)**2+(pod.y-YREF)**2)
      
         # integrate the error 
         try:    
@@ -96,13 +97,13 @@ class GravityPlug:
         # died of old age!
         # fitness is current distance from the pod plus the average over it's life
         # (this should encourage it to get close quickly)
-        if pod.state.age >= MAX_AGE:          
+        if pod.age >= MAX_AGE:          
             return -dist_TARGET - pod.error_integral/MAX_AGE
     
         # out of bounds
         # fitness is pod age (offset so it is independent of natural death)
         if dist_BOUND > RAD_circ:
-            fit=pod.state.age-BIG
+            fit=pod.age-BIG
             return  fit
         
         """
@@ -116,7 +117,7 @@ class GravityPlug:
           
     def  initPod(self,pod):
         # reset the pod and give it a new brain
-        pod.state.ang = pi+(0.5 - random())*pi*0.2    # randomize the intial angle
+        pod.ang = pi+(0.5 - random())*pi*0.2    # randomize the intial angle
         pod.error_integral=0.0
          
     # normal process called every time step    
@@ -126,17 +127,16 @@ class GravityPlug:
         
         # normal control stuff
         control=Control()
-        state=pod.state
-        
+            
         # create the input for the brain
-        # first the velocity of the state 
-        input=[state.dxdt*VEL_SCALE]
-        input.append(state.dydt*VEL_SCALE)
-        input.append(sin(state.ang))
-        input.append(cos(state.ang))
-        input.append(state.dangdt*DANGDT_SCALE)
-        input.append((state.x-XREF)*X_scale)
-        input.append((state.y-YREF)*Y_scale)
+        # first the velocity of the pod 
+        input=[pod.dxdt*VEL_SCALE]
+        input.append(pod.dydt*VEL_SCALE)
+        input.append(sin(pod.ang))
+        input.append(cos(pod.ang))
+        input.append(pod.dangdt*DANGDT_SCALE)
+        input.append((pod.x-XREF)*X_scale)
+        input.append((pod.y-YREF)*Y_scale)
         
         """
         doit=False

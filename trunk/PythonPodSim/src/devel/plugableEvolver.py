@@ -25,7 +25,7 @@
 #
 # For more information on the working of this code see in line comments 
 # and look at the code. 
-from simulation import *
+from simulationMP import *
 
 import pygame 
 from random import  *
@@ -46,7 +46,7 @@ RUN_NAME=plug.RUN_NAME
 #  parameters that could be varied
     
 POOL_SIZE=50               # size of pool of best brains
-POP_SIZE=10                # number of pod on circuit
+POP_SIZE=1             # number of pod on circuit
 REPROVE_PROB=.1            # probability that selection we trigger a reprove of the best gene
 MUTATE_SCALE=4             # amount of mutation
 BREED_PROB=0.1             # prob that new entity is from breeding           
@@ -54,7 +54,7 @@ BREED_PROB=0.1             # prob that new entity is from breeding
 SEED_PROB=0.1              # probability a new thing is created from nothing
 CHOOSE_FLUKE_PROB=0.0      # chance we use a high scorer
 CHOOSE_PROVEN_PROB=0.0
-dt = .01      
+dt = .1      
 
 
 # files used by program
@@ -464,28 +464,31 @@ class GAControl:
     def __init__(self):
         self.brain=pool.create_new()
             
-        
-    # normal process called every time step    
-    def process(self,sensor,state,dt):
+  
+    # If we are trying to evolve and pod dies
     
-                    
-        # If we are trying to evolve and pod dies
+    def admin(self,pod):
+        
         if pool.reaping:
             
-            fitness=plug.reap_pod(state,dt)
+            fitness=plug.reap_pod(pod)
             if fitness != None:
             
                 " here then time to replace the pod"
                 # save current  brain and fitness in the pool
-                #fitness=self.calc_fitness(state,self.brain)
+                #fitness=self.calc_fitness(pod,self.brain)
                 pool.add(self.brain,fitness) 
-                world.init_pod(state.pod)
-                plug.initPod(state.pod)
+                world.init_pod(pod)
+                plug.initPod(pod)
                 self.brain=pool.create_new()
                 return None
-               
+                          
+    # normal process called every time step
+    #     
+    def process(self,pod,dt):
+                      
         # normal control stuff
-        control=plug.process(sensor,state,dt,self.brain)
+        control=plug.process(pod,dt)
         
         return control
 
@@ -507,8 +510,8 @@ for i in range(POP_SIZE):     # create initial population on the circuit
 
 
 admin       = Admin()
-world       = World(plug.WORLD_FILE,pods)
-sim         = Simulation(world,dt,admin)
+world       = World(plug.WORLD_FILE,pods,dt)
+sim         = Simulation(world,admin)
 
 # register the painter to display stuff
 sim.painter = Painter()
