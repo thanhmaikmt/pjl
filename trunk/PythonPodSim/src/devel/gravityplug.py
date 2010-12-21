@@ -11,12 +11,15 @@ from copy import *
 from math import *
 import time
 import feedforwardbrain
+from pods import *
+
+
 
 BIG=10000
 sensorRange = 2000
 
 
-MAX_AGE=100                # pods life span   
+MAX_AGE=1                # pods life span   
 N_HIDDEN1=7                 # number of neurons in hidden layer
 #N_HIDDEN2=7
 N_SENSORS=0             # number of sensors
@@ -33,6 +36,19 @@ DANGDT_SCALE=1.0/3.0
 
 layerSizes=[7,N_HIDDEN1,4]
 
+
+class Controller:
+            def __init__(self,brain,plug):
+                self.brain=brain
+                brain.fitness=None
+                self.plug=plug
+                
+            def process(self,pod,dt):
+                     
+                # normal control stuff
+                control=self.plug.process(pod,dt)
+                
+                return control
 #
 # 
 #
@@ -43,7 +59,7 @@ class GravityPlug:
     WORLD_FILE="rect_world.txt"     # world to use
     CAN_BREED=True
     ###  START OF PROGRAM
-    max_input=[0,0,0,0,0,0,0]
+    #max_input=[0,0,0,0,0,0,0]
     
     def loadBrain(self,file):
         return feedforwardbrain.loadBrain(file)
@@ -122,7 +138,6 @@ class GravityPlug:
     # normal process called every time step    
     def process(self,pod,dt):
         
-     
         
         # normal control stuff
         control=Control()
@@ -164,10 +179,47 @@ class GravityPlug:
         
         return control
 
-    def createPod(self,control,color):
-        return GravityPod(N_SENSORS,sensorRange,control,color)
+    def createInitialPod(self,i):
+        
+     
+                
+                
+        brain=self.createBrain()
+        #control=GAController(self)
+        # random colours
+        b=255-(i*167)%256
+        g=(i*155)%256
+        r=255-(i*125)%256    
+        return GravityPod(N_SENSORS,sensorRange,Controller(brain,self),(r,g,b))
+    
 
     def init_pod(self,pod,world):
         world.init_pod(pod)
         pod.ang += random()-0.5    # randomize the intial angle
-           
+    
+    
+      # If we are trying to evolve and pod dies
+    
+    def admin(self,pod,sim):
+        
+        pool=sim.pool
+        if pool.reaping:
+            
+            fitness=self.reap_pod(pod)
+            if fitness != None:
+            
+                " here then time to replace the pod"
+                # save current  brain and fitness in the pool
+                #fitness=self.calc_fitness(pod,self.brain)
+                pool.add(pod.controller.brain,fitness) 
+                sim.world.init_pod(pod)
+                self.initPod(pod)
+                pod.controller.brain=pool.create_new()
+                return True
+            
+        return False
+            
+                          
+    # normal process called every time step
+    def createAgent(self,world,pool,id):
+        return Agent(world,pool,id)

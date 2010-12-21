@@ -22,8 +22,6 @@ def randomSeed():
 
 def loadBrain(stream):
         # dummy to make compatible with backprop saved brains
-        b=pickle.load(stream)
-        a=pickle.load(stream)
         sz=pickle.load(stream)
         brain=FeedForwardBrain(sz) 
         brain.weight=pickle.load(stream)    

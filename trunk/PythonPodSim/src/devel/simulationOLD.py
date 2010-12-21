@@ -371,7 +371,7 @@ class World:
             
         self.done_lock.release()
             
-    def step(self):
+    def step3(self):
         self.ticks += 1
       
         if not tryThreading:
