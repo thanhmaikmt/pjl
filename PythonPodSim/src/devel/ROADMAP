@@ -1,0 +1,26 @@
+Web Server that can run pod races.
+
+User has a web page that displays the races.
+
+Load pods?
+
+exec "class MyPod"    
+as code -- security   -- username  - password
+
+
+class MyPod(CarPod):
+	def __init__()
+	
+		weights=[[][ [2 3  3] [ 2 3 4] 
+		self.brain=Brain(weights)
+	
+	
+
+META FILE:
+
+sensor1 @ angle
+
+
+control1=
+
+
