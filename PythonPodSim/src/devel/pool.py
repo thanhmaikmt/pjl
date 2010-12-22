@@ -4,10 +4,8 @@ Created on 21 Dec 2010
 @author: pjl
 '''
 
-
-from world import *
 from random import  *
-from simulationMP import *
+
 
 POOL_SIZE=50               # size of pool of best brains
 REPROVE_PROB=.1            # probability that selection we trigger a reprove of the best gene
@@ -22,7 +20,7 @@ class Pool:  #  use me to store the best brains and create new brains
   
     # create a pool
    
-    def __init__(self,world,plug):
+    def __init__(self,world,brainPlug):
         self.good_list=[]
         #self.fluke_list=[]
         #self.proven_list=[]
@@ -33,8 +31,8 @@ class Pool:  #  use me to store the best brains and create new brains
         #self.reprover=None
         self.touched=True
         self.reaping=True
-        self.world=world
-        self.plug=plug
+        #self.world=world
+        self.brainPlug=brainPlug
 
     def proven_string(self,FMT):
         if len(self.proven_list) == 0:
@@ -82,7 +80,7 @@ class Pool:  #  use me to store the best brains and create new brains
         # if pool is not full create a random brain 
         if len(self.good_list) < self.maxGoodMembers or random() < SEED_PROB:         
             #Create a brain
-            brain=self.plug.createBrain()
+            brain=self.brainPlug.createBrain()
   
         # keep testing the best brain in case it was a fluke!!!
         # this removes the best brain from the pool 
@@ -92,10 +90,10 @@ class Pool:  #  use me to store the best brains and create new brains
             del self.good_list[0]
             return brain
         
-        elif self.plug.CAN_BREED and random() < BREED_PROB:
+        elif self.brainPlug.CAN_BREED and random() < BREED_PROB:
             mum=self.select()
             dad=self.select()
-            brain=self.plug.breed(mum,dad)
+            brain=self.brainPlug.breed(mum,dad)
             
         else:
           
@@ -104,7 +102,7 @@ class Pool:  #  use me to store the best brains and create new brains
         # mutate the cloned brain by a random amount.
             fact=random()
             fact *= fact*MUTATE_SCALE
-            brain.mutate(fact)
+            self.brainPlug.mutate(brain,fact)
             
             
         brain.fitness=None

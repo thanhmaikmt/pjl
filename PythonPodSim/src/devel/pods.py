@@ -6,23 +6,25 @@ Created on 21 Dec 2010
 
 from math import *
 from util import *
-import multiprocessing as mp 
-from copy import *
-import pygame as pg
-
-#
-# 24/10/2010
-#    set CarPod dangdt
-#    modified slip to allow power slides (still very naff)
+#from copy import *
 
 ang_thrust_max=0.5
-
 white = (255,255,255)
 red=(255,40,40)
-
 small=1e-6
 
 
+
+class Controller:
+    def __init__(self,brain,plug):
+        self.brain=brain
+        brain.fitness=None
+        self.plug=plug
+                
+    def process(self,pod,dt):
+        control=self.plug.process(pod,dt)            
+        return control
+    
 class Control:
 
     def __init__(self):
@@ -183,9 +185,11 @@ class CarPod(Pod):
    
         
         
-    def step(self,dt,world):
+    def step(self):
+        world=self.world
+        dt=world.dt
         state=self.state
-        self.control=self.controller.process(self.sensors,state,dt)
+        self.control=self.controller.process(self,dt)
         if self.control == None:
             return
         
@@ -224,7 +228,7 @@ class CarPod(Pod):
                 
             state.vel += (self.control.up-self.control.down)*self.thrust_max/self.mass-self.damp*damp_fact
             state.collide = False
-            state.ang += 0.5*(2.0-self.slip)*(-self.control.right+self.control.left)*state.vel*self.steer_factor*dt + self.slip*self.dangdt*dt
+            state.ang += 0.5*(2.0-self.slip)*(-self.control.right+self.control.left)*state.vel*self.steer_factor*dt + self.slip*state.dangdt*dt
             avel=abs(state.vel)
             if avel > self.slip_speed_max:
                 self.slip=1
@@ -241,9 +245,9 @@ class CarPod(Pod):
             state.dxdt = 0
             state.vel  = 0
             state.collide = True
-            state.ang += (-self.control.right+self.control.left)*self.vel*self.steer_factor*dt
+            state.ang += (-self.control.right+self.control.left)*state.vel*self.steer_factor*dt
 
-        self.state.distance_travelled += sqrt(self.dxdt**2+self.dydt**2)*dt
+        self.state.distance_travelled += sqrt(state.dxdt**2+state.dydt**2)*dt
         state.dangdt=(state.ang-ang_prev)/dt
  
 

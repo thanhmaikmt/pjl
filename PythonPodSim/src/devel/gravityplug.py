@@ -35,19 +35,6 @@ DANGDT_SCALE=1.0/3.0
 
 layerSizes=[7,N_HIDDEN1,4]
 
-
-class Controller:
-            def __init__(self,brain,plug):
-                self.brain=brain
-                brain.fitness=None
-                self.plug=plug
-                
-            def process(self,pod,dt):
-                     
-                # normal control stuff
-                control=self.plug.process(pod,dt)
-                
-                return control
 #
 # 
 #
@@ -55,37 +42,11 @@ class GravityPlug:
 
     RUN_NAME="plugSpin"             # used for file names so you can tag different experiments
     FIT_FMT=" %5.1f "
-    WORLD_FILE="rect_world.txt"     # world to use
+    WORLD_FILE="rectWorld.world"     # world to use
     CAN_BREED=True
     ###  START OF PROGRAM
     #max_input=[0,0,0,0,0,0,0]
     
-    def loadBrain(self,file):
-        return feedforwardbrain.loadBrain(file)
-    
-    def createBrain(self):
-        return feedforwardbrain.FeedForwardBrain(layerSizes)
-        
-    def breed(self,mum,dad):
-        
-        child=mum.clone()
-        for i in range(1,child.num_layer):  
-            a=child.weight[i]
-            d=dad.weight[i]
-            
-            n=child.layer_size[i]
-            
-            split=randrange(n+1)
-            #print "split",split
-            for j in range(split,n):
-                childW=a[j]
-                dW=d[j]
-                
-                for k in range(child.layer_size[i - 1]+1):
-                    childW[k]=dW[k]
-                    
-                    
-        return child
         
     def postDraw(self,screen,fontMgr):
         fontMgr.Draw(screen, None, 20,"x",(XREF,YREF), (255,255,255) )       
@@ -178,28 +139,15 @@ class GravityPlug:
         
         return control
 
-    def createInitialPod(self,i):
-        
-     
-                
-                
-        brain=self.createBrain()
-        #control=GAController(self)
-        # random colours
+    def createInitialPod(self,i,brain):  
         b=255-(i*167)%256
         g=(i*155)%256
-        r=255-(i*125)%256    
+        r=255-(i*125)%256     
         return GravityPod(N_SENSORS,sensorRange,Controller(brain,self),(r,g,b))
+        
+    # If we are trying to evolve and pod dies
     
-
-    def init_pod(self,pod,world):
-        world.init_pod(pod)
-        pod.ang += random()-0.5    # randomize the intial angle
-    
-    
-      # If we are trying to evolve and pod dies
-    
-    def admin(self,pod,sim):
+    def reaper(self,pod,sim):
         
         pool=sim.pool
         if pool.reaping:
@@ -207,9 +155,9 @@ class GravityPlug:
             fitness=self.reap_pod(pod)
             if fitness != None:
             
-                " here then time to replace the pod"
+                # here then time to replace the pod
                 # save current  brain and fitness in the pool
-                #fitness=self.calc_fitness(pod,self.brain)
+                # fitness=self.calc_fitness(pod,self.brain)
                 pool.add(pod.controller.brain,fitness) 
                 sim.world.init_pod(pod)
                 self.initPod(pod)
