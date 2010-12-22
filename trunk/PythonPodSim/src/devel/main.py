@@ -5,7 +5,7 @@ from pool import  *
 from admin import  *
 from simulationMP import *
 
-run="carParam"
+run="carNN"
 
 if run == "carNN":
     from NNBrainPlug import *

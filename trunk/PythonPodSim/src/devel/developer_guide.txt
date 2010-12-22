@@ -1,0 +1,4 @@
+Developer Guide
+===============
+
+Stuff about hacking Pod World

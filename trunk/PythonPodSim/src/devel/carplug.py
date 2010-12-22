@@ -32,7 +32,7 @@ class CarPlug:
 
     RUN_NAME="carPlug"             # used for file names so you can tag different experiments
     FIT_FMT=" %5.1f "
-    WORLD_FILE="car_circuit.txt"     # world to use
+    WORLD_FILE="carCircuit.world"     # world to use
     
     ###  START OF PROGRAM
     #max_input=[0,0,0,0,0,0,0]
@@ -48,7 +48,6 @@ class CarPlug:
         state=pod.state
         
         if  state.vel < 0:
-            print "backwards"
             # print "backwards"
             return 0
         
@@ -86,7 +85,7 @@ class CarPlug:
             input.append(s.val*SENSOR_SCALE)
             
         # activate the brain to get output    
-        output=pod.controller.brain.ffwd(input)
+        output=pod.brain.ffwd(input)
        
         # assign values to the controllers
         control.up=output[0]
@@ -101,7 +100,7 @@ class CarPlug:
         b=255-(i*167)%256
         g=(i*155)%256
         r=255-(i*125)%256    
-        return CarPod(N_SENSORS,sensorRange,Controller(brain,self),(r,g,b))
+        return CarPod(N_SENSORS,sensorRange,brain,self,(r,g,b))
     
     
     # If we are trying to evolve and pod dies
@@ -115,10 +114,10 @@ class CarPlug:
                 " here then time to replace the pod"
                 # save current  brain and fitness in the pool
                 #fitness=self.calc_fitness(pod,self.brain)
-                pool.add(pod.controller.brain,fitness) 
+                pool.add(pod.brain,fitness) 
                 sim.world.init_pod(pod)
                 self.initPod(pod)
-                pod.controller.brain=pool.create_new()
+                pod.brain=pool.create_new()
                 return True
             
         return False

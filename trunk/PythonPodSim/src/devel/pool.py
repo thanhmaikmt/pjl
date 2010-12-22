@@ -65,10 +65,12 @@ class Pool:  #  use me to store the best brains and create new brains
     # 
     def add(self,brain,fitness):  
              
-                                                         
-        if  brain.fitness == None  or fitness < brain.fitness:
+        try:                                                 
+            if  brain.fitness == None  or fitness < brain.fitness:
                 brain.fitness=fitness
-            
+        except AttributeError:
+                brain.fitness=fitness
+                
         self.add_good(brain)
         
  
