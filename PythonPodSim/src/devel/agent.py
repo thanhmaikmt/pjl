@@ -37,7 +37,7 @@ class Agent(mp.Process):
         reap=sim.plug.reaper(self.pod,sim)
         if reap and MP:
             self.seed.state=self.pod.state
-            self.seed.brain=self.pod.controller.brain
+            self.seed.brain=self.pod.brain
             self.world_end.send(self.seed)
             
     
@@ -55,7 +55,7 @@ class Agent(mp.Process):
             cmd=self.pod_end.recv()
             if isinstance(cmd,Seed):
                 self.pod.state=cmd.state
-                self.pod.controller.brain=cmd.brain
+                self.pod.brain=cmd.brain
                 continue
              
             #print cmd

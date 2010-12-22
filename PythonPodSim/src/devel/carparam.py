@@ -7,7 +7,7 @@ Created on 1 Dec 2010
 from random import  *
 from math import *
 from pods import *
-
+from copy import *
 
 
 sensorRange = 2000
@@ -113,7 +113,7 @@ class CarParamPlug:
         
         control=Control()
         
-        p=pod.controller.brain.params
+        p=pod.brain.params
         sensor=pod.sensors
         state=pod.state
         
@@ -145,7 +145,7 @@ class CarParamPlug:
         b=255-(i*167)%256
         g=(i*155)%256
         r=255-(i*125)%256    
-        return CarPod(N_SENSORS,sensorRange,Controller(brain,self),(r,g,b))
+        return CarPod(N_SENSORS,sensorRange,brain,self,(r,g,b))
     
     
     # If we are trying to evolve and pod dies
@@ -159,10 +159,10 @@ class CarParamPlug:
                 " here then time to replace the pod"
                 # save current  brain and fitness in the pool
                 #fitness=self.calc_fitness(pod,self.brain)
-                pool.add(pod.controller.brain,fitness) 
+                pool.add(pod.brain,fitness) 
                 sim.world.init_pod(pod)
                 self.initPod(pod)
-                pod.controller.brain=pool.create_new()
+                pod.brain=pool.create_new()
                 return True
             
         return False

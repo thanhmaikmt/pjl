@@ -6,7 +6,7 @@ Created on 21 Dec 2010
 
 from math import *
 from util import *
-#from copy import *
+import pygame as pg
 
 ang_thrust_max=0.5
 white = (255,255,255)
@@ -14,19 +14,9 @@ red=(255,40,40)
 small=1e-6
 
 
-
-class Controller:
-    def __init__(self,brain,plug):
-        self.brain=brain
-        brain.fitness=None
-        self.plug=plug
-                
-    def process(self,pod,dt):
-        control=self.plug.process(pod,dt)            
-        return control
     
 class Control:
-
+    " A control message "
     def __init__(self):
         self.left=0
         self.right=0
@@ -34,13 +24,21 @@ class Control:
         self.down=0
 
     def limit(self):
+        " limit all values to 0-1 range "
         self.up=limit(self.up,0,1)
         self.right=limit(self.right,0,1)
         self.down=limit(self.down,0,1)
         self.left=limit(self.left,0,1)
 
 class Sensor:
+    " Sensor "
+    
     def __init__(self,ang_ref,range,name):
+        """
+        ang_ref:  anticlockwise angle from forward 
+        range: 
+        name:  
+        """ 
         self.ang_ref=ang_ref
         self.ang=ang_ref
         self.range=range
@@ -64,17 +62,17 @@ class Pod:
     right_poly_ref=[(5,5),(9,4),(12,5),(9,6)]
 
 
-    def __init__(self,nSensor,sensorRange,controller,col):
+    def __init__(self,nSensor,sensorRange,brain,plug,col):
        
         self.message="init"
-     
+        self.plug=plug
         self.sensors=[]
         self.control=Control()
         for i in range(nSensor):
             ang_ref=i*pi*2/nSensor
             self.sensors.append(Sensor(ang_ref,sensorRange,"sensor"+str(i)))
         self.base_init()    
-        self.controller=controller
+        self.brain=brain
         self.col=col
         self.base_init()
    
@@ -164,8 +162,8 @@ class Pod:
 
 class CarPod(Pod):
  
-    def __init__(self,nSensor,sensorRange,brain,col):
-        Pod.__init__(self,nSensor,sensorRange,brain,col)
+    def __init__(self,nSensor,sensorRange,brain,plug,col):
+        Pod.__init__(self,nSensor,sensorRange,brain,plug,col)
         self.init()
         
     def init(self):
@@ -189,7 +187,7 @@ class CarPod(Pod):
         world=self.world
         dt=world.dt
         state=self.state
-        self.control=self.controller.process(self,dt)
+        self.control=self.plug.process(self,dt)
         if self.control == None:
             return
         

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# podworld documentation build configuration file, created by
-# sphinx-quickstart on Wed Dec 22 10:55:50 2010.
+# Pod World documentation build configuration file, created by
+# sphinx-quickstart on Wed Dec 22 11:50:56 2010.
 #
 # This file is execfile()d with the current directory set to its containing dir.
 #
@@ -23,28 +23,28 @@ import sys, os
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = []
+extensions = ['sphinx.ext.autodoc']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['.templates']
 
 # The suffix of source filenames.
-source_suffix = '.rst'
+source_suffix = '.txt'
 
 # The master toctree document.
 master_doc = 'index'
 
 # General substitutions.
-project = 'podworld'
-copyright = '2010, pjl'
+project = 'Pod World'
+copyright = '2010, Dr PJ'
 
 # The default replacements for |version| and |release|, also used in various
 # other places throughout the built documents.
 #
 # The short X.Y version.
-version = '1'
+version = '0.1.0'
 # The full version, including alpha/beta/rc tags.
-release = '1'
+release = '0.1.0'
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
@@ -142,7 +142,7 @@ html_last_updated_fmt = '%b %d, %Y'
 #html_file_suffix = ''
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'podworlddoc'
+htmlhelp_basename = 'PodWorlddoc'
 
 
 # Options for LaTeX output
@@ -157,8 +157,8 @@ htmlhelp_basename = 'podworlddoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class [howto/manual]).
 latex_documents = [
-  ('index', 'podworld.tex', 'podworld Documentation',
-   'pjl', 'manual'),
+  ('index', 'PodWorld.tex', 'Pod World Documentation',
+   'Dr PJ', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
