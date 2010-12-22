@@ -15,10 +15,10 @@ class Seed:pass
 
 class Agent(mp.Process):
    
-    def __init__(self,plug,i):
+    def __init__(self,pod):
 
-        self.seed=Seed()       
-        self.pod = plug.createInitialPod(i)
+        self.seed=Seed()
+        self.pod=pod
         self.world_end,self.pod_end=mp.Pipe()
         mp.Process.__init__ ( self,None,self.run )
          
@@ -32,8 +32,9 @@ class Agent(mp.Process):
         if MP:
             self.pod.state=self.world_end.recv()
     
+    
     def admin(self,sim):
-        reap=sim.plug.admin(self.pod,sim)
+        reap=sim.plug.reaper(self.pod,sim)
         if reap and MP:
             self.seed.state=self.pod.state
             self.seed.brain=self.pod.controller.brain

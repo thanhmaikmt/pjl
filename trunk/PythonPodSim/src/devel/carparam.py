@@ -23,16 +23,52 @@ SENSOR_SCALE=1.0/100.0      # scale sensors (make more like 0-1)
 MIN_AGE=.2
 N_TRIP=21
 
-layerSizes=[N_SENSORS+1,N_HIDDEN1,4]
-  
+
+
+
+ 
+paramsRoot=[1.259,200.0,0.01,1.0,-0.0083,1.083,100,80];
+     
+class ParamBrain:
+    def __init__(self):
+        
+        self.params=deepcopy(paramsRoot)
+    
+    def clone(self):
+        clone=ParamBrain()
+        clone.params=deepcopy(self.params)
+        return clone
+    
+    def mutate(self,amount):
+        x=self.params
+        i=randrange(len(self.params))
+        x[i]=x[i] + (random()-0.5)*paramsRoot[i]*amount
+        
+        
+class ParamBrainPlug:
+    CAN_BREED=False
+    
+    def loadBrain(self,file):
+        pass
+    
+    def createBrain(self):
+        return ParamBrain()
+        
+    def breed(self,mum,dad):
+        pass
+    
+    def mutate(self,brain,amount):
+        brain.mutate(amount)
+    
+    
 #
 # 
 #
-class CarPlug:
+class CarParamPlug:
 
     RUN_NAME="carPlug"             # used for file names so you can tag different experiments
     FIT_FMT=" %5.1f "
-    WORLD_FILE="car_circuit.txt"     # world to use
+    WORLD_FILE="carCircuit.world"     # world to use
     
     ###  START OF PROGRAM
     #max_input=[0,0,0,0,0,0,0]
@@ -73,28 +109,36 @@ class CarPlug:
     def process(self,pod,dt):
          
         # normal control stuff
-        control=Control()
-        state=pod.state
-           
-        # create the input for the brain
-        # first the velocity of the pod 
-        input=[sqrt(state.dxdt**2+state.dydt**2)*VEL_SCALE,state.dangdt*DANGDT_SCALE]
+           # normal control stuff
         
-        # and all the sensors
-        # (note: possibly rear pointing sensors are redundant?)
-        for s in pod.sensors:
-            input.append(s.val*SENSOR_SCALE)
+        control=Control()
+        
+        p=pod.controller.brain.params
+        sensor=pod.sensors
+        state=pod.state
+        
+        # V=1.259*sensor[0].val   #  param[0]=1.259
+        V=p[0]*sensor[0].val   
+        if V>p[1]:                #  param[1]=200.0
+            V=p[1]
+        cont=(V/(abs(state.vel)+p[2])) - p[3]  #  param[2]=0.01   p[3]=1
+        if cont > 0:
+            control.up = cont
+        else:
+            control.down = abs(cont)
             
-        # activate the brain to get output    
-        output=pod.controller.brain.ffwd(input)
-       
-        # assign values to the controllers
-        control.up=output[0]
-        control.down=output[1]
-        control.left=output[2]
-        control.right=output[3] 
-      
+        diff=(sensor[1].val+sensor[2].val)-(sensor[7].val+sensor[6].val)
+        
+        turn_compensation=p[4]*sensor[0].val+p[5]   #   param[4]=-0.0083     param[5]=1.083
+        
+        if diff>0.0:
+            control.left=abs((diff/p[6])**2/p[7])+turn_compensation    # param6]=100    param[7=80
+        else:
+            control.right=abs((diff/p[6])**2/p[7])+turn_compensation
+        
         return control
+       
+       
         
     def createInitialPod(self,i,brain):
                   
