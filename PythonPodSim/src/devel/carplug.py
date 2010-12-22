@@ -21,19 +21,14 @@ BIG=10000
 
 MAX_AGE=100              # pods life span   
 N_HIDDEN1=7                 # number of neurons in hidden layer
-N_SENSORS=0             # number of sensors
+N_SENSORS=8             # number of sensors
 VEL_SCALE=1/80.0
-XREF = 350
-YREF = 400
-X_circ=350
-Y_circ=400
-RAD_circ=100
-X_scale=1/100.0
-Y_scale=1/100.0
 DANGDT_SCALE=1.0/3.0
+SENSOR_SCALE=1.0/100.0      # scale sensors (make more like 0-1)
+MIN_AGE=.2
+N_TRIP=21
 
-
-layerSizes=[7,N_HIDDEN1,4]
+layerSizes=[N_SENSORS+1,N_HIDDEN1,4]
 
 
 class Controller:
@@ -51,11 +46,11 @@ class Controller:
 #
 # 
 #
-class GravityPlug:
+class CarPlug:
 
-    RUN_NAME="plugSpin"             # used for file names so you can tag different experiments
+    RUN_NAME="carPlug"             # used for file names so you can tag different experiments
     FIT_FMT=" %5.1f "
-    WORLD_FILE="rect_world.txt"     # world to use
+    WORLD_FILE="car_circuit.txt"     # world to use
     CAN_BREED=True
     ###  START OF PROGRAM
     #max_input=[0,0,0,0,0,0,0]
@@ -87,52 +82,36 @@ class GravityPlug:
                     
         return child
         
-    def postDraw(self,screen,fontMgr):
-        fontMgr.Draw(screen, None, 20,"x",(XREF,YREF), (255,255,255) )       
-        pygame.draw.circle(screen,(255,255,255),(X_circ,Y_circ),RAD_circ,2)
+    def postDraw(self,screen,fontMgr):pass
         
     # decide if we want to kill a pod        
     def reap_pod(self,pod):
        
         dt=pod.world.dt
-        # distance from centre of bounding circle
-        dist_BOUND=sqrt((pod.state.x-X_circ)**2+(pod.state.y-Y_circ)**2)
         
-        # distance from target
-        dist_TARGET= sqrt((pod.state.x-XREF)**2+(pod.state.y-YREF)**2)
-     
-        # integrate the error 
-        try:    
-            pod.error_integral += dist_TARGET*dt
-        except AttributeError:
-            pod.error_integral = 0.0
- 
-       
-        # died of old age!
-        # fitness is current distance from the pod plus the average over it's life
-        # (this should encourage it to get close quickly)
-        if pod.state.age >= MAX_AGE:          
-            return -dist_TARGET - pod.error_integral/MAX_AGE
+        state=pod.state
+        
+        if  state.vel < 0:
+            print "backwards"
+            # print "backwards"
+            return 0
+        
+        if state.age > MIN_AGE and state.distance_travelled == 0:
+            print ""
+            return 0
+        
+        if state.age > MAX_AGE or state.collide:
+            return  state.pos_trips-state.neg_trips
+         
     
-        # out of bounds
-        # fitness is pod age (offset so it is independent of natural death)
-        if dist_BOUND > RAD_circ:
-            fit=pod.state.age-BIG
-            return  fit
+        if (state.pos_trips-state.neg_trips) >= N_TRIP:  
+            return N_TRIP + MAX_AGE-pod.state.age
         
-        """
-        # Same as above if it topples over
-        if pod.ang<0.6*pi or pod.ang>1.4*pi:
-            fit = pod.age-BIG
-            return fit
-        """
-        
-        return None
+        return None    
           
     def  initPod(self,pod):
         # reset the pod and give it a new brain
         pod.state.ang = pi+(0.5 - random())*pi*0.2    # randomize the intial angle
-        pod.error_integral=0.0
          
     # normal process called every time step    
     def process(self,pod,dt):
@@ -141,48 +120,30 @@ class GravityPlug:
         # normal control stuff
         control=Control()
         state=pod.state
+       
+       
+         # create the input for the brain
+        # first the velocity of the pod 
+        input=[sqrt(state.dxdt**2+state.dydt**2)*VEL_SCALE,state.dangdt*DANGDT_SCALE]
         
-        # create the input for the brain
-        # first the velocity of the state 
-        input=[state.dxdt*VEL_SCALE]
-        input.append(state.dydt*VEL_SCALE)
-        input.append(sin(state.ang))
-        input.append(cos(state.ang))
-        input.append(state.dangdt*DANGDT_SCALE)
-        input.append((state.x-XREF)*X_scale)
-        input.append((state.y-YREF)*Y_scale)
-        
-        """
-        doit=False
-        for i in range(len(input)):
-            if abs(input[i]) > GravityPlug.max_input[i]:
-                doit=True
-                GravityPlug.max_input[i]=abs(input[i])
-                
-                
-        if doit:
-            print GravityPlug.max_input
-        """
-            
-        # and all the sensors (in this case none!!!)
-        #for s in sensor:
-        #    input.append(s.val*SENSOR_SCALE)
+        # and all the sensors
+        # (note: possibly rear pointing sensors are redundant?)
+        for s in pod.sensors:
+            input.append(s.val*SENSOR_SCALE)
             
         # activate the brain to get output    
         output=pod.controller.brain.ffwd(input)
        
         # assign values to the controllers
-        control.up=output[0]-output[1]
+        control.up=output[0]
+        control.down=output[1]
         control.left=output[2]
-        control.right=output[3]
-        
+        control.right=output[3] 
+      
         return control
-
-    def createInitialPod(self,i):
         
-     
-                
-                
+    def createInitialPod(self,i):
+                  
         brain=self.createBrain()
         #control=GAController(self)
         # random colours
@@ -222,3 +183,40 @@ class GravityPlug:
     # normal process called every time step
     def createAgent(self,world,pool,id):
         return Agent(world,pool,id)
+    
+    
+
+
+from agent import *
+from simulationMP import *
+from world import  *
+from painter import *
+from pool import  *
+import gravityplug
+from admin import  *
+
+# 
+plug=CarPlug()
+
+dt=.1
+
+###  START OF PROGRAM
+
+world       = World(plug.WORLD_FILE,dt)
+
+pool=Pool(world,plug)    #  create a pool for fittest networks
+
+agents=[]        #  pods on the circuits
+
+POP_SIZE=10
+for i in range(POP_SIZE):     # create initial population on the circuit
+    agents.append(Agent(plug,i))
+  
+admin       = Admin()
+sim         = Simulation(world,agents,plug,pool,admin,plug.RUN_NAME)
+
+# register the painter to display stuff
+sim.painter = Painter(sim,plug.RUN_NAME)
+
+# go go go  ..........
+sim.run()

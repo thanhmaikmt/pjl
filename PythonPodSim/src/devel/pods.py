@@ -80,17 +80,18 @@ class Pod:
     def base_init(self):
         self.state=State() 
         self.state.ang=pi
-        self.state.dangdt=0
-        self.state.x=0
-        self.state.y=0
-        self.state.dxdt=0
-        self.state.dydt=0
-        self.state.vel=0
+        self.state.dangdt=0.0
+        self.state.x=0.0
+        self.state.y=0.0
+        self.state.dxdt=0.0
+        self.state.dydt=0.0
+        self.state.vel=0.0
         self.state.collide=False
         self.state.collide_count=0
         self.state.age=0.0
         self.state.pos_trips=0
         self.state.neg_trips=0
+        self.state.distance_travelled=0.0
         
     def update_sensors(self):
         world=self.world
@@ -178,7 +179,7 @@ class CarPod(Pod):
         self.damp=.0001
         #self.vel=0.0
         self.fuel=0.0
-        self.distanceTravelled=0.0
+        self.state.distance_travelled=0.0
    
         
         
@@ -242,7 +243,7 @@ class CarPod(Pod):
             state.collide = True
             state.ang += (-self.control.right+self.control.left)*self.vel*self.steer_factor*dt
 
-        self.distanceTravelled += sqrt(self.dxdt**2+self.dydt**2)*dt
+        self.state.distance_travelled += sqrt(self.dxdt**2+self.dydt**2)*dt
         state.dangdt=(state.ang-ang_prev)/dt
  
 
