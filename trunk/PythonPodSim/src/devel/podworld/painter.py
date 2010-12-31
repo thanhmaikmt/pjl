@@ -48,22 +48,26 @@ class Painter:   # use me to display stuff
                 
         FMT=sim.plug.FIT_FMT
         pool=sim.pool
-        avFitStr=FMT % pool.average_fitness()
         tickRateStr="%8.1f" % ticks_per_sec
-        
-        bestStr=topToString(pool.good_list)
+           
+        if pool != None:
+            avFitStr=FMT % pool.average_fitness()
+         
+            bestStr=topToString(pool.good_list)
         
         #flukeStr=topToString(pool.fluke_list)
         
         #provenStr=topToString(pool.proven_list)
         
         
-        str1=self.run_name+' pool size :'+ str(len(sim.agents))+\
+            str1=self.run_name+' pool size :'+ str(len(sim.agents))+\
                            '   ticks :'+ str(sim.ticks) +\
                            '   best :'+ bestStr +\
                            '   average :'+ avFitStr+\
                            '   ticks/sec :'+tickRateStr+"    "
-                                                    
+        else:
+            str1=self.run_name+ '   ticks/sec :'+tickRateStr+"    "
+
        # print str1
         self.fontMgr.Draw(screen, None, 20,str1,(X,Y), (0,255,0) )
         sim.plug.postDraw(screen,self.fontMgr)

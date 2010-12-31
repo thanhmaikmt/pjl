@@ -14,6 +14,7 @@ MP=True
 class Seed:pass
 
 class Agent(mp.Process):
+    """ Looks after a Pod. manage multiporcessing if MP is True """
    
     def __init__(self,pod):
 

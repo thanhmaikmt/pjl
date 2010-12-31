@@ -1,0 +1,6 @@
+Pod Word is a simulation environment.
+=====================================
+
+Pod World is a 2D world which is the home for Pods. Pods have a state (position velocity etc) and sensors which report the distance to walls in the sensor direction.
+You can control the behaviour of the pods by writing a function that returns a control object.
+
