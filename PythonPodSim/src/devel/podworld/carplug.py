@@ -21,7 +21,7 @@ VEL_SCALE=1/80.0
 DANGDT_SCALE=1.0/3.0
 SENSOR_SCALE=1.0/100.0      # scale sensors (make more like 0-1)
 MIN_AGE=.2
-N_TRIP=21
+N_TRIP=200
 
 layerSizes=[N_SENSORS+1,N_HIDDEN1,4]
   
@@ -99,8 +99,13 @@ class CarPlug:
                   
         b=255-(i*167)%256
         g=(i*155)%256
-        r=255-(i*125)%256    
-        return CarPod(N_SENSORS,sensorRange,brain,self,(r,g,b))
+        r=255-(i*125)%256
+        sensors=[] 
+        for i in range(N_SENSORS):
+            ang_ref=i*pi*2.0/N_SENSORS
+            sensors.append(Sensor(ang_ref,sensorRange,"sensor"+str(i)))
+           
+        return CarPod(sensors,brain,self,(r,g,b))
     
     
     # If we are trying to evolve and pod dies
@@ -108,6 +113,9 @@ class CarPlug:
     def reaper(self,pod,sim):
         
         pool=sim.pool
+        if pool == None:
+            return False
+         
         if pool.reaping:            
             fitness=self.reap_pod(pod)
             if fitness != None:   

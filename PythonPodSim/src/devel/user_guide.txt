@@ -1,4 +1,0 @@
-User Guide
-==========
-
-Stuff about how to run Pod World

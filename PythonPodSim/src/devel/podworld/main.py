@@ -3,7 +3,7 @@ from world import  *
 from painter import *
 from pool import  *
 from admin import  *
-from simulationMP import *
+from simulation import *
 
 run="carNN"
 
@@ -36,6 +36,7 @@ dt    = .1
 world = World(podPlug.WORLD_FILE,dt)
 pool  = Pool(world,brainPlug)    #  create a pool for fittest networks
 agents=[]        #  pods on the circuits
+#pool = None
 
 POP_SIZE=10
 

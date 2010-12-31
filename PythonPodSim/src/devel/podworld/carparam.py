@@ -14,14 +14,14 @@ sensorRange = 2000
 
 BIG=10000
 
-MAX_AGE=100              # pods life span   
+MAX_AGE=200              # pods life span   
 N_HIDDEN1=7                 # number of neurons in hidden layer
 N_SENSORS=8             # number of sensors
 VEL_SCALE=1/80.0
 DANGDT_SCALE=1.0/3.0
 SENSOR_SCALE=1.0/100.0      # scale sensors (make more like 0-1)
 MIN_AGE=.2
-N_TRIP=21
+N_TRIP=500
 
 
 

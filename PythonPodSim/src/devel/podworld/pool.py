@@ -5,10 +5,12 @@ Created on 21 Dec 2010
 '''
 
 from random import  *
+import pickle
+import copy
 
 
 POOL_SIZE=50               # size of pool of best brains
-REPROVE_PROB=.1            # probability that selection we trigger a reprove of the best gene
+REPROVE_PROB=.01            # probability that selection we trigger a reprove of the best gene
 MUTATE_SCALE=4             # amount of mutation
 BREED_PROB=0.1             # prob that new entity is from breeding           
 #CAN_BREED=False            # by default assume can not breed
@@ -189,9 +191,9 @@ class Pool:  #  use me to store the best brains and create new brains
         pickle.dump(n,file)
         
         for x in self.good_list:
-            o=deepcopy(x.fitness)
-            pickle.dump(o,file)
-            x.save(file)
+            #o=copy.deepcopy(x.fitness)
+            pickle.dump(x,file)
+            #x.save(file)
         print "POOL SAVED"
         
     # load pool from a file
@@ -200,16 +202,16 @@ class Pool:  #  use me to store the best brains and create new brains
         n=pickle.load(file)
         print n
         for i in range(n):
-            f=pickle.load(file)
-            brain=plug.loadBrain(file)
-            brain.proof_count=0    # sorry we lost the proof count when we saved it
-            brain.fitness=f
-            brain.proof_count=0
-            brain.flukeness=f
-            self.add(brain,f)
+            #f=pickle.load(file)
+            brain=pickle.load(file)
+            #brain.proof_count=0    # sorry we lost the proof count when we saved it
+            #brain.fitness=f
+            #brain.proof_count=0
+            #brain.flukeness=f
+            self.add(brain,brain.fitness)
          
-        print "RELOADED POOL"   
-        for pod in pods:
+        #print "RELOADED POOL"   
+        #for pod in pods:
             # reset the pod and give it a new brain from the pool
-            world.init_pod(pod)
-            pod.ang += random()-0.5    # randomize the intial angle
+        #    world.init_pod(pod)
+        #    pod.ang += random()-0.5    # randomize the intial angle

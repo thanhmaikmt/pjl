@@ -4,10 +4,23 @@ import multiprocessing as mp
 from copy import *
 
 
+
 class Simulation:
+    """ The simulation class is responsible for running the Pod World.
+     
+    :param world:    World.
+    :param agents:   list of Agents.
+    :param plug:     plugin class.
+    :param pool:     Pool.
+    :param admin:    Admin.
+    :param run_name:  string used for log files etc 
+    """
 
     def __init__(self,world,agents,plug,pool,admin,run_name):
-
+        
+        #: world     a World
+        #: agents    list of agents
+        
         pg.init()
         self.admin=admin
         self.ticks=0
@@ -22,6 +35,7 @@ class Simulation:
         self.plug=plug
         self.pool=pool
         self.log_file=open(run_name+".log","w")
+        self.run_name=run_name
     
         
         modes=pg.display.list_modes()
@@ -65,7 +79,8 @@ class Simulation:
             
             
     def run(self):
-
+        """ start the simulation  
+        """
         dt=self.world.dt
         clock = pg.time.Clock()
         frameRate=1.0/dt/self.slowMotionFactor

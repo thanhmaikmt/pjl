@@ -20,13 +20,14 @@ def sigmoid(x):
 def randomSeed():
     return 0.5 - random()
 
+"""
 def loadBrain(stream):
         # dummy to make compatible with backprop saved brains
         sz=pickle.load(stream)
         brain=FeedForwardBrain(sz) 
         brain.weight=pickle.load(stream)    
         return brain
-    
+"""
     
 class FeedForwardBrain:
   

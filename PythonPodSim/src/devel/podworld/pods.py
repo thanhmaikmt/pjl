@@ -56,21 +56,20 @@ class State: pass
 
 
 class Pod:
+    """ Base class for all pods """
+    
     pod_poly_ref=[(-10,-10),(0,20),(10,-10)]
     thrust_poly_ref=[(0,-10),(-2,-14),(0,-18),(2,-14)]
     left_poly_ref=[(-5,5),(-9,4),(-12,5),(-9,6)]
     right_poly_ref=[(5,5),(9,4),(12,5),(9,6)]
 
 
-    def __init__(self,nSensor,sensorRange,brain,plug,col):
+    def __init__(self,sensors,brain,plug,col):
        
         self.message="init"
         self.plug=plug
-        self.sensors=[]
         self.control=Control()
-        for i in range(nSensor):
-            ang_ref=i*pi*2/nSensor
-            self.sensors.append(Sensor(ang_ref,sensorRange,"sensor"+str(i)))
+        self.sensors=sensors
         self.base_init()    
         self.brain=brain
         self.col=col
@@ -162,8 +161,8 @@ class Pod:
 
 class CarPod(Pod):
  
-    def __init__(self,nSensor,sensorRange,brain,plug,col):
-        Pod.__init__(self,nSensor,sensorRange,brain,plug,col)
+    def __init__(self,sensors,brain,plug,col):
+        Pod.__init__(self,sensors,brain,plug,col)
         self.init()
         
     def init(self):

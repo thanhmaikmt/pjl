@@ -1,0 +1,47 @@
+
+Installation
+************
+
+Python and PyGame
+=================
+
+The Pod World uses python and a gaming library pygame. 
+You will need to install python and the pygame library. pygame needs the correct version of python.
+ 
+
+Linux
+-----
+
+You are a geek so sort it out yourself.
+
+Windows
+-------
+
+To program in windows 
+
+* python-2.5.4
+* pygame-1.9.1.win32-py2.5
+
+
+Mac
+---
+
+* Python 2.5.4 http://www.python.org/download/releases/2.5.4/
+* Pygame 1.9.1 http://www.pygame.org/download.shtml
+
+
+(tested on Macbook running OS 10.6).
+
+
+Idle
+====
+
+Python comes with a (fairly naff) IDE idle
+
+To run a python module right click -> "edit with IDLE" -> hit run in the module window.
+
+
+Eclipse
+=======
+
+If you want to do some serious work then I recommend using eclipse with the pydev plugin. 

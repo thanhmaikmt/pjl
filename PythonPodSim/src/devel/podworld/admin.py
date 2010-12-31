@@ -20,10 +20,7 @@ class Admin:  # use me to control the simulation
             world=sim.world
             log_file=sim.log_file
             
-             # output to a log file
-            if pool.reaping and log_file!=None and pool.touched:
-                log_file.write(str(sim.ticks) +','+ str(pool.best_fitness())+','+str(pool.average_fitness())+'\n')
-                pool.touched=False
+            
                                 
             keyinput = pg.key.get_pressed()
         
@@ -39,7 +36,16 @@ class Admin:  # use me to control the simulation
     # display the performance of the best pod in pool
          #   if  keyinput[pg.K_c]:
          #       pool.proven_list=[]
+            
+            
+            if pool == None:
+                return
+             
+            if pool.reaping and log_file!=None and pool.touched:
+                log_file.write(str(sim.ticks) +','+ str(pool.best_fitness())+','+str(pool.average_fitness())+'\n')
+                pool.touched=False
                 
+                    
             # display the performance of the best pod in pool
             if  keyinput[pg.K_b]:
                 
@@ -81,12 +87,14 @@ class Admin:  # use me to control the simulation
 
             # save the pool to a file
             if keyinput[pg.K_s]:
+                POOL_FILE_NAME=sim.run_name+".pool"
                 file=open(POOL_FILE_NAME,"w")
                 pool.save(file)
                 file.close()
                 
             # reload the pool from a file
             if keyinput[pg.K_l]:
+                POOL_FILE_NAME=sim.run_name+".pool"
                 file=open(POOL_FILE_NAME,"r")
                 pool.load(file)
                 file.close()
