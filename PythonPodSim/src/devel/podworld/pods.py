@@ -31,14 +31,15 @@ class Control:
         self.left=limit(self.left,0,1)
 
 class Sensor:
-    " Sensor "
-    
-    def __init__(self,ang_ref,range,name):
-        """
+    """  
         ang_ref:  anticlockwise angle from forward 
         range: 
-        name:  
-        """ 
+        name:
+    """
+           
+    def __init__(self,ang_ref,range,name):
+       
+        
         self.ang_ref=ang_ref
         self.ang=ang_ref
         self.range=range
@@ -277,7 +278,7 @@ class GravityPod(Pod):
         dt=world.dt
         
         # state=State(self)
-        self.control=self.controller.process(self,dt)
+        self.control=self.plug.process(self,dt)
         if self.control == None:
             return
         

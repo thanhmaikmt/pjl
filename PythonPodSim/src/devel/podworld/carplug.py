@@ -25,6 +25,7 @@ N_TRIP=200
 
 layerSizes=[N_SENSORS+1,N_HIDDEN1,4]
   
+ 
 #
 # 
 #
@@ -36,8 +37,8 @@ class CarPlug:
     
     ###  START OF PROGRAM
     #max_input=[0,0,0,0,0,0,0]
-   
         
+          
     def postDraw(self,screen,fontMgr):pass
         
     # decide if we want to kill a pod        
@@ -64,9 +65,9 @@ class CarPlug:
         
         return None    
           
-    def  initPod(self,pod):
+    #def  initPod(self,pod):
         # reset the pod and give it a new brain
-        pod.state.ang = pi+(0.5 - random())*pi*0.2    # randomize the intial angle
+    #    pod.state.ang = pi+(0.5 - random())*pi*0.2    # randomize the intial angle
          
     # normal process called every time step    
     def process(self,pod,dt):
@@ -117,15 +118,20 @@ class CarPlug:
             return False
          
         if pool.reaping:            
-            fitness=self.reap_pod(pod)
-            if fitness != None:   
+            fit_val=self.reap_pod(pod)
+            if fit_val != None:   
                 " here then time to replace the pod"
                 # save current  brain and fitness in the pool
                 #fitness=self.calc_fitness(pod,self.brain)
-                pool.add(pod.brain,fitness) 
+                pod.brain.fitness.set_val(fit_val)
+                
+                pool.add(pod.brain) 
                 sim.world.init_pod(pod)
-                self.initPod(pod)
+                
                 pod.brain=pool.create_new()
+                if pod.brain.fitness.goal != None:
+                    pod.brain.fitness.goal.initPod(pod)
+                
                 return True
             
         return False

@@ -5,6 +5,8 @@ from pool import  *
 from admin import  *
 from simulation import *
 
+#run="carNN"
+#run="gravityNN"
 run="carNN"
 
 if run == "carNN":
@@ -13,7 +15,15 @@ if run == "carNN":
 
     podPlug=carplug.CarPlug()
     brainPlug=BrainPlug(carplug.layerSizes)
+     
+    class CarAngleGoal:
+        
+        def __init__(self,ang):
+            self.ang=ang
+            
+    goals=[CarAngleGoal(.0),CarAngleGoal(-.5),CarAngleGoal(0.5)]
     
+     
 elif run == "gravityNN":
     
     from NNBrainPlug import *
@@ -21,6 +31,8 @@ elif run == "gravityNN":
 
     podPlug=gravityplug.GravityPlug()
     brainPlug=BrainPlug(gravityplug.layerSizes)
+   
+   
 
 elif run ==  "carParam":
     
@@ -34,7 +46,10 @@ elif run ==  "carParam":
 ###  START OF PROGRAM
 dt    = .1
 world = World(podPlug.WORLD_FILE,dt)
-pool  = Pool(world,brainPlug)    #  create a pool for fittest networks
+
+
+pool  = Pool(world,brainPlug,goals)    #  create a pool for fittest networks
+    
 agents=[]        #  pods on the circuits
 #pool = None
 

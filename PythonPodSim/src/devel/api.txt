@@ -2,6 +2,6 @@ API Documentation
 =================
 
 
-.. automodule:: simulation
+.. autoclass:: simulation.Simulation
 	:members:
 

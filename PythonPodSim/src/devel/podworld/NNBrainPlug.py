@@ -9,9 +9,7 @@ class BrainPlug:
     
     def __init__(self,sz):
         self.layerSizes=sz
-        
-    def loadBrain(self,file):
-        return brain.loadBrain(file)
+  
     
     def createBrain(self):
         return brain.FeedForwardBrain(self.layerSizes)
