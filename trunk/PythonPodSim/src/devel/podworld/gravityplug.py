@@ -5,7 +5,7 @@ Created on 1 Dec 2010
 '''
 
 import pygame 
-from simulationMP import *
+from simulation import *
 from random import  *
 from copy import *
 from math import *
@@ -130,7 +130,7 @@ class GravityPlug:
         #    input.append(s.val*SENSOR_SCALE)
             
         # activate the brain to get output    
-        output=pod.controller.brain.ffwd(input)
+        output=pod.brain.ffwd(input)
        
         # assign values to the controllers
         control.up=output[0]-output[1]
@@ -143,7 +143,13 @@ class GravityPlug:
         b=255-(i*167)%256
         g=(i*155)%256
         r=255-(i*125)%256     
-        return GravityPod(N_SENSORS,sensorRange,Controller(brain,self),(r,g,b))
+        
+        sensors=[] 
+        for i in range(N_SENSORS):
+            ang_ref=i*pi*2.0/N_SENSORS
+            sensors.append(Sensor(ang_ref,sensorRange,"sensor"+str(i)))
+            
+        return GravityPod(sensors,brain,self,(r,g,b))
         
     # If we are trying to evolve and pod dies
     
@@ -158,10 +164,10 @@ class GravityPlug:
                 # here then time to replace the pod
                 # save current  brain and fitness in the pool
                 # fitness=self.calc_fitness(pod,self.brain)
-                pool.add(pod.controller.brain,fitness) 
+                pool.add(pod.brain,fitness) 
                 sim.world.init_pod(pod)
                 self.initPod(pod)
-                pod.controller.brain=pool.create_new()
+                pod.brain=pool.create_new()
                 return True
             
         return False

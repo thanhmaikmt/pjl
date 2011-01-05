@@ -145,7 +145,13 @@ class CarParamPlug:
         b=255-(i*167)%256
         g=(i*155)%256
         r=255-(i*125)%256    
-        return CarPod(N_SENSORS,sensorRange,brain,self,(r,g,b))
+        sensors=[] 
+        for i in range(N_SENSORS):
+            ang_ref=i*pi*2.0/N_SENSORS
+            sensors.append(Sensor(ang_ref,sensorRange,"sensor"+str(i)))
+           
+        
+        return CarPod(sensors,brain,self,(r,g,b))
     
     
     # If we are trying to evolve and pod dies

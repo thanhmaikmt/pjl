@@ -10,19 +10,27 @@ import copy
 
 
 POOL_SIZE=50               # size of pool of best brains
-REPROVE_PROB=.01            # probability that selection we trigger a reprove of the best gene
+#REPROVE_PROB=.01            # probability that selection we trigger a reprove of the best gene
 MUTATE_SCALE=4             # amount of mutation
 BREED_PROB=0.1             # prob that new entity is from breeding           
 #CAN_BREED=False            # by default assume can not breed
 SEED_PROB=0.1              # probability a new thing is created from nothing
 
 
+class Fitness:
+    
+    def __init__(self,goals):
+        self.goals=goals
+        
+        
+        
+        
 class Pool:  #  use me to store the best brains and create new brains
   
   
     # create a pool
    
-    def __init__(self,world,brainPlug):
+    def __init__(self,world,brainPlug,goals):
         self.good_list=[]
         #self.fluke_list=[]
         #self.proven_list=[]
@@ -33,6 +41,7 @@ class Pool:  #  use me to store the best brains and create new brains
         #self.reprover=None
         self.touched=True
         self.reaping=True
+        self.goals=goals
         #self.world=world
         self.brainPlug=brainPlug
 
@@ -109,7 +118,9 @@ class Pool:  #  use me to store the best brains and create new brains
             self.brainPlug.mutate(brain,fact)
             
             
-        brain.fitness=None
+        brain.fitness={}
+        brain.goal=self.goals[0]
+        
         return brain
     
     
@@ -119,19 +130,7 @@ class Pool:  #  use me to store the best brains and create new brains
         #clone.proof_count=self.good_list[0].brain.proof_count
         return clone
 
-    # return the one that has been RETESTED the most.
-    def create_most_proven(self):
-        
-        maxProof=-1
-        
-        for g in self.proven_list:
-            if g.proof_count > maxProof:
-                maxProof=g.proof_count
-                cloneMe=g
-                                
-        clone=cloneMe.clone()
-        #clone.proof_count=self.good_list[0].brain.proof_count
-        return clone
+  
 
 
     # random selection from the pool
@@ -156,15 +155,7 @@ class Pool:  #  use me to store the best brains and create new brains
         
         return self.good_list[id]
         
-        
-    # return the best fitness in the pool
-    # since I retest the best this value can fall
-    def best_fluke_fitness(self):
-        if len(self.fluke_list) == 0:
-            return 0
-        else:
-            return self.fluke_list[0].flukeness
-        
+  
     # return the best fitness in the pool
     # since I retest the best this value can fall
     def best_fitness(self):
@@ -202,16 +193,7 @@ class Pool:  #  use me to store the best brains and create new brains
         n=pickle.load(file)
         print n
         for i in range(n):
-            #f=pickle.load(file)
             brain=pickle.load(file)
-            #brain.proof_count=0    # sorry we lost the proof count when we saved it
-            #brain.fitness=f
-            #brain.proof_count=0
-            #brain.flukeness=f
             self.add(brain,brain.fitness)
          
-        #print "RELOADED POOL"   
-        #for pod in pods:
-            # reset the pod and give it a new brain from the pool
-        #    world.init_pod(pod)
-        #    pod.ang += random()-0.5    # randomize the intial angle
+    
