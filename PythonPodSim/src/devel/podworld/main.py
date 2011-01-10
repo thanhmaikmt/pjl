@@ -21,6 +21,9 @@ if run == "carNN":
         def __init__(self,ang):
             self.ang=ang
             
+        def to_string(self):
+            return str(self.ang)
+            
     goals=[CarAngleGoal(.0),CarAngleGoal(-.5),CarAngleGoal(0.5)]
     
      
@@ -48,7 +51,7 @@ dt    = .1
 world = World(podPlug.WORLD_FILE,dt)
 
 
-pool  = Pool(world,brainPlug,goals)    #  create a pool for fittest networks
+pool  = Pool_Mino(50,brainPlug,goals)    #  create a pool for fittest networks
     
 agents=[]        #  pods on the circuits
 #pool = None
@@ -56,7 +59,8 @@ agents=[]        #  pods on the circuits
 POP_SIZE=10
 
 for i in range(POP_SIZE):     # create initial population on the circuit
-    brain=brainPlug.createBrain()
+    brain=pool.create_new_brain()
+
     pod = podPlug.createInitialPod(i,brain)
     agents.append(Agent(pod))
 
