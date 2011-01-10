@@ -7,13 +7,6 @@ Created on 21 Dec 2010
 
 
 
-def topToString(list):
-    if len(list) ==0:
-        return "null"
-    
-    x=list[0]
-    #return " %4.0f " % x.fitness +  " %4.0f" % x.flukeness + "( %d )"  %  x.proof_count
-    return " %4.0f " % x.fitness 
     
 # Define some classes
 import time
@@ -51,9 +44,9 @@ class Painter:   # use me to display stuff
         tickRateStr="%8.1f" % ticks_per_sec
            
         if pool != None:
-            avFitStr=FMT % pool.average_fitness()
+        #    avFitStr=FMT % pool.average_fitness()
          
-            bestStr=topToString(pool.good_list)
+            bestStr=pool.displayString()
         
         #flukeStr=topToString(pool.fluke_list)
         
@@ -63,7 +56,6 @@ class Painter:   # use me to display stuff
             str1=self.run_name+' pool size :'+ str(len(sim.agents))+\
                            '   ticks :'+ str(sim.ticks) +\
                            '   best :'+ bestStr +\
-                           '   average :'+ avFitStr+\
                            '   ticks/sec :'+tickRateStr+"    "
         else:
             str1=self.run_name+ '   ticks/sec :'+tickRateStr+"    "

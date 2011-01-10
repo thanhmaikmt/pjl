@@ -42,10 +42,14 @@ class Admin:  # use me to control the simulation
                 return
              
             if pool.reaping and log_file!=None and pool.touched:
-                log_file.write(str(sim.ticks) +','+ str(pool.best_fitness())+','+str(pool.average_fitness())+'\n')
+                if len(pool.list) > 0:
+                    log_file.write(str(sim.ticks) +','+ str(pool.list[0].dom)+'\n')
                 pool.touched=False
                 
                     
+            if keyinput[pg.K_z]:
+                pool.debug("Z")
+                
             # display the performance of the best pod in pool
             if  keyinput[pg.K_b]:
                 

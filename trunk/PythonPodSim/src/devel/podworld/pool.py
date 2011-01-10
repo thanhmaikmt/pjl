@@ -7,193 +7,268 @@ Created on 21 Dec 2010
 from random import  *
 import pickle
 import copy
+from fitness import *
 
 
-POOL_SIZE=50               # size of pool of best brains
-#REPROVE_PROB=.01            # probability that selection we trigger a reprove of the best gene
+
 MUTATE_SCALE=4             # amount of mutation
 BREED_PROB=0.1             # prob that new entity is from breeding           
-#CAN_BREED=False            # by default assume can not breed
 SEED_PROB=0.1              # probability a new thing is created from nothing
-
-
-class Fitness:
+        
+class Pool: 
     
-    def __init__(self,goals):
-        self.goals=goals
+    """ Responsible for managing a GA scheme.
+        This implementation attempts multi objective optimisation (list of goals).
         
+        :param size: size of archive
+        :param brainPlug: responsible for creating new brains (genes)
+        :param goals: list of goals
         
-        
-        
-class Pool:  #  use me to store the best brains and create new brains
-  
-  
-    # create a pool
+    """ 
+    
    
-    def __init__(self,world,brainPlug,goals):
-        self.good_list=[]
-        #self.fluke_list=[]
-        #self.proven_list=[]
-        self.maxGoodMembers=POOL_SIZE
-        #self.maxFlukeMembers=POOL_SIZE    
-        #self.maxProvenMembers=POOL_SIZE    
-        #self.elite_bias=1.0/POOL_SIZE
-        #self.reprover=None
+    def __init__(self,size,brainPlug,goals):
+        self.list=[]
+        self.maxMembers=size
         self.touched=True
         self.reaping=True
         self.goals=goals
-        #self.world=world
         self.brainPlug=brainPlug
-
-    def proven_string(self,FMT):
-        if len(self.proven_list) == 0:
-            return "Null"
+        self.proto_vec=[]
         
-        str1=FMT % self.proven_list[0].fitness
-        str2= " ("+str(self.proven_list[0].proof_count)+")"
+        for g in goals:
+            self.proto_vec.append(None)       
         
-        return str1+str2
-    
-  
-    # add a new Gene to the Pool  (if better than the worst one in pool)
-    # 
-    def add_good(self,brain):  
-                    
-        for i in range(len(self.good_list)):
-            if brain.fitness > self.good_list[i].fitness:
-                self.touched=True
-                self.good_list.insert(i,brain)
-                if len(self.good_list) > self.maxGoodMembers:
-                    self.good_list.pop()
-                return
-            
-        if len(self.good_list) < self.maxGoodMembers:
-            self.good_list.append(brain)    
-            self.touched=True
- 
+    def create_new_brain(self):
+        """ create a new brain from the pool.
+            if pool is not full create a random brain
+        """
         
-    # add a new Gene to the Pool  (if better than the worst one in pool)
-    # 
-    def add(self,brain,fitness):  
-             
-        try:                                                 
-            if  brain.fitness == None  or fitness < brain.fitness:
-                brain.fitness=fitness
-        except AttributeError:
-                brain.fitness=fitness
-                
-        self.add_good(brain)
-        
- 
-             
-    # create a neural brain from the pool or maybe random
-    # might return best brain to be reproven
-    def create_new(self):
-            
-        # if pool is not full create a random brain 
-        if len(self.good_list) < self.maxGoodMembers or random() < SEED_PROB:         
+        if len(self.list) < self.maxMembers or random() < SEED_PROB:         
             #Create a brain
             brain=self.brainPlug.createBrain()
   
-        # keep testing the best brain in case it was a fluke!!!
-        # this removes the best brain from the pool 
-        # it will get back in if it scores OK 
-        elif random() < REPROVE_PROB:     
-            brain=self.good_list[0] 
-            del self.good_list[0]
-            return brain
         
         elif self.brainPlug.CAN_BREED and random() < BREED_PROB:
-            mum=self.select()
-            dad=self.select()
+            mum=self._select()
+            dad=self._select()
             brain=self.brainPlug.breed(mum,dad)
             
         else:
           
         # Otherwise just select a random brain from the pool
-            brain=self.select().clone()
+            brain=self._select().clone()
         # mutate the cloned brain by a random amount.
             fact=random()
             fact *= fact*MUTATE_SCALE
             self.brainPlug.mutate(brain,fact)
             
             
-        brain.fitness={}
-        brain.goal=self.goals[0]
+        brain.vec=copy.deepcopy(self.proto_vec)
+        
+        brain.current_goal=0
         
         return brain
     
     
-    # return top of the pool
     def create_best(self):
-        clone=self.good_list[0].clone()
+        """ returns a copy of the brain at the top of the list """
+        
+        clone=self.list[0].clone()
         #clone.proof_count=self.good_list[0].brain.proof_count
         return clone
-
-  
 
 
     # random selection from the pool
     # can also return None to trigger a new random brain    
-    def select(self):
-
-
-        #if len(self.proven_list) > 0 and  random() < CHOOSE_PROVEN_PROB:
-        #    id=randint(0,len(self.proven_list)-1)
-        #    return self.proven_list[id]
-
-        
-        #if len(self.fluke_list) > 0 and  random() < CHOOSE_FLUKE_PROB:
-        #    id=randint(0,len(self.fluke_list)-1)
-        #    return self.fluke_list[id]
-        
-        
-        id=randint(0,len(self.good_list)-1)
-        
-        #if id ==len(self.good_list):
-        #    return None
-        
-        return self.good_list[id]
-        
+    def _select(self):
+        id=randint(0,len(self.list)-1)
+        return self.list[id]
   
-    # return the best fitness in the pool
-    # since I retest the best this value can fall
-    def best_fitness(self):
-        if len(self.good_list) == 0:
-            return 0
-        else:
-            return self.good_list[0].fitness
-       
-    # return average fitness
-    def average_fitness(self):
-        if len(self.good_list) == 0:
-            return 0
-        else:
-            sum=0.0
-            for x in self.good_list:
-                sum +=x.fitness
-
-            return sum/len(self.good_list)
         
     # save the pool to a file
     # (note reproof count is not saved)
     def save(self,file):       
-        n=len(self.good_list)
+        n=len(self.list)
         pickle.dump(n,file)
         
         for x in self.good_list:
-            #o=copy.deepcopy(x.fitness)
+            #o=copy.deepcopy(x.vector)
             pickle.dump(x,file)
             #x.save(file)
         print "POOL SAVED"
         
     # load pool from a file
     def load(self,file):
-        self.good_list=[]
+        self.list=[]
         n=pickle.load(file)
         print n
         for i in range(n):
             brain=pickle.load(file)
-            self.add(brain,brain.fitness)
+            self.add(brain)
          
+
+       
+    def add(self,brain):  
+        """  Add  the brain (gene) to the Pool if it is better than the worse one.    
+        """   
+        raise NotImplemented
+        
+    def reject(self,brain):
+        """ return true if brain is useless.
+        """
+        return False
+
+class Pool_Pyreto(Pool):
     
+
+    def _remove_vec(self,vec):
+        
+        n= len(self.goals)
+        for i in range(len(self.list)):
+            item=self.list[i]
+            vec_item=item.vec
+            
+            for k in range(n):
+                if vec_item[k] > vec[k]:
+                    item.dom -=1
+    
+    
+                    
+    def debug(self,tag):
+        print "---------------------- "+tag 
+        for i in self.list:
+            print str(i.vec)+ str(i.dom)
+            
+    
+    def add(self,brain):  
+        """  Add  the brain (gene) to the Pool if it is better than the worse one.    
+        """
+           
+    
+        if len(self.list) == 0:
+            brain.dom=0
+            self.list.append(brain)
+            self.debug("1")
+            return
+                   
+        n=len(self.goals)
+        vec_new=brain.vec
+        
+        
+        dom=0
+                    
+        for i in range(len(self.list)):
+            item=self.list[i]
+            vec_item=self.list[i].vec
+            
+            for k in range(n):
+                if vec_new[k] > vec_item[k]:
+                      dom+=1
+                elif vec_item[k] > vec_new[k]:
+                    item.dom+=1
+    
+        brain.dom=dom
+    
+        self.list.append(brain)
+        
+        pop=self.list
+        
+        pop.sort(key = lambda x:x.dom,reverse=True)
+    
+        if len(self.list) == self.maxMembers:
+            item=self.list.pop()
+            self._remove_vec(item.vec)          
+            pop.sort(key = lambda x:x.dom,reverse=True)
+            
+        
+            
+        # self._remove_vec(item.vec)
+        
+
+    def displayString(self):
+        if len(self.list) ==0:
+            return "null"
+        
+        x=self.list[0]
+        #return " %4.0f " % x.fitness +  " %4.0f" % x.flukeness + "( %d )"  %  x.proof_count
+        return str(x.vec) + " " + str(x.dom)
+    
+    
+class Pool_Mino(Pool):
+       
+    def add(self,brain):  
+        """  Add  the brain (gene) to the Pool if it is better than the worse one.    
+        """   
+                
+        brain.min_val=min(brain.vec)
+        brain.sum_val=sum(brain.vec)
+        
+        self.list.append(brain)
+        
+        pop=self.list
+        
+        def cmpmino(x,y):
+            if x.min_val == y.min_val:
+                if x.sum_val > y.sum_val:
+                    return 1
+                elif x.sum_val < y.sum_val:
+                    return -1
+                else:
+                    return 0
+            elif x.min_val > y.min_val:
+                return 1
+            else:
+                return -1
+                  
+                
+        pop.sort(cmp=cmpmino,reverse=True)
+        
+        if len(self.list) > self.maxMembers:
+            self.list.pop()
+    
+    
+    def displayString(self):
+        if len(self.list) ==0:
+            return "null"
+        
+        x=self.list[0]
+        
+        av=copy.deepcopy(x.vec)
+        
+        for b in self.list:
+            if b != x:
+                for i in range(len(av)):
+                    av[i] += b.vec[i]
+                
+        fact=1.0/len(self.list)
+
+        avStr=""
+        for i in range(len(av)):
+                avStr += " %5.1f" % (av[i] * fact)
+                            #return " %4.0f " % x.fitness +  " %4.0f" % x.flukeness + "( %d )"  %  x.proof_count
+        return str(x.vec)+": ("+ avStr+")"
+    
+    def reject(self,brain):
+        """ if any test is less than min value in pool reject """
+        
+        n=len(self.list)
+        
+        if n< self.maxMembers:
+            return False
+        
+        rv=min(self.list[n-1].vec)
+        
+        for x in brain.vec:
+            if x == None:
+                return False
+            
+            if x < rv:
+                return True
+                           
+    def debug(self,tag):
+        print "---------------------- "+tag 
+        
+        a=self.list[0]
+        for b in self.list:
+            print str(b.vec) + " : " + str(a.dist(b))

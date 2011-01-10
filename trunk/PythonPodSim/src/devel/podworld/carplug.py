@@ -106,8 +106,9 @@ class CarPlug:
             ang_ref=i*pi*2.0/N_SENSORS
             sensors.append(Sensor(ang_ref,sensorRange,"sensor"+str(i)))
            
-        return CarPod(sensors,brain,self,(r,g,b))
-    
+        pod=CarPod(sensors,brain,self,(r,g,b))
+        pod.current_goal=0
+        return pod
     
     # If we are trying to evolve and pod dies
     
@@ -123,15 +124,25 @@ class CarPlug:
                 " here then time to replace the pod"
                 # save current  brain and fitness in the pool
                 #fitness=self.calc_fitness(pod,self.brain)
-                pod.brain.fitness.set_val(fit_val)
+                pod.brain.vec[pod.current_goal]=fit_val
+                pod.current_goal +=1
+            
+               # print " POD REAP "+ str(pod.brain.vec)
                 
-                pool.add(pod.brain) 
+                if pool.reject(pod.brain):
+                    pod.brain=pool.create_new_brain()    
+                    pod.current_goal = 0
+                    
+                elif pod.current_goal == len(pool.goals):
+                #    print " POD --- POOL "
+                    pool.add(pod.brain)
+                    pod.brain=pool.create_new_brain()    
+                    pod.current_goal = 0
+                    
                 sim.world.init_pod(pod)
                 
-                pod.brain=pool.create_new()
-                if pod.brain.fitness.goal != None:
-                    pod.brain.fitness.goal.initPod(pod)
-                
+                pod.state.ang += pool.goals[pod.current_goal].ang
+                   
                 return True
             
         return False

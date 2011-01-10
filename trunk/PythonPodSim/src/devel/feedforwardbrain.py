@@ -2,7 +2,6 @@
 # based  on C++ code found at 
 # http://www.codeproject.com/KB/recipes/BP.aspx?msg=2809798#xx2809798xx
 
-
 from math import  *
 from random import  *
 import copy
@@ -12,29 +11,55 @@ import pickle
 # multilayer network
 #
 #
-#                    
+#
+
+"""
+def printOutWeights(brain):
+    print " Layer size (input  hidden  . . .  output : ",
+    for n in brain.layer_size:
+        print n," ",
+
+            
+    #  For each layer
+    for i in range(1,brain.num_layer):         
+        print " conections to layer ",i
+        
+        #  For each neuron in current layer
+        for j in range(brain.layer_size[i]):   
+           
+            # For input from each neuron in preceeding layer
+            # NOTE: bias connection is weight[i][j][brain.layer_size[i - 1]]
+            # this is not included in the count so we have to have +1  
+            for k  in range(brain.layer_size[i - 1]+1):
+                    print brain.weight[i][j][k]," ",
+"""                
+          
+        
+        
+         
 
 def sigmoid(x):
         if x < -100:
-            return 0.0      
+            return 0.0
+        
         return 1.0 / (1.0 + exp(-x))
     
 def randomSeed():
     return 0.5 - random()
 
-"""
 def loadBrain(stream):
         # dummy to make compatible with backprop saved brains
+        b=pickle.load(stream)
+        a=pickle.load(stream)
         sz=pickle.load(stream)
         brain=FeedForwardBrain(sz) 
         brain.weight=pickle.load(stream)    
         return brain
-"""
+    
     
 class FeedForwardBrain:
   
-
-    """  
+  
     def save(self,stream):
             bb=1
             pickle.dump(bb,stream)
@@ -47,7 +72,7 @@ class FeedForwardBrain:
             
             w=copy.deepcopy(self.weight)
             pickle.dump(w,stream)
-    """
+    
   
     
     def __init__(self,sz):
@@ -68,6 +93,9 @@ class FeedForwardBrain:
             for k in range(self.layer_size[i]):
                 a.append(0.0)
 
+        
+        
+
 
         self.weight=[]
         self.weight.append([])
@@ -83,21 +111,7 @@ class FeedForwardBrain:
                 r.append(randomSeed())
     
       
-    def resize_inputs(self,nIn):
         
-        
-        for j in range(nIn-self.layer_size[0]):    
-            self.out[0].append(0.0)
-                
-        for a in self.weight[1]:
-            wLast=a.pop()
-            a.append(0.0)                 
-            for j in range(nIn-self.layer_size[0]-1):    
-                a.append(0.0)
-            a.append(wLast)
-            
-        if self.layer_size[0]<nIn:
-            self.layer_size[0]=nIn
         
     def clone(self):
         clone=FeedForwardBrain(self.layer_size)
@@ -105,39 +119,22 @@ class FeedForwardBrain:
         return clone
             
     def mutate(self,amount):    
-        """ mutate *all* the weights by a random amount.
-        :param amount: range of mutation  (+-amount/2)
-        """
-         
-        # for all layers with inputs
         for i in range(1,self.num_layer):
             a=self.weight[i]  
-            # for all neurons in the layer
             for j in range(self.layer_size[i]):            
                 r=a[j]
-                for k in range(self.layer_size[i-1]+1):
+                for k in range(self.layer_size[i]):
                     r[k]=r[k]+randomSeed()*amount
                     
-    def dist(self,brain):    
-        """ sqrt(sum of diff weights squared)         
-        :param brain: compare with
-        """
-         
-        sum=0.0
-        # for all layers with inputs
-        for i in range(1,self.num_layer):
-            a=self.weight[i] 
-            b=brain.weight[i]
-             
-            # for all neurons in the layer
-            for j in range(self.layer_size[i]):            
-                ra=a[j]
-                rb=b[j]
-                for k in range(self.layer_size[i-1]+1):
-                    sum += (ra[k]-rb[k])**2
-                    
-        return sqrt(sum) 
-
+        
+            
+#//  I did this intentionaly to maintains consistancy in numbering the layers.
+#//  Since for a net having n layers, input layer is refered to as 0th layer,
+#//  first hidden layer as 1st layer and the nth layer as output layer. And 
+#//  first (0th) layer just stores the inputs hence there is no delta or weigth
+#//  values corresponding to it.
+ 
+ 
     def output(self):
         return self.out[self.num_layer - 1];
     
@@ -154,6 +151,10 @@ class FeedForwardBrain:
         
         return mse / 2.0;
    
+       
+       
+       
+
     #  feed forward one set of input
     def ffwd(self,x):
         
