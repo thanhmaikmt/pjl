@@ -10,13 +10,14 @@ Created on 21 Dec 2010
     
 # Define some classes
 import time
-from fontmanager import *
+import gui
+
+
 
 class Painter:   # use me to display stuff
     
     def __init__(self,sim,run_name):
-        self.preDraw=None       # define this function to draw on top!
-        self.fontMgr = cFontManager(((None, 20), (None, 48), ('helvetica', 24)))
+        self.preDraw=None       # define this function to draw on top!      
         self.last_time=time.time()
         self.last_ticks = 0
         self.sim=sim
@@ -61,6 +62,6 @@ class Painter:   # use me to display stuff
             str1=self.run_name+ '   ticks/sec :'+tickRateStr+"    "
 
        # print str1
-        self.fontMgr.Draw(screen, None, 20,str1,(X,Y), (0,255,0) )
-        sim.plug.postDraw(screen,self.fontMgr)
+        gui.draw_string(screen, str1,(X,Y), (0,255,0),20 )
+        sim.plug.postDraw(screen,gui.fontMgr)
         

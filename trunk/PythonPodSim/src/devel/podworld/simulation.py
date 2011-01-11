@@ -1,8 +1,7 @@
-import pygame as pg
 from math import *
 import multiprocessing as mp
 from copy import *
-
+import gui
 
 
 class Simulation:
@@ -21,7 +20,7 @@ class Simulation:
         #: world     a World
         #: agents    list of agents
         
-        pg.init()
+   
         self.admin=admin
         self.ticks=0
         self.slowMotionFactor=1.0
@@ -31,29 +30,17 @@ class Simulation:
         self.frameskipfactor=1
         self.frameskipcount=1
         self.painter=None
-        self.screen = pg.Surface(dim_world) #
+        
+        self.screen = gui.init_surface(dim_world)
+        
+        
         self.plug=plug
         self.pool=pool
         self.log_file=open(run_name+".log","w")
         self.run_name=run_name
     
         
-        modes=pg.display.list_modes()
-        dim_display=modes[0]
-
-        sx=dim_display[1]/float(dim_world[1])
-        sy=dim_display[0]/float(dim_world[0])
-        
-        if sx < 1 or sy < 1:
-            s=min(sx,sy)/1.2
-            self.dim_window=(dim_world[0]*s,dim_world[1]*s)
-            print "Small screen: scaling world by ",s
-
-        else:
-            self.dim_window=dim_world
-
-        self.display = pg.display.set_mode(self.dim_window)
-        pg.display.set_caption('PodSim (press escape to exit)')
+      
         
        
         
@@ -82,7 +69,7 @@ class Simulation:
         """ start the simulation  
         """
         dt=self.world.dt
-        clock = pg.time.Clock()
+        clock = gui.clock()
         frameRate=1.0/dt/self.slowMotionFactor
         self.tick_count=0
         
@@ -105,18 +92,13 @@ class Simulation:
                 self.frameskipcount=self.frameskipfactor
 
             if display or (self.tick_count%100)==0:
-                pg.event.pump()
+                gui.grab_events()
                 if self.admin != None:
                     self.admin.process(self)
                 
                 
-            keyinput = pg.key.get_pressed()
-
-            if keyinput[pg.K_ESCAPE] or pg.event.peek(pg.QUIT):
-                pg.display.quit()
+            if gui.check_for_quit():
                 break
-                # raise SystemExit
-
                 
                 
             self.step()
@@ -135,8 +117,6 @@ class Simulation:
                 if self.painter != None:
                     if self.painter.postDraw != None:
                         self.painter.postDraw(self.screen)
+                gui.blit(self.screen)
                 
-                zz=pg.transform.scale(self.screen,self.dim_window)
-                self.display.blit(zz,(0,0))
-                pg.display.flip()
-            
+                
