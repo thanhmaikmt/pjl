@@ -89,6 +89,11 @@ class Pool:
     # save the pool to a file
     # (note reproof count is not saved)
     def save(self,file):       
+        """ Save pool into a file 
+        :param file: file to store brains
+        """
+        
+        
         n=len(self.list)
         pickle.dump(n,file)
         

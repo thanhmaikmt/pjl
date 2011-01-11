@@ -4,10 +4,10 @@ Created on 21 Dec 2010
 @author: pjl
 '''
 
-import pygame as pg
 from math import *
 from util import *
- 
+import gui
+
 small=1e-8
 
 class Wall:
@@ -64,7 +64,7 @@ class World:
         self.trips=[]
        
         fin=open(fileName,"r")
-        self.rect=pg.Rect(0,0,0,0)
+        self.rect=gui.Rect(0,0,0,0)
         
         self.blind=False
         self.podang=pi
@@ -268,6 +268,8 @@ class World:
       
         
     def draw(self,screen):
+        gui.draw_world(self,screen)
+        """
         if not self.blind:
             for wall in self.walls:
                 if "start" in wall.name:
@@ -288,7 +290,7 @@ class World:
         
         for pod in self.pods:
             pod.draw(screen) #@IndentOk
-
+    """
 #        fontobject = pg.font.Font(None,20)
 #        message=" Ticks: " + str(self.ticks)
 #        screen.blit(fontobject.render(message, 1, (255,255,255)),

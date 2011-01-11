@@ -6,7 +6,7 @@ Created on 21 Dec 2010
 
 from math import *
 from util import *
-import pygame as pg
+import gui
 
 ang_thrust_max=0.5
 white = (255,255,255)
@@ -108,57 +108,10 @@ class Pod:
 
 
     def draw(self,screen):
-        self.draw_sensors(screen)
-        self.draw_pod(screen)
+        gui.draw_sensors(self,screen)
+        gui.draw_pod(self,screen)
 
-    def draw_pod(self, screen):
-        
-        state=self.state
-        
-        if state.collide:
-            state.collide_count=100
-
-        outline=rotate_poly(self.pod_poly_ref, state.ang, state)
-        
-        if state.collide_count>0:
-            col=(255,100,100)
-            state.collide_count -= 1
-        else:
-            col=self.col
-        pg.draw.polygon(screen,col,outline)
-        
-        if self.control == None:
-            return
-        
-        if self.control.up > 0.0:
-            outline=rotate_poly(self.thrust_poly_ref, state.ang, state)
-            pg.draw.polygon(screen,red,outline)
-        if self.control.left > 0.0:
-            outline=rotate_poly(self.left_poly_ref, state.ang, state)
-            pg.draw.polygon(screen,red,outline)
-        if self.control.right > 0.0:
-            outline=rotate_poly(self.right_poly_ref, state.ang, state)
-            pg.draw.polygon(screen,red,outline)
-
-
-    def draw_sensors(self,screen):
-        
-        state=self.state
-        for sensor in self.sensors:
-            wallName=sensor.wall
-            if wallName== None:
-                col=(10,10,10)
-            elif "end" in wallName:
-                col=(255,255,255)
-            else:
-                col=(70,70,70)
-
-            dist=sensor.val
-            
-            p1=(state.x,state.y)
-            p2=(state.x+dist*sin(sensor.ang),state.y+dist*cos(sensor.ang))
-            pg.draw.line(screen,col,p1,p2,1)
-
+ 
 
 class CarPod(Pod):
  
