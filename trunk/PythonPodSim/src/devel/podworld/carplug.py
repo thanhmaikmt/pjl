@@ -8,7 +8,7 @@ from random import  *
 from math import *
 from pods import *
 
-
+import pygame as pg
 
 sensorRange = 2000
 
@@ -53,13 +53,15 @@ class CarPlug:
             return 0
         
         if state.age > MIN_AGE and state.distance_travelled == 0:
-            print ""
             return 0
         
-        if state.age > MAX_AGE or state.collide:
+        if state.age > MAX_AGE:
             return  state.pos_trips-state.neg_trips
-         
-    
+        
+        
+        if state.collide:
+            return  state.pos_trips-state.neg_trips+state.seg_pos
+            
         if (state.pos_trips-state.neg_trips) >= N_TRIP:  
             return N_TRIP + MAX_AGE-pod.state.age
         
@@ -89,11 +91,30 @@ class CarPlug:
         output=pod.brain.ffwd(input)
        
         # assign values to the controllers
+        #"""
         control.up=output[0]
         control.down=output[1]
         control.left=output[2]
         control.right=output[3] 
-      
+        """
+        
+        keyinput=pg.keys.get_pressed()
+         
+        if keyinput[pg.K_LEFT]:
+            control.left=1
+
+        if keyinput[pg.K_RIGHT]:
+            control.right=1
+
+        if keyinput[pg.K_UP]:
+            control.up=1
+
+        if keyinput[pg.K_DOWN]:
+            control.down=1
+
+        print control.left,control.right,control.up,control.down
+        """
+        
         return control
         
     def createInitialPod(self,i,brain):
