@@ -46,7 +46,7 @@ class Wall:
             i += 2
 
 
-        self.rect=pg.Rect(self.minX,self.minY,self.maxX-self.minX,self.maxY-self.minY)
+        self.rect=gui.Rect(self.minX,self.minY,self.maxX-self.minX,self.maxY-self.minY)
        
     
     def len(self):
@@ -222,7 +222,7 @@ class World:
 
     def check_collide_with_wall(self,p0_x,p0_y,p1_x,p1_y):
         if p0_x==p1_x and p1_y==p0_y:
-            return None
+            return None,None
 
         for wall in self.walls:
             for seg in wall.segments:
@@ -234,8 +234,10 @@ class World:
                 (s,t,dmy)=intersect(p0_x,p0_y,p1_x,p1_y,p2_x,p2_y,p3_x,p3_y)
 
                 if s >= 0 and s <= 1 and t >= 0 and t <= 1:
-                    return wall
-        return None
+                    #print s,t
+                    return wall,s
+                
+        return None,None
 
     def count_trips(self,p0_x,p0_y,p1_x,p1_y):
   

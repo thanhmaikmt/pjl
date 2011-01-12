@@ -40,8 +40,10 @@ class Simulation:
         self.run_name=run_name
     
         
-      
-        
+    def reaper(self,pod):
+        if self.plug == None:
+            return False 
+        return self.plug.reaper(pod,self)        
        
         
     def step(self):
@@ -95,14 +97,11 @@ class Simulation:
                 gui.grab_events()
                 if self.admin != None:
                     self.admin.process(self)
-                
-                
+                  
             if gui.check_for_quit():
                 break
-                
-                
+              
             self.step()
-            
             
             if display:
                 self.screen.fill((0,0,0))

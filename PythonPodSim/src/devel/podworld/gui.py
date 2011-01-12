@@ -5,13 +5,13 @@ from util import *
 
 keys=pg
  
+red=(255,0,0)
  
-def Rect():
-    return pg.Rect()
+def Rect(a,b,c,d):
+    return pg.Rect(a,b,c,d)
 
 
-def init_surface(dim_world):
-    
+def init_surface(dim_world):  
         pg.init()
         modes=pg.display.list_modes()
         dim_display=modes[0]
@@ -24,7 +24,7 @@ def init_surface(dim_world):
             dim_window=(dim_world[0]*s,dim_world[1]*s)
             print "Small screen: scaling world by ",s
 
-        else:
+        else: 
             dim_window=dim_world
 
         display = pg.display.set_mode(dim_window)
@@ -33,12 +33,14 @@ def init_surface(dim_world):
         return pg.Surface(dim_world) #
  
 def get_pressed():
-    return pg.key.get_pressed()
-
+    kk=pg.key.get_pressed()
+    for k in kk:
+            if k:
+                print "PRESSED ",k
+    return kk
 
 def draw_string(screen,str1,point,col,size ):
     fontMgr.Draw(screen, None, size,str1,point, col) 
-
 
 
 def clock():
@@ -46,8 +48,8 @@ def clock():
    return pg.time.Clock() 
 
 def check_for_quit():
-    keyinput = pg.key.get_pressed()
-
+    keyinput = get_pressed()
+                
     if keyinput[pg.K_ESCAPE] or pg.event.peek(pg.QUIT):
                 pg.display.quit()
                 return True
@@ -107,13 +109,13 @@ def draw_pod(self, screen):
         
         if self.control.up > 0.0:
             outline=rotate_poly(self.thrust_poly_ref, state.ang, state)
-            pg.draw.polygon(screen,red,outline)
+            pg.draw.polygon(screen,(255*self.control.up,0,0),outline)
         if self.control.left > 0.0:
             outline=rotate_poly(self.left_poly_ref, state.ang, state)
-            pg.draw.polygon(screen,red,outline)
+            pg.draw.polygon(screen,(255*self.control.left,0,0),outline)
         if self.control.right > 0.0:
             outline=rotate_poly(self.right_poly_ref, state.ang, state)
-            pg.draw.polygon(screen,red,outline)
+            pg.draw.polygon(screen,(255*self.control.right,0,0),outline)
 
 def draw_sensors(self,screen):
         

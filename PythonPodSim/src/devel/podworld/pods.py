@@ -158,7 +158,7 @@ class CarPod(Pod):
         xNext = state.x + state.dxdt*dt
         yNext = state.y + state.dydt*dt
 
-        wall=world.check_collide_with_wall(state.x,state.y,xNext,yNext)
+        wall,seg_pos=world.check_collide_with_wall(state.x,state.y,xNext,yNext)
         
         ang_prev=state.ang
         
@@ -192,6 +192,7 @@ class CarPod(Pod):
             
 
         else:
+            state.seg_pos=seg_pos
             state.dydt = 0
             state.dxdt = 0
             state.vel  = 0

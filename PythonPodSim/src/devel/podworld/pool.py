@@ -97,7 +97,7 @@ class Pool:
         n=len(self.list)
         pickle.dump(n,file)
         
-        for x in self.good_list:
+        for x in self.list:
             #o=copy.deepcopy(x.vector)
             pickle.dump(x,file)
             #x.save(file)
@@ -249,10 +249,16 @@ class Pool_Mino(Pool):
         fact=1.0/len(self.list)
 
         avStr=""
+        for i in range(len(x.vec)):
+                avStr += " %4.1f" % x.vec[i]
+        
+        avStr+=" ("
         for i in range(len(av)):
-                avStr += " %5.1f" % (av[i] * fact)
-                            #return " %4.0f " % x.fitness +  " %4.0f" % x.flukeness + "( %d )"  %  x.proof_count
-        return str(x.vec)+": ("+ avStr+")"
+                avStr += " %4.1f" % (av[i] * fact)
+        
+        avStr+=")"         
+                        #return " %4.0f " % x.fitness +  " %4.0f" % x.flukeness + "( %d )"  %  x.proof_count
+        return avStr
     
     def reject(self,brain):
         """ if any test is less than min value in pool reject """
