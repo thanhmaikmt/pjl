@@ -647,6 +647,8 @@ class Simulation:
     def __init__(self,world,dt,admin=None):
 
         pg.init()
+        
+        print pg
         self.admin=admin
         self.dt=dt
         self.slowMotionFactor=1.0
