@@ -51,6 +51,8 @@ def expose_event(widget, event):
     widget.window.draw_drawable(widget.get_style().fg_gc[gtk.STATE_NORMAL],
                                 pixmap, x, y, x, y, width, height)
     return False
+I am please to have you as my supervisor , I have started preliminary research on smart grids   but now need your guidance at this stage . Please let me know what is required at this stage of my research.
+
 
 # Draw a rectangle on the screen
 def draw_brush(widget, x, y):
