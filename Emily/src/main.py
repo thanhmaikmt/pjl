@@ -15,6 +15,9 @@ from io import *
 
 
 class Case:
+    """
+        Represents a number of users (all behave identically)
+    """
     
     def __init__(self,user,number):
         self.time=0
@@ -30,6 +33,9 @@ class Case:
         self.charge=self.capacity
           
     def step(self,period):
+        """
+        simulate time of period (minutes)
+        """
         
         timeNext=self.time+period
         
@@ -37,8 +43,10 @@ class Case:
             self.trip=self.tripNext
             self.tripNext=self.iter.next()
     
-        drain=self.chargeRate*chargeDT
+        # calculate energy drain from supply
+        drain=self.chargeRate*period*Time.secsPerMinute
         drain=min(drain,self.capacity-self.charge)
+
         self.charge +=drain-dist*self.eff
     
         self.time = timeNext

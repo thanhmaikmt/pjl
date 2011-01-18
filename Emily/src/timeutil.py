@@ -6,10 +6,10 @@ Created on 18 Jan 2011
 
 
 class Time:
-    minsPerHour=60
-    minsPerDay=minsPerHour*24
-    minsPerWeek=minsPerDay*7
-    
+    minsPerHour=60.0
+    minsPerDay=minsPerHour*24.0
+    minsPerWeek=minsPerDay*7.0
+    secsPerHour=minsPerHour*60.0
    
 
  
