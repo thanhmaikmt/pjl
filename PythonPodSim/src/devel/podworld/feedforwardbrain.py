@@ -19,6 +19,17 @@ def sigmoid(x):
             return 0.0      
         return 1.0 / (1.0 + exp(-x))
     
+def atan(x):
+        if x < -100:
+            return -1.0
+        
+        if x > 100:
+            return 1.0
+              
+        ee=exp(-x)
+        return (1.0 -ee) / (1.0 + ee)
+    
+    
 def randomSeed():
     return 0.5 - random()
 
@@ -50,12 +61,12 @@ class FeedForwardBrain:
     """
   
     
-    def __init__(self,sz):
+    def __init__(self,sz,func=[None,sigmoid,sigmoid],weight=None):
 
         #//	set no of layers and their sizes
         self.num_layer = len(sz)
         self.layer_size = []   # new int[num_layer];
-
+        self.func=func
         for  i in range(self.num_layer):
             self.layer_size.append(sz[i])
 
@@ -69,19 +80,21 @@ class FeedForwardBrain:
                 a.append(0.0)
 
 
-        self.weight=[]
-        self.weight.append([])
-        
-        for i in range(1,self.num_layer):  
+        if weight == None:
+            self.weight=[]
             self.weight.append([])
-            a=self.weight[i]
-            for j in range(self.layer_size[i]):
-                a.append([])
-                r=a[j]
-                for k in range(self.layer_size[i - 1]):
+            
+            for i in range(1,self.num_layer):  
+                self.weight.append([])
+                a=self.weight[i]
+                for j in range(self.layer_size[i]):
+                    a.append([])
+                    r=a[j]
+                    for k in range(self.layer_size[i - 1]):
+                        r.append(randomSeed())
                     r.append(randomSeed())
-                r.append(randomSeed())
-    
+        else:
+            self.weight=weight
       
     def resize_inputs(self,nIn):
         
@@ -100,8 +113,7 @@ class FeedForwardBrain:
             self.layer_size[0]=nIn
         
     def clone(self):
-        clone=FeedForwardBrain(self.layer_size)
-        clone.weight=copy.deepcopy(self.weight)
+        clone=FeedForwardBrain(self.layer_size,self.func,self.weight)
         return clone
             
     def mutate(self,amount):    
@@ -162,7 +174,7 @@ class FeedForwardBrain:
                  self.out[0][layer] = x[layer]       # output_from_neuron(layer,j) Jth neuron in Ith Layer
 
         #	assign output(activation) value 
-        #	to each neuron usng sigmoid func
+        #	to each neuron using sigmoid func
         
         for layer in range(1,self.num_layer):         #  For each layer
             for j in range(self.layer_size[layer]):   #  For each neuron in current layer
@@ -171,10 +183,21 @@ class FeedForwardBrain:
                     sum += self.out[layer - 1][k] * self.weight[layer][j][k];	# Apply weight to inputs and add to sum
                 
                 sum += self.weight[layer][j][self.layer_size[layer - 1]];	    	# Apply bias
-                self.out[layer][j] = sigmoid(sum);				            # Apply sigmoid function
+                self.out[layer][j] = self.func[layer](sum);				            # Apply sigmoid function
     
         return self.out[self.num_layer - 1];
     
-    
+                    
+    def radom_mutate(self,amount):    
+        
+        for i in range(1,self.num_layer):
+            a=self.weight[i]  
+            for j in range(self.layer_size[i]):            
+                r=a[j]
+                k=randint(0, self.layer_size[i-1]+1)
+                z=randint(0, (self.layer_size[i-1]+1))
+                while k < z:
+                    r[k]=r[k]+randomSeed()*amount
+                    k=k+1 
             
             

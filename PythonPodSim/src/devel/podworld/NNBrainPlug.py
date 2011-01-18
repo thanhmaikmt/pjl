@@ -1,4 +1,5 @@
-import feedforwardbrain as brain
+#import feedforwardbrain as brain
+import recursivebrain as brain
 from random import *
 
 
@@ -12,7 +13,8 @@ class BrainPlug:
   
     
     def createBrain(self):
-        return brain.FeedForwardBrain(self.layerSizes)
+       return brain.RecursiveBrain(self.layerSizes)
+ #       return brain.FeedForwardBrain(self.layerSizes)
         
     def breed(self,mum,dad):
         
