@@ -14,7 +14,11 @@ class PowerSupply:
        
      
     def add(self,power):
-        self.redundantCap.append(power)
+        
+        """
+            power (MW)
+        """
+        self.redundantCap.append(power*1e6)
         
         
         

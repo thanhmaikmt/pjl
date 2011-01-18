@@ -15,7 +15,7 @@ class Schedule:
     def __init__(self,id,length):
         self.id=id
         self.trips=[]
-        self.length=length
+        self.length=length     #   
 
     def append(self,start,stop,distance):
         self.trips.append((start,stop,distance))
