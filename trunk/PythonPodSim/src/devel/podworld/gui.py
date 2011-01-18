@@ -34,9 +34,11 @@ def init_surface(dim_world):
  
 def get_pressed():
     kk=pg.key.get_pressed()
-    for k in kk:
-            if k:
-                print "PRESSED ",k
+   
+   # for k in kk:
+   #         if k:
+   #             print "PRESSED ",k
+    
     return kk
 
 def draw_string(screen,str1,point,col,size ):
