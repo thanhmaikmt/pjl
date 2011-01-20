@@ -1,6 +1,6 @@
 TRIP SCHEDULE			
 			
-TRIP ID	Standard		
+TRIP ID	Standard	7		
 Day	START	STOP	DISTANCE
 MON	07:00	19:00	
 TUE	07:00	19:00	

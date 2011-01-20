@@ -6,13 +6,19 @@ Created on 18 Jan 2011
 
 from supply import *
 from cars import *
-from tripschedule import *
+from schedule import *
 from users import *
+from case import *
+
+import timeutil 
 
 def seek(fin,key):
     n=len(key)
     while  True:
         line=fin.readline()
+        if len(line) == 0:
+            return None
+        
         if line[0:n] == key:
             return line
         
@@ -22,10 +28,10 @@ def readSupply(file):
     
     sup=PowerSupply(title)
 
-    print "Hello Emily",title
+    #print "Hello Emily",title
     
     headers=seek(fin,"DAY")
-    print headers
+    #print headers
     
     start=None
     dt=30.0
@@ -36,7 +42,9 @@ def readSupply(file):
 #        print toks
         if len(toks) == 0 or toks[0]=="":
             break
-        sup.add(float(toks[4]))
+        
+        sup.add(float(toks[4])*1e6)    # convert to watts
+        
         if start==None:
             start=(float(toks[2])-1.0)*30.0
     
@@ -68,15 +76,15 @@ def readCars(file):
             if len(toks) != 4:
                 break
             name=toks[0]
-            cap=float(toks[1])
-            rechargetime=float(toks[2])
-            range=float(toks[3])
+            cap=float(toks[1])*1000.0*secsPerHour     # kWh t-> Joules
+            rechargetime=float(toks[2])*secsPerHour   # hours->secs               #
+            range=float(toks[3])*1e3                  # km --> meters                      
             cars[name]=Car(name,cap,rechargetime,range)
             
     return cars
    
 
-def readTripSchedules(fin):
+def readTripSchedules(file):
     
     trips={}  
     fin=open(file)
@@ -90,25 +98,35 @@ def readTripSchedules(fin):
             break
         toks=headers.split("\t")
         name=toks[1]
+        
+        period=float(toks[2])*timeutil.minsPerDay
+        
         fin.readline()
         
       
         print name
+        
+        trips[name]=Schedule(name,period)
     
         while True:
             line=fin.readline()
             toks=line.split("\t")
             if len(toks) <= 1 or toks[0]=="":
                 break
-            name=toks[0]
-            start=float(toks[1])
-            stop=float(toks[2])
-            if len(toks) == 3:
+            
+            dayMins=timeutil.dayToNumber[toks[0]]*timeutil.minsPerDay
+            
+            start=crackTime(toks[1])+dayMins
+            stop=crackTime(toks[2])+dayMins
+            
+            print toks
+            
+            if toks[3] == '\n':
                 dist=None
             else:
                 dist=float(toks[3])
                      
-            trips[name]=TripSchedule(name,start,stop,dist)
+            trips[name].append(start,stop,dist)
             
     return trips
 
@@ -127,6 +145,7 @@ def readUsers(file,cars,trips):
     
     while True:
             line=fin.readline()
+            line=line.rstrip()
             toks=line.split("\t")
             if len(toks) != 3:
                 break
@@ -157,7 +176,7 @@ def readScenario(file,users):
                 break
             user=users[toks[0]]
             number=int(toks[1])
-            cases.append((user,number))
+            cases.append(Case(user,number))
             
     return cases
    
