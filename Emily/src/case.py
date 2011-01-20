@@ -15,7 +15,8 @@ class Case:
     
     def __init__(self,user,number,supply):
         #number=1
-        self.id=user.id+str(number)
+        self.id=user.id
+        self.number=number
         self.time=None
         self.user=user
         car=self.user.car
