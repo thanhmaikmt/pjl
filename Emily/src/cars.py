@@ -4,7 +4,7 @@ Created on 18 Jan 2011
 @author: pjl
 '''
 
-from timeut import *
+from timeutil import *
 
 class Car:
 
@@ -18,6 +18,6 @@ class Car:
         """
         
         self.id=id
-        self.capacity  = batteryCapacity*1000.0*Time.secsPerHour         # J   
-        self.chargeRate= batteryCapacity/rechargeTime*Time.secsPerHour   # J/sec   
-        self.eff       = 1000.0*range/batteryCapacity                    # meters/Joule
+        self.capacity  = batteryCapacity                # J   
+        self.chargeRate= batteryCapacity/rechargeTime   # J/sec   
+        self.range     = range                          # meters

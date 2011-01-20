@@ -8,58 +8,16 @@ Created on 14 Jan 2011
 #from supply import *
 #from cars import *
 from io import *
-#from tripschedule import *
-
- 
-      
-
-
-class Case:
-    """
-        Represents a number of users (all behave identically)
-    """
-    
-    def __init__(self,user,number):
-        self.time=0
-        car=user.car
-        self.trips=user.trips
-        self.iter=self.trip.__iter__()
-        self.trip=self.iter.next()
-        self.tripNext=self.iter.next()
-        
-        self.capacity=car.capacity*number
-        self.eff=car.eff*number
-        self.chargeRate=car.chargeRate*number
-        self.charge=self.capacity
-          
-    def step(self,period):
-        """
-        simulate time of period (minutes)
-        """
-        
-        timeNext=self.time+period
-        
-        while self.trip.end < time:
-            self.trip=self.tripNext
-            self.tripNext=self.iter.next()
-    
-        # calculate energy drain from supply
-        drain=self.chargeRate*period*Time.secsPerMinute
-        drain=min(drain,self.capacity-self.charge)
-
-        self.charge +=drain-dist*self.eff
-    
-        self.time = timeNext
-        
-        return drain  
-  
-
-
+from schedule import *
+import timeutil
+from case import *
 from io import *
+from   matplotlib.pyplot import *
 
 
-dir="/home/pjl/eclpseProjects/Emily/data/test1/"
-supFile=dir+"2007_DAY_DATE_HALFHR_GBDEMAND_REDCAP.txt"  
+dir="../data/test1/"
+supFile=dir+"REDCAPhiDay.txt"  
+
 carFile=dir+"CAR.txt"
 tripFile=dir+"TRIPSCHEDULE.txt"
 userFile=dir+"USERS.txt"
@@ -71,25 +29,43 @@ trips=readTripSchedules(tripFile)
 users=readUsers(userFile,cars,trips)
 cases=readScenario(scenarioFile,users)
 
-agents=[]
 
+time=supply.start
+
+drainTot=0
+capTot=0
+
+
+print " CASES: "
 for case in cases:
-    agents.append(case) 
+    case.display()
 
-time=0
-period=30
 
+t=[]
+deltaT=supply.interval
+
+print "STARTING ",time/60
 while True:
     
-    slot=int(supply.interval/time)
+    print time/60
     
-    if slot >= len(supply.redudantCap):
+    rc=supply.redundantCapacityAt(time,deltaT)
+    if rc == None:
         break
     
+    t.append(time)
+    
     for case in cases:
-        drain=case.step(period)
-        supply.redudantCap[slot] -= drain
+        case.step(time,deltaT)
+        #case.display()
         
-    time += dt
+    time += deltaT
     
     
+
+print "END ",time/60
+
+for case in cases:
+    plot(timeutil.arrayMinToHours(case.times),case.charges,label=case.id)
+    
+show()

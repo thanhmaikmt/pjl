@@ -18,11 +18,18 @@ class PowerSupply:
         """
             power (MW)
         """
-        self.redundantCap.append(power*1e6)
+        self.redundantCap.append(power)
         
         
-        
-    def setStuff(self,start,dt): 
-        print "START DT",start,dt
+    def redundantCapacityAt(self,time,deltaT):
+        slot=int((time-self.start)/self.interval)
+        # TODO smearing
+        if slot >= len(self.redundantCap):
+            return None
+        else:
+            return self.redundantCap[slot]
+         
+    def setStuff(self,start,interval): 
+        print "START DT",start,interval
         self.start=start
-        self.dt=dt 
+        self.interval=interval 

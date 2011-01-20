@@ -8,9 +8,9 @@ Created on 18 Jan 2011
       
 class User:
     
-    def __init__(self,id,car,trips):
+    def __init__(self,id,car,schedule):
         self.id=id
         self.car=car
-        self.trips=trips
-        print "USER:",car,trips
+        self.schedule=schedule
+        print "USER:",car,schedule
         

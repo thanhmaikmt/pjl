@@ -6,7 +6,7 @@ Created on 18 Jan 2011
 
 
 from timeutil import *
-
+from actions import *
 
 class Schedule: 
     """
@@ -18,19 +18,41 @@ class Schedule:
         self.length=length     #   
 
     def append(self,start,stop,distance):
-        self.trips.append((start,stop,distance))
+        
+        if len(self.trips) > 0:
+            assert start > self.trips[len(self.trips)-1].tend
+            assert stop > start
+        
+        self.trips.append(Trip(start,stop,distance))
 
-
+class Trip:
+    
+    
+    def __init__(self,tstart,tend,range):
+        self.tstart=tstart
+        self.tend=tend
+        self.range=range
+        if range != None:
+            self.speed=range/(tstart-tend)
+        else:
+            self.speed=None
 
 class TripIterator:
     
     
     def __init__(self,sched):    
         self.trips=sched.trips
+        assert len(self.trips)>0
         self.length=sched.length
         
-    def getPeriod(self,time,period):
-
+    def simulate(self,time,period,case):
+        """
+        time start of period (mins)
+        period length of period (mins)
+        
+        returns  distance (meters) ,    time_avaible_for_charging (mins)   
+        
+        """
         #print time,period    
         t=0.0
         ptr=0
@@ -40,7 +62,7 @@ class TripIterator:
         trips=self.trips
         
 
-        while tstart > trips[ptr][1]: 
+        while tstart > trips[ptr].tend: 
           #  print ptr,tstart,trips[ptr][1]
             ptr += 1
             if ptr >= len(trips):
@@ -61,8 +83,31 @@ class TripIterator:
             print tstart,tend
             print trip[0],trip[1]
         
-        # tstart < trip[1]
+        if  tstart < trip.tstart:
+            if tend < trip.tstart:
+                case.doCharge(period)
+            
+            elif tend < trip.tend:
+                case.doCharge(trip.tstart-tstart)
+                case.doTravel(tend-trip.tstart,trip.speed)
+            
+            else:
+                raise NameError(" step is greater than a journey ")
+            
+        else:
+            assert tend > trip.tstart
+            
+            if tend <= trip.tend:
+                case.doTravel(period,trip.speed)
+            else:
+                case.doTravel(trip.tend-tstart,trip.speed)
+                case.doCharge(tend-trip.tend)
+            
         
+        return
+    
+        
+        """
         if tend > trip[1]:  # step  ends after travel 
             
             if tstart < trip[0]:  # all travel
@@ -96,25 +141,43 @@ class TripIterator:
             
             chargePeriod=period
             
-            
+        
+        if trip[2] == None:
+            if abs(period-chargePeriod) < 0.1:
+                return 0,chargePeriod
+            else:
+                return None,chargePeriod
+        
+        
         return trip[2]*(period-chargePeriod)/(trip[1]-trip[0]),chargePeriod
+        """    
             
-            
+
+class MyCase:
+    
+    def __init__(self):
+        self.ct=0
+        self.tt=0
+        
+    def doCharge(self,dt):
+        self.ct+=dt
+        
+    def doTravel(self,dt):
+        self.tt+=dt
         
 
 def test(dt):
-    length=Time.minsPerWeek
+    length=timeutil.minsPerWeek
+    
     trips=Schedule("trips",length)
     
     for i in range(1):
         start=toMins(i,8,30)
         end=toMins(i,17,30)
         trips.append(start,end,40.0)
-        
+  
     
-    dist=0
-    charge=0
-    
+    mycase=MyCase()
     
     iter=TripIterator(trips)
     
@@ -122,21 +185,17 @@ def test(dt):
     tend=t+length
     
     while t < tend:
-        d,c= iter.getPeriod(t,dt)
-        #print d,c
-        dist   += d
-        charge += c    
+        iter.simulate(t,dt,mycase)        
         t      += dt
         
         
-    return dist,charge,t
+    return mycase.tt,mycase.ct,t
 
     
 if __name__ == "__main__":
     
     
     dts=[5,10,20,30,40,60,90,120]
-    
     
     for dt in dts:
         print test(dt)
