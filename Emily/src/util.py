@@ -30,3 +30,14 @@ def crackTime(str):
         
         toks=str.split(":")      
         return float(toks[0])*minsPerHour+float(toks[1])
+    
+    
+def arrayJoulesToKWH(x):
+    
+    k=[]
+    
+    fact=1e-3/secsPerHour
+    for xx in x:
+        k.append(xx*fact)
+        
+    return k

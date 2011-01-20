@@ -9,13 +9,14 @@ Created on 14 Jan 2011
 #from cars import *
 from io import *
 from schedule import *
-import timeutil
+import util
 from case import *
 from io import *
-from   matplotlib.pyplot import *
 
+import matplotlib.pyplot as pyplot
+import matplotlib.ticker as ticker
 
-dir="../data/test1/"
+dir="../data/test2/"
 supFile=dir+"REDCAPhiDay.txt"  
 
 carFile=dir+"CAR.txt"
@@ -27,7 +28,7 @@ supply=readSupply(supFile)
 cars=readCars(carFile)
 trips=readTripSchedules(tripFile)
 users=readUsers(userFile,cars,trips)
-cases=readScenario(scenarioFile,users)
+cases=readScenario(scenarioFile,users,supply)
 
 
 time=supply.start
@@ -45,16 +46,15 @@ t=[]
 deltaT=supply.interval
 
 print "STARTING ",time/60
+
 while True:
-    
-    print time/60
-    
+        
     rc=supply.redundantCapacityAt(time,deltaT)
     if rc == None:
         break
     
     t.append(time)
-    
+
     for case in cases:
         case.step(time,deltaT)
         #case.display()
@@ -62,10 +62,25 @@ while True:
     time += deltaT
     
     
-
-print "END ",time/60
+print "END ",time/60.0
 
 for case in cases:
-    plot(timeutil.arrayMinToHours(case.times),case.charges,label=case.id)
-    
-show()
+    pyplot.plot(util.arrayMinToHours(case.times),util.arrayJoulesToKWH(case.charges),label=case.id)
+
+
+
+days=["mon","tue","wed","thu","fri","sat","sun"]
+
+def my_date(x,pos=None):
+    day=int(x/24)
+    hr=x-day*24   
+    strH=" %d" % hr
+    return days[day]+strH
+
+xaxis=pyplot.axes().xaxis
+xaxis.set_major_formatter(ticker.FuncFormatter(my_date))
+pyplot.ylabel("Charge (kWh)")
+pyplot.xlabel("Time (hours)")
+pyplot.title(" Car charge state ")
+pyplot.grid(True)
+pyplot.show()
