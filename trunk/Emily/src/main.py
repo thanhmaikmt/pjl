@@ -12,9 +12,11 @@ from schedule import *
 import util
 from case import *
 from io import *
+from math import *
 
 import matplotlib.pyplot as pyplot
 import matplotlib.ticker as ticker
+import matplotlib.lines as lines
 
 dir="../data/test2/"
 supFile=dir+"REDCAPhiDay.txt"  
@@ -44,8 +46,8 @@ for case in cases:
 
 t=[]
 deltaT=supply.interval
-
-print "STARTING ",time/60
+startTime=time/60
+print "STARTING ",startTime
 
 while True:
         
@@ -63,7 +65,20 @@ while True:
     
 
 ## COSMETIC STUFF    
-print "END ",time/60.0
+
+endTime=time/60.0
+
+print "END ",endTime
+duration=(endTime-startTime)
+
+print duration
+
+if duration < 20.0:
+    ticks=range(int(floor(startTime)),int(ceil(endTime)),1)
+elif duration < 40.0:   
+    ticks=range(2*int(floor(startTime/2.0)),2*int(ceil(endTime/2.0)),2)
+else:
+    raise NameError(" Please sort out tick intervals")
 
 lastDay=-1
 
@@ -78,17 +93,31 @@ def my_date(x,pos=None):
     else:
         return strH
 
-for case in cases:
-    pyplot.plot(util.arrayMinToHours(case.times),util.arrayJoulesToKWH(case.charges),label=case.id)
-
-
-
 days=["mon","tue","wed","thu","fri","sat","sun"]
 
-xaxis=pyplot.axes().xaxis
+fig = pyplot.figure()
+p=fig.add_subplot('111')
+
+xaxis=p.xaxis
 xaxis.set_major_formatter(ticker.FuncFormatter(my_date))
-pyplot.ylabel("Charge (kWh)")
-pyplot.xlabel("Time (hours)")
-pyplot.title(" Car charge state ")
-pyplot.grid(True)
+xaxis.set_ticks(ticks)
+xaxis.limit_range_for_scale(ticks[0],ticks[len(ticks)-1])
+
+styles=['k','k--','k:']
+
+cnt=0
+for case in cases:
+    m=lines.Line2D.markers[cnt]
+    cnt+=1
+    p.plot(util.arrayMinToHours(case.times),util.arrayJoulesToKWH(case.charges),label=case.id) #,styles[cnt%3])
+ 
+
+
+p.legend() #bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+
+
+p.set_ylabel("Charge (kWh)")
+p.set_xlabel("Time (hours)")
+p.set_title(" Car charge state ")
+p.grid(True)
 pyplot.show()
