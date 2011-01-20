@@ -61,8 +61,22 @@ while True:
         
     time += deltaT
     
-    
+
+## COSMETIC STUFF    
 print "END ",time/60.0
+
+lastDay=-1
+
+def my_date(x,pos=None):
+    day=int(x/24)
+    hr=x-day*24   
+    strH=" %d" % hr
+    global lastDay
+    if day != lastDay:
+        lastDay=day
+        return days[day]+strH
+    else:
+        return strH
 
 for case in cases:
     pyplot.plot(util.arrayMinToHours(case.times),util.arrayJoulesToKWH(case.charges),label=case.id)
@@ -70,12 +84,6 @@ for case in cases:
 
 
 days=["mon","tue","wed","thu","fri","sat","sun"]
-
-def my_date(x,pos=None):
-    day=int(x/24)
-    hr=x-day*24   
-    strH=" %d" % hr
-    return days[day]+strH
 
 xaxis=pyplot.axes().xaxis
 xaxis.set_major_formatter(ticker.FuncFormatter(my_date))
