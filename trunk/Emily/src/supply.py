@@ -32,4 +32,12 @@ class PowerSupply:
     def setStuff(self,start,interval): 
         print "START DT",start,interval
         self.start=start
-        self.interval=interval 
+        self.interval=interval
+        
+        
+    def request(self,power,time,period):
+        return True
+    
+    
+    def consume(self,power,time,period):
+        pass

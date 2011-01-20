@@ -5,7 +5,7 @@ Created on 19 Jan 2011
 '''
 
 from schedule import *
-import timeutil 
+import util 
 
 
 class Case:
@@ -53,14 +53,14 @@ class Case:
     def doCharge(self,time):
     
         
-        tinMins=(self.capacity-self.charge)/self.chargeRate/timeutil.secsPerMinute
+        tinMins=(self.capacity-self.charge)/self.chargeRate/util.secsPerMinute
         
         tReq=min(time,tinMins)
     
         canCharge = self.supply.request(self.chargeRate,time,tReq)
         
         if canCharge:
-            c=self.chargeRate*time*timeutil.secsPerMinute
+            c=self.chargeRate*time*util.secsPerMinute
             c=min(c,self.capacity-self.charge)
             self.energyUse +=c
             self.charge += c

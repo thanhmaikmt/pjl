@@ -4,8 +4,6 @@ Created on 18 Jan 2011
 @author: pjl
 '''
 
-from timeutil import *
-
 class Car:
 
 

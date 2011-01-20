@@ -10,7 +10,7 @@ from schedule import *
 from users import *
 from case import *
 
-import timeutil 
+import util 
 
 def seek(fin,key):
     n=len(key)
@@ -48,6 +48,7 @@ def readSupply(file):
         if start==None:
             start=(float(toks[2])-1.0)*30.0
     
+    assert start != None
     # read avails
     
     sup.setStuff(start, dt)
@@ -76,8 +77,8 @@ def readCars(file):
             if len(toks) != 4:
                 break
             name=toks[0]
-            cap=float(toks[1])*1000.0*secsPerHour     # kWh t-> Joules
-            rechargetime=float(toks[2])*secsPerHour   # hours->secs               #
+            cap=float(toks[1])*1000.0*util.secsPerHour     # kWh t-> Joules
+            rechargetime=float(toks[2])*util.secsPerHour   # hours->secs               #
             range=float(toks[3])*1e3                  # km --> meters                      
             cars[name]=Car(name,cap,rechargetime,range)
             
@@ -96,10 +97,11 @@ def readTripSchedules(file):
         headers=seek(fin,"TRIP ID")
         if headers == None:
             break
+        
         toks=headers.split("\t")
         name=toks[1]
         
-        period=float(toks[2])*timeutil.minsPerDay
+        period=float(toks[2])*util.minsPerDay
         
         fin.readline()
         
@@ -114,10 +116,10 @@ def readTripSchedules(file):
             if len(toks) <= 1 or toks[0]=="":
                 break
             
-            dayMins=timeutil.dayToNumber[toks[0]]*timeutil.minsPerDay
+            dayMins=util.dayToNumber[toks[0]]*util.minsPerDay
             
-            start=crackTime(toks[1])+dayMins
-            stop=crackTime(toks[2])+dayMins
+            start=util.crackTime(toks[1])+dayMins
+            stop=util.crackTime(toks[2])+dayMins
             
             print toks
             
@@ -157,7 +159,7 @@ def readUsers(file,cars,trips):
     return users
 
 
-def readScenario(file,users):
+def readScenario(file,users,supply):
     
     cases=[]
     fin=open(file)
@@ -176,7 +178,7 @@ def readScenario(file,users):
                 break
             user=users[toks[0]]
             number=int(toks[1])
-            cases.append(Case(user,number))
+            cases.append(Case(user,number,supply))
             
     return cases
    
