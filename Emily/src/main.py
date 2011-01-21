@@ -32,19 +32,22 @@ scenario=readScenario(scenarioFile,users,supply)
 logFile=dir+scenario.id+"log"
 logout=open(logFile,"w")
 
-time=supply.start
+time=supply.startTime
 
 deltaT=supply.interval
 startTime=time/60
 print "STARTING ",startTime
+endTime=supply.endTime
 
-while True:
+while time < endTime:
         
-    rc=supply.redundantCapacityAt(time,deltaT)
-    if rc == None:
-        break
+    while True:
+        resolved=True
+        
+    
     
     for case in scenario.cases:
+        
         case.step(time,deltaT)
         #case.display()
         
@@ -90,7 +93,7 @@ xaxis.set_major_formatter(ticker.FuncFormatter(my_date))
 xaxis.set_ticks(ticks)
 xaxis.limit_range_for_scale(ticks[0],ticks[len(ticks)-1])
 
-styles=['k','k--','k:']
+# styles=['k','k--','k:']
 
 cnt=0
 for case in scenario.cases:

@@ -5,8 +5,7 @@ Created on 18 Jan 2011
 '''
 
 
-# from util import *
-
+import util 
 
 class Schedule: 
     """
@@ -33,7 +32,7 @@ class Trip:
         self.tend=tend
         self.range=range
         if range != None:
-            self.speed=range/(tstart-tend)
+            self.speed=range/(tend-tstart)
         else:
             self.speed=None
 
@@ -63,7 +62,7 @@ class TripIterator:
         
 
         while tstart > trips[ptr].tend: 
-          #  print ptr,tstart,trips[ptr][1]
+            #  print ptr,tstart,trips[ptr][1]
             ptr += 1
             if ptr >= len(trips):
                 tstart -= self.length
@@ -106,95 +105,52 @@ class TripIterator:
         
         return
     
-        
-        """
-        if tend > trip[1]:  # step  ends after travel 
-            
-            if tstart < trip[0]:  # all travel
-                
-                print "trip is shorter than time step"
-
-            elif tstart > trip[1]:   
-                             
-                print "BUGGY POOHS"
-                
-            elif tstart < trip[0]:   # all travel in step
-     
-             
-                chargePeriod = trip[0]-tstart + tend-trip[1]
-             
-            else:
-                                          
-                chargePeriod=tend-trip[1]
-             
-        elif tend > trip[0]:   # travel finishes during interval
-     
-                if tstart < trip[0]:
-                    chargePeriod=trip[0]-tstart
-                
-                else: # all travel
-        
-                    chargePeriod=0
-                    
-             
-        else:    # step finishes before travel
-            
-            chargePeriod=period
-            
-        
-        if trip[2] == None:
-            if abs(period-chargePeriod) < 0.1:
-                return 0,chargePeriod
-            else:
-                return None,chargePeriod
-        
-        
-        return trip[2]*(period-chargePeriod)/(trip[1]-trip[0]),chargePeriod
-        """    
+          
             
 
-class MyCase:
-    
-    def __init__(self):
-        self.ct=0
-        self.tt=0
-        
-    def doCharge(self,dt):
-        self.ct+=dt
-        
-    def doTravel(self,dt):
-        self.tt+=dt
-        
-
-def test(dt):
-    length=timeutil.minsPerWeek
-    
-    trips=Schedule("trips",length)
-    
-    for i in range(1):
-        start=toMins(i,8,30)
-        end=toMins(i,17,30)
-        trips.append(start,end,40.0)
-  
-    
-    mycase=MyCase()
-    
-    iter=TripIterator(trips)
-    
-    t=0
-    tend=t+length
-    
-    while t < tend:
-        iter.simulate(t,dt,mycase)        
-        t      += dt
-        
-        
-    return mycase.tt,mycase.ct,t
 
     
 if __name__ == "__main__":
     
+    class MyCase:
+        
+        def __init__(self):
+            self.ct=0
+            self.tt=0
+            self.dist=0
+            
+        def doCharge(self,dt):
+            self.ct+=dt
+            
+        def doTravel(self,dt,speed):
+            self.tt+=dt
+            self.dist+=dt*speed
     
+    def test(dt):
+        length=util.minsPerWeek
+        
+        trips=Schedule("trips",length)
+        
+        for i in range(1):
+            start=util.toMins(i,8,30)
+            end=util.toMins(i,17,30)
+            trips.append(start,end,40.0)
+      
+        
+        mycase=MyCase()
+        
+        iter=TripIterator(trips)
+        
+        t=0
+        tend=t+length
+        
+        while t < tend:
+            iter.simulate(t,dt,mycase)        
+            t      += dt
+            
+            
+        return mycase.tt,mycase.ct,mycase.dist,t
+
     dts=[5,10,20,30,40,60,90,120]
     
     for dt in dts:
