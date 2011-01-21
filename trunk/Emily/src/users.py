@@ -12,5 +12,5 @@ class User:
         self.id=id
         self.car=car
         self.schedule=schedule
-        print "USER:",car,schedule
+        
         

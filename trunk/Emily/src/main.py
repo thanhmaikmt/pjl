@@ -5,12 +5,9 @@ Created on 14 Jan 2011
 '''
 
 
-#from supply import *
-#from cars import *
-from io import *
-from schedule import *
+from schedule import Schedule
 import util
-from case import *
+from case import Case
 from io import *
 from math import *
 
@@ -18,9 +15,9 @@ import matplotlib.pyplot as pyplot
 import matplotlib.ticker as ticker
 import matplotlib.lines as lines
 
+
 dir="../data/test2/"
 supFile=dir+"REDCAPhiDay.txt"  
-
 carFile=dir+"CAR.txt"
 tripFile=dir+"TRIPSCHEDULE.txt"
 userFile=dir+"USERS.txt"
@@ -30,21 +27,13 @@ supply=readSupply(supFile)
 cars=readCars(carFile)
 trips=readTripSchedules(tripFile)
 users=readUsers(userFile,cars,trips)
-cases=readScenario(scenarioFile,users,supply)
+scenario=readScenario(scenarioFile,users,supply)
 
+logFile=dir+scenario.id+"log"
+logout=open(logFile,"w")
 
 time=supply.start
 
-drainTot=0
-capTot=0
-
-
-print " CASES: "
-for case in cases:
-    case.display()
-
-
-t=[]
 deltaT=supply.interval
 startTime=time/60
 print "STARTING ",startTime
@@ -55,16 +44,14 @@ while True:
     if rc == None:
         break
     
-    t.append(time)
-
-    for case in cases:
+    for case in scenario.cases:
         case.step(time,deltaT)
         #case.display()
         
     time += deltaT
     
 
-## COSMETIC STUFF    
+## COSMETIC GRAPH AND LOG STUFF --------------------------- 
 
 endTime=time/60.0
 
@@ -106,7 +93,7 @@ xaxis.limit_range_for_scale(ticks[0],ticks[len(ticks)-1])
 styles=['k','k--','k:']
 
 cnt=0
-for case in cases:
+for case in scenario.cases:
     m=lines.Line2D.markers[cnt]
     cnt+=1
     p.plot(util.arrayMinToHours(case.times),util.arrayJoulesToKWH(case.charges),label=case.id) #,styles[cnt%3])

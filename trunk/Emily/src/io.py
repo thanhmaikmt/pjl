@@ -4,11 +4,12 @@ Created on 18 Jan 2011
 @author: pjl
 '''
 
-from supply import *
-from cars import *
-from schedule import *
-from users import *
-from case import *
+from supply import Supply
+from cars import Car
+from schedule import Schedule
+from users import User
+from case import Case
+from scenario import Scenario
 
 import util 
 
@@ -26,12 +27,11 @@ def readSupply(file):
     fin=open(file)
     title=fin.readline()
     
-    sup=PowerSupply(title)
-
-    #print "Hello Emily",title
+    print "*** reading supply file:",file, " :",title
     
-    headers=seek(fin,"DAY")
-    #print headers
+    sup=Supply(title)
+    
+    seek(fin,"DAY")
     
     start=None
     dt=30.0
@@ -39,7 +39,6 @@ def readSupply(file):
     while True:
         line=fin.readline()
         toks=line.split("\t")
-#        print toks
         if len(toks) == 0 or toks[0]=="":
             break
         
@@ -56,7 +55,8 @@ def readSupply(file):
     return sup
 
 
-def readCars(file):
+def readCars(file,log):
+    print "*** reading car file:",file
     
     cars={}
     fin=open(file)
@@ -64,34 +64,29 @@ def readCars(file):
     
     print title
     
+    headers=seek(fin,"CAR ID")
+  
     while True:
-        headers=seek(fin,"CAR")
-        if headers == None:
+        line=fin.readline()
+        toks=line.split("\t")
+        if len(toks) != 4:
             break
+        name=toks[0]
+        cap=float(toks[1])*1000.0*util.secsPerHour     # kWh t-> Joules
+        rechargetime=float(toks[2])*util.secsPerHour   # hours->secs               #
+        range=float(toks[3])*1e3                       # km --> meters                      
+        cars[name]=Car(name,cap,rechargetime,range)
         
-        print headers
-    
-        while True:
-            line=fin.readline()
-            toks=line.split("\t")
-            if len(toks) != 4:
-                break
-            name=toks[0]
-            cap=float(toks[1])*1000.0*util.secsPerHour     # kWh t-> Joules
-            rechargetime=float(toks[2])*util.secsPerHour   # hours->secs               #
-            range=float(toks[3])*1e3                  # km --> meters                      
-            cars[name]=Car(name,cap,rechargetime,range)
-            
     return cars
    
 
-def readTripSchedules(file):
-    
+def readTripSchedules(file,log):
+ 
     trips={}  
     fin=open(file)
     title=fin.readline()
-    
-    print title
+ 
+    print "*** reading trip schedule file:",file," :",title
     
     while True:
         headers=seek(fin,"TRIP ID")
@@ -134,12 +129,12 @@ def readTripSchedules(file):
 
 
 def readUsers(file,cars,trips):
-    
+  
     users={}
     fin=open(file)
     title=fin.readline()
     
-    print title
+    print "*** reading users file:",file," :",title
     
    
     headers=seek(fin,"USER ID")
@@ -154,6 +149,7 @@ def readUsers(file,cars,trips):
             name=toks[0]
             car=cars[toks[1]]
             trip=trips[toks[2]]
+            print name,car.id,trip.id
             users[name]=User(name,car,trip)
             
     return users
@@ -161,16 +157,14 @@ def readUsers(file,cars,trips):
 
 def readScenario(file,users,supply):
     
-    cases=[]
     fin=open(file)
     title=fin.readline()
+    scenario=Scenario(title)
     
-    print title
-    
-   
-    headers=seek(fin,"USER ID")
-    print headers
-    
+    print "*** reading scenario file:",file ," :", title
+     
+    seek(fin,"USER ID")
+  
     while True:
             line=fin.readline()
             toks=line.split("\t")
@@ -178,7 +172,8 @@ def readScenario(file,users,supply):
                 break
             user=users[toks[0]]
             number=int(toks[1])
-            cases.append(Case(user,number,supply))
+            print "%25s" % user.id,"\t",number
+            scenario.appendCase(Case(user,number,supply))
             
-    return cases
+    return scenario
    

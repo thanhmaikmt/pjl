@@ -5,19 +5,16 @@ Created on 18 Jan 2011
 '''
 
 
+import  util 
 
-class PowerSupply:
+class Supply:
    
     def __init__(self,id):
         self.id=id
         self.redundantCap=[]
-       
-     
-    def add(self,power):
+        self.energyConsumed=0.0
         
-        """
-            power (MW)
-        """
+    def add(self,power):
         self.redundantCap.append(power)
         
         
@@ -33,6 +30,11 @@ class PowerSupply:
         print "START DT",start,interval
         self.start=start
         self.interval=interval
+  
+        self.totalRedundantEnergy=0
+        
+        for p in self.redundantCap:
+            self.totalRedundantEnergy += p*interval*util.secsPerMinute
         
         
     def request(self,power,time,period):
