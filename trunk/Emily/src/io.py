@@ -55,7 +55,7 @@ def readSupply(file):
     return sup
 
 
-def readCars(file,log):
+def readCars(file):
     print "*** reading car file:",file
     
     cars={}
@@ -64,7 +64,7 @@ def readCars(file,log):
     
     print title
     
-    headers=seek(fin,"CAR ID")
+    seek(fin,"CAR ID")
   
     while True:
         line=fin.readline()
@@ -80,7 +80,7 @@ def readCars(file,log):
     return cars
    
 
-def readTripSchedules(file,log):
+def readTripSchedules(file):
  
     trips={}  
     fin=open(file)
@@ -137,8 +137,7 @@ def readUsers(file,cars,trips):
     print "*** reading users file:",file," :",title
     
    
-    headers=seek(fin,"USER ID")
-    print headers
+    seek(fin,"USER ID")
     
     while True:
             line=fin.readline()
@@ -149,7 +148,7 @@ def readUsers(file,cars,trips):
             name=toks[0]
             car=cars[toks[1]]
             trip=trips[toks[2]]
-            print name,car.id,trip.id
+            print " %20s" % name,"%20s" % car.id,"%20s" % trip.id
             users[name]=User(name,car,trip)
             
     return users

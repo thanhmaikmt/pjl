@@ -26,14 +26,17 @@ class Supply:
         else:
             return self.redundantCap[slot]
          
-    def setStuff(self,start,interval): 
-        print "START DT",start,interval
-        self.start=start
+    def setStuff(self,startTime,interval):
+         
+        print "START DT",startTime,interval
+        self.startTime=startTime
         self.interval=interval
-  
+        
         self.totalRedundantEnergy=0
         
+        self.endTime=self.startTime
         for p in self.redundantCap:
+            self.endTime+=interval
             self.totalRedundantEnergy += p*interval*util.secsPerMinute
         
         
