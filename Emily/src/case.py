@@ -94,4 +94,4 @@ class Case:
             
     
     def display(self):
-        print "case",self.user.id,100.0*self.charge/self.capacity,"%"
+        print "case", self.user.id, 100.0*self.charge/self.capacity,"%"
