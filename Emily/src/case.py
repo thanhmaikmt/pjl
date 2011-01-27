@@ -30,6 +30,7 @@ class Case:
         self.charges=[]
         self.energyUses=[]
         self.supply=supply
+        supply.addClient(self)
         
         #self.stamp()
 
@@ -39,43 +40,51 @@ class Case:
         self.energyUses.append(self.energyUse)
         
       
-    def step(self,time,period):
+    def speak(self):
+        pass
+    
+    def resolved(self):
+        return True
+    
+    def step(self,period):
         """
         simulate time of period (minutes)
         """
         if self.time == None:
-            self.time=time
+            self.time=self.supply.time
             self.stamp()
+        else:
+            assert self.time == self.supply.time
             
-        assert self.time == time
-        self.tripIter.simulate(time,period,self)
+            
+        self.tripIter.simulate(self.time,period,self)
         
 
-    def doCharge(self,time):
+    def doCharge(self,period):
     
         
         tinMins=(self.capacity-self.charge)/self.chargeRate/util.secsPerMinute
         
-        tReq=min(time,tinMins)
+        tReq=min(period,tinMins)
     
-        canCharge = self.supply.request(self.chargeRate,time,tReq)
+        canCharge = self.supply.request(self.chargeRate,period,tReq)
         
         if canCharge:
-            c=self.chargeRate*time*util.secsPerMinute
+            c=self.chargeRate*period*util.secsPerMinute
             c=min(c,self.capacity-self.charge)
             self.energyUse +=c
             self.charge += c
-            self.supply.consume(self.chargeRate,time,tReq)
+            self.supply.consume(self.chargeRate,period,tReq)
             
-            if tReq < time:
+            if tReq < period:
                 self.time += tReq        
                 self.stamp()
-                self.time += time-tReq
+                self.time += period-tReq
                 self.stamp()
                 return
             
             
-        self.time += time    
+        self.time += period    
         self.stamp()
        
             

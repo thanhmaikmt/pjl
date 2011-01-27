@@ -34,7 +34,7 @@ def readSupply(file):
     seek(fin,"DAY")
     
     start=None
-    dt=30.0
+    dt=30
     
     while True:
         line=fin.readline()
@@ -45,7 +45,7 @@ def readSupply(file):
         sup.add(float(toks[4])*1e6)    # convert to watts
         
         if start==None:
-            start=(float(toks[2])-1.0)*30.0
+            start=(int(toks[2])-1)*dt
     
     assert start != None
     # read avails
@@ -96,7 +96,7 @@ def readTripSchedules(file):
         toks=headers.split("\t")
         name=toks[1]
         
-        period=float(toks[2])*util.minsPerDay
+        period=int(toks[2])*util.minsPerDay
         
         fin.readline()
         

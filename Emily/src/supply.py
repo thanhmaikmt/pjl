@@ -13,11 +13,18 @@ class Supply:
         self.id=id
         self.redundantCap=[]
         self.energyConsumed=0.0
+        self.time=0
+        self.clients=[]
         
     def add(self,power):
         self.redundantCap.append(power)
         
-        
+    def speak(self):
+        pass
+    
+    def resolved(self):
+        return True
+     
     def redundantCapacityAt(self,time,deltaT):
         slot=int((time-self.start)/self.interval)
         # TODO smearing
@@ -30,6 +37,7 @@ class Supply:
          
         print "START DT",startTime,interval
         self.startTime=startTime
+        self.time=startTime
         self.interval=interval
         
         self.totalRedundantEnergy=0
@@ -40,9 +48,18 @@ class Supply:
             self.totalRedundantEnergy += p*interval*util.secsPerMinute
         
         
-    def request(self,power,time,period):
+    def request(self,power,period):
         return True
     
     
-    def consume(self,power,time,period):
+    def consume(self,power,period):
         pass
+    
+    def addClient(self,client):
+        self.clients.append(client)
+        
+    def step(self,deltaT):
+        for client in self.clients:
+                client.step(deltaT)
+        
+        self.time+=deltaT
