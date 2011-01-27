@@ -37,19 +37,34 @@ time=supply.startTime
 deltaT=supply.interval
 startTime=time/60
 print "STARTING ",startTime
+
 endTime=supply.endTime
 
-while time < endTime:
-        
+
+while time < endTime:   
+    
+    talking=True
+    
     while True:
-        resolved=True
+        for case in scenario.cases:
+            case.speak()
+            
+        supply.speak()
+        
+        for case in scenario.cases:
+            if not case.resolved():
+                continue
+            
+        if not supply.resolved():
+            continue
+        
+        break
         
     
-    
-    for case in scenario.cases:
-        
-        case.step(time,deltaT)
+   
         #case.display()
+    
+    supply.step(deltaT)
         
     time += deltaT
     

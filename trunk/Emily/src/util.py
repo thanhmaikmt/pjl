@@ -5,11 +5,11 @@ Created on 18 Jan 2011
 '''
 
 
-minsPerHour=60.0
-minsPerDay=minsPerHour*24.0
-minsPerWeek=minsPerDay*7.0
-secsPerHour=minsPerHour*60.0
-secsPerMinute=60.0
+minsPerHour=60
+minsPerDay=minsPerHour*24
+minsPerWeek=minsPerDay*7
+secsPerHour=minsPerHour*60
+secsPerMinute=60
    
 dayToNumber={"MON":0,"TUE":1,"WED":2,"THU":3,"FRI":4,"SAT":5,"SUN":6}
  
@@ -23,13 +23,11 @@ def arrayMinToHours(x):
 
 
 def toMins(day,hour,min):
-        
-        return float(min+minsPerHour*hour+minsPerDay*day)
+        return min+minsPerHour*hour+minsPerDay*day
     
 def crackTime(str):
-        
         toks=str.split(":")      
-        return float(toks[0])*minsPerHour+float(toks[1])
+        return int(toks[0])*minsPerHour+int(toks[1])
     
     
 def arrayJoulesToKWH(x):

@@ -43,6 +43,8 @@ class TripIterator:
         self.trips=sched.trips
         assert len(self.trips)>0
         self.length=sched.length
+        #' periods must be homogenious usage
+        self.allowOverLap=False   
         
     def simulate(self,time,period,case):
         """
@@ -61,7 +63,7 @@ class TripIterator:
         trips=self.trips
         
 
-        while tstart > trips[ptr].tend: 
+        while tstart >= trips[ptr].tend: 
             #  print ptr,tstart,trips[ptr][1]
             ptr += 1
             if ptr >= len(trips):
@@ -79,14 +81,18 @@ class TripIterator:
         
         if False:
             print "------------------------"
-            print tstart,tend
-            print trip[0],trip[1]
-        
+            print "REQUESTED start,stop" ,tstart,tend
+            print "DEFINED",trip.tstart,trip.tend
+            print "------------------------"
+
         if  tstart < trip.tstart:
-            if tend < trip.tstart:
+            
+            if tend <= trip.tstart:
                 case.doCharge(period)
             
-            elif tend < trip.tend:
+            elif tend <= trip.tend:
+                print tend,trip.tend
+                assert self.allowOverLap 
                 case.doCharge(trip.tstart-tstart)
                 case.doTravel(tend-trip.tstart,trip.speed)
             
@@ -96,9 +102,14 @@ class TripIterator:
         else:
             assert tend > trip.tstart
             
+            # print tstart-trip.tend
+            
             if tend <= trip.tend:
                 case.doTravel(period,trip.speed)
+                
             else:
+                print tend-trip.tend,trip.tend-tstart
+                assert self.allowOverLap 
                 case.doTravel(trip.tend-tstart,trip.speed)
                 case.doCharge(tend-trip.tend)
             
@@ -151,7 +162,7 @@ if __name__ == "__main__":
             
         return mycase.tt,mycase.ct,mycase.dist,t
 
-    dts=[5,10,20,30,40,60,90,120]
+    dts=[1,5,10,15,30]
     
     for dt in dts:
         print test(dt)
