@@ -40,8 +40,8 @@ class Painter:   # use me to display stuff
         self.last_time=tot_time
         self.last_ticks=tot_ticks
                 
-        FMT=sim.plug.FIT_FMT
-        pool=sim.pool
+        FMT=sim.world.reaperPlug.FIT_FMT
+        pool=sim.world.pool
         tickRateStr="%8.1f" % ticks_per_sec
            
         if pool != None:
@@ -54,7 +54,7 @@ class Painter:   # use me to display stuff
         #provenStr=topToString(pool.proven_list)
         
         
-            str1=self.run_name+' pool size :'+ str(len(sim.agents))+\
+            str1=self.run_name+' pool size :'+ str(len(sim.world.agents))+\
                            '   ticks :'+ str(sim.ticks) +\
                            '   best :'+ bestStr +\
                            '   ticks/sec :'+tickRateStr+"    "
@@ -63,5 +63,5 @@ class Painter:   # use me to display stuff
 
        # print str1
         gui.draw_string(screen, str1,(X,Y), (0,255,0),20 )
-        sim.plug.postDraw(screen,gui.fontMgr)
+        sim.world.reaperPlug.postDraw(screen,gui.fontMgr)
         
