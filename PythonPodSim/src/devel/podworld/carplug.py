@@ -133,9 +133,9 @@ class CarPlug:
     
     # If we are trying to evolve and pod dies
     
-    def reaper(self,pod,sim):
+    def reaper(self,pod,world):
         
-        pool=sim.pool
+        pool=world.pool
         if pool == None:
             return False
          
@@ -160,7 +160,7 @@ class CarPlug:
                     pod.brain=pool.create_new_brain()    
                     pod.current_goal = 0
                     
-                sim.world.init_pod(pod)
+                world.init_pod(pod)
                 
                 pod.state.ang += pool.goals[pod.current_goal].ang
                    

@@ -15,9 +15,10 @@ class Admin:  # use me to control the simulation
             # do admin tasks here
 
             # global pods
-            agents=sim.agents
-            pool=sim.pool
             world=sim.world
+            agents=sim.world.agents
+            pool=sim.world.pool
+           
             log_file=sim.log_file
             
             

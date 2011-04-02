@@ -9,7 +9,7 @@ import multiprocessing as mp
 from copy import  *
 from pods import *
 
-MP=False   # default to false to avoid confusion .
+MP=True   # default to false to avoid confusion .
 
 class Seed:pass
 
@@ -34,8 +34,8 @@ class Agent(mp.Process):
             self.pod.state=self.world_end.recv()
     
     
-    def admin(self,sim):
-        reap=sim.reaper(self.pod)
+    def admin(self,world):
+        reap=world.reaper(self.pod)
         if reap and MP:
             self.seed.state=self.pod.state
             self.seed.brain=self.pod.brain

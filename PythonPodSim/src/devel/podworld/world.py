@@ -56,18 +56,19 @@ class Wall:
 
 class World:
 
-    def __init__(self,fileName,dt):
+    def __init__(self,fileName,dt,agents,reaperPlug,pool):
 
         self.pods=[]
         self.dt=dt
         self.walls=[]
         self.trips=[]
-       
+        self.agents=agents
         fin=open(fileName,"r")
         self.rect=gui.Rect(0,0,0,0)
-        
+        self.reaperPlug=reaperPlug
         self.blind=False
         self.podang=pi
+        self.pool=pool
         
         while True:
             line = fin.readline()
@@ -90,8 +91,18 @@ class World:
 
         self.build_trip_wires()
         
+    def reaper(self,pod):
+        if self.reaperPlug == None:
+            return False 
+        return self.reaperPlug.reaper(pod,self)        
     
     
+    def start(self):
+        for agent in self.agents:
+            self.insertPod(agent.pod)
+            agent.start()
+            
+        
     def insertPod(self,pod):
         self.pods.append(pod)
         pod.world=self
@@ -218,7 +229,25 @@ class World:
         return (tMin,wallMin)
         return
 
-
+     
+    def step(self):
+      
+                         
+        # send "step" message to all agents
+        # this can be multithreaded  
+        for agent in self.agents:
+           agent.stepInit()
+        
+    
+        # wait for all agents to report back         
+        for agent in self.agents:
+            agent.waitForDone()
+            #print " state is: ", state     
+        
+        # back to a single thread now
+        for agent in self.agents:
+            agent.admin(self)
+            
 
     def check_collide_with_wall(self,p0_x,p0_y,p1_x,p1_y):
         if p0_x==p1_x and p1_y==p0_y:

@@ -46,11 +46,6 @@ elif run ==  "carParam":
 
 
 
-###  START OF PROGRAM
-dt    = .1
-world = World(podPlug.WORLD_FILE,dt)
-
-
 pool  = Pool_Mino(50,brainPlug,goals)    #  create a pool for fittest networks
     
 agents=[]        #  pods on the circuits
@@ -64,9 +59,13 @@ for i in range(POP_SIZE):     # create initial population on the circuit
     pod = podPlug.createInitialPod(i,brain)
     agents.append(Agent(pod))
 
+###  START OF PROGRAM
+reaperPlug=podPlug
+dt    = .1
+world = World(podPlug.WORLD_FILE,dt,agents,reaperPlug,pool)
 
 admin = Admin()
-sim   = Simulation(world,agents,podPlug,pool,admin,podPlug.RUN_NAME)
+sim   = Simulation(world,admin,podPlug.RUN_NAME)
 
 # register the painter to display stuff
 sim.painter = Painter(sim,podPlug.RUN_NAME)
