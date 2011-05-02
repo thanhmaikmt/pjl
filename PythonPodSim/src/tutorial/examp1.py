@@ -39,7 +39,8 @@ class MyWorld:
 
 
 dt=0.1    # time step in secs
-myWorld=MyWorld("Pauls World",dt)
+title="PaulsWorld"
+myWorld=MyWorld(title,dt)
 
 sim=Simulation(myWorld,"My Title",dt)
 sim.run()
