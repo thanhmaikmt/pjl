@@ -57,8 +57,8 @@ if __name__ == "__main__":
     
     excite=N.zeros(nOsc,N.double)
     
-    iOsc=20
-    excite[iOsc]=100.0
+    iOsc=40
+    excite[iOsc]=10000.0
     
     chunkSize=1024
     
@@ -67,11 +67,12 @@ if __name__ == "__main__":
     #osc.stepForced(excite)
     
     i=0
-    chunk[i]=N.real(osc.state[iOsc])
     
     player=PP.Player()
     ii=0
-    while(True):
+    play=True
+    while(play):
+        chunk[i]=N.real(osc.state[iOsc])
         if ii % 23050 == 0:
             osc.stepForced(excite)
         else:
@@ -80,13 +81,14 @@ if __name__ == "__main__":
         i+=1
         
         if i == chunkSize:
-          #  player.play(chunk)
+            player.play(chunk)
             i=0
+            #play=False
             
-        chunk[i]=N.real(osc.state[iOsc])
+       
         
         
-    #from matplotlib.pyplot import * 
-    #plot(out)
-    #show()
+    from matplotlib.pyplot import * 
+    plot(chunk)
+    show()
   
