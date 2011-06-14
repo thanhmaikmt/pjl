@@ -129,6 +129,7 @@ class CarPlug:
            
         pod=CarPod(sensors,brain,self,(r,g,b))
         pod.current_goal=0
+        pod.brain=brain
         return pod
     
     # If we are trying to evolve and pod dies
