@@ -6,6 +6,8 @@ Created on 21 Dec 2010
 
 from math import *
 from util import *
+from agent import *
+
 import gui
 
 small=1e-8
@@ -56,13 +58,16 @@ class Wall:
 
 class World:
 
-    def __init__(self,fileName,dt,agents,reaperPlug,pool):
+    def __init__(self,fileName,dt,pods,reaperPlug=None,pool=None):
 
-        self.pods=[]
+        self.pods=pods
         self.dt=dt
         self.walls=[]
         self.trips=[]
-        self.agents=agents
+        self.agents=[]
+        for pod in pods:
+            self.agents.append(Agent(pod))
+            
         fin=open(fileName,"r")
         self.rect=gui.Rect(0,0,0,0)
         self.reaperPlug=reaperPlug
@@ -96,6 +101,8 @@ class World:
             return False 
         return self.reaperPlug.reaper(pod,self)        
     
+    def dimensions(self):
+        return self.rect.width,self.rect.height
     
     def start(self):
         for agent in self.agents:

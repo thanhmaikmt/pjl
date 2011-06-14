@@ -4,16 +4,9 @@ import gui
 
 class Simulation:
     """ The simulation class is responsible for running the Pod World.
-     
-    :param world:    World.
-    :param agents:   list of Agents.
-    :param plug:     plugin class.
-    :param pool:     Pool.
-    :param admin:    Admin.
-    :param run_name:  string used for log files etc 
-    """
+     """
 
-    def __init__(self,world,run_name,dt):
+    def __init__(self,world,run_name):
         
         #: world     a World
         #: agents    list of agents
@@ -23,12 +16,11 @@ class Simulation:
         self.ticks=0
         self.slowMotionFactor=1.0
         self.world = world
-        w,h=self.world.dimensions()
+        w,h=(self.world.dimensions())
         dim_world = (w+20,h+20)
         self.frameskipfactor=1
         self.frameskipcount=1
         self.painter=None
-        self.dt=dt
         
         self.screen = gui.init_surface(dim_world,run_name)
         

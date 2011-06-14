@@ -9,7 +9,7 @@ import multiprocessing as mp
 from copy import  *
 from pods import *
 
-MP=True   # default to false to avoid confusion .
+MP=False   # default to false to avoid confusion .
 
 class Seed:pass
 

@@ -65,14 +65,13 @@ class Pod:
     right_poly_ref=[(5,5),(9,4),(12,5),(9,6)]
 
 
-    def __init__(self,sensors,brain,plug,col):
+    def __init__(self,sensors,plug,col):
        
         self.message="init"
         self.plug=plug
         self.control=Control()
         self.sensors=sensors
         self.base_init()    
-        self.brain=brain
         self.col=col
         self.base_init()
    
@@ -115,8 +114,8 @@ class Pod:
 
 class CarPod(Pod):
  
-    def __init__(self,sensors,brain,plug,col):
-        Pod.__init__(self,sensors,brain,plug,col)
+    def __init__(self,sensors,plug,col):
+        Pod.__init__(self,sensors,plug,col)
         self.init()
         
     def init(self):
@@ -207,8 +206,8 @@ class GravityPod(Pod):
 
     g = 2
 
-    def __init__(self,nSensor,sensorRange,brain,col):
-        Pod.__init__(self,nSensor,sensorRange,brain,col)
+    def __init__(self,nSensor,sensorRange,col):
+        Pod.__init__(self,nSensor,sensorRange,col)
         self.init()
      
     def init(self):
@@ -269,8 +268,8 @@ class GravityPod(Pod):
 
 class SimplePod(Pod):
 
-    def __init__(self,nSensor,sensorRange,brain,col,stepSize=20):
-        Pod.__init__(self,nSensor,sensorRange,brain,col)
+    def __init__(self,nSensor,sensorRange,col,stepSize=20):
+        Pod.__init__(self,nSensor,sensorRange,col)
         self.stepSize=stepSize
 
     def step(self,dt,world):
