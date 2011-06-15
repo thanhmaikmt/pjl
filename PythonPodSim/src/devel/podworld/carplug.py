@@ -117,7 +117,7 @@ class CarPlug:
         
         return control
         
-    def createInitialPod(self,i,brain):
+    def createInitialPod(self,i):
                   
         b=255-(i*167)%256
         g=(i*155)%256
@@ -127,9 +127,8 @@ class CarPlug:
             ang_ref=i*pi*2.0/N_SENSORS
             sensors.append(Sensor(ang_ref,sensorRange,"sensor"+str(i)))
            
-        pod=CarPod(sensors,brain,self,(r,g,b))
+        pod=CarPod(sensors,self,(r,g,b))
         pod.current_goal=0
-        pod.brain=brain
         return pod
     
     # If we are trying to evolve and pod dies

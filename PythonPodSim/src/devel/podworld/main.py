@@ -58,7 +58,8 @@ POP_SIZE=10
 for i in range(POP_SIZE):     # create initial population on the circuit
     brain=pool.create_new_brain()
 
-    pod = podPlug.createInitialPod(i,brain)
+    pod = podPlug.createInitialPod(i)
+    pod.brain=brain
     pods.append(pod)
 
 ###  START OF PROGRAM
@@ -67,7 +68,7 @@ dt    = .1
 world = World(podPlug.WORLD_FILE,dt,pods,reaperPlug,pool)
 
 admin = Admin()
-sim   = Simulation(world,podPlug.RUN_NAME,dt)
+sim   = Simulation(world,podPlug.RUN_NAME)
 sim.setAdmin(admin)
 
 # register the painter to display stuff
