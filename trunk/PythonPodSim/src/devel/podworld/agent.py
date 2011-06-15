@@ -5,15 +5,20 @@ Created on 21 Dec 2010
 '''
 
 #from plugableEvolver import *
-import multiprocessing as mp
+MP=False   # default to false to avoid confusion .
+
+if MP:
+    import multiprocessing as mp
+    
 from copy import  *
 from pods import *
 
-MP=False   # default to false to avoid confusion .
+
 
 class Seed:pass
 
-class Agent(mp.Process):
+if MP:
+ class Agent(mp.Process):
     """ Looks after a Pod. manage multiporcessing if MP is True """
    
     def __init__(self,pod):
@@ -68,4 +73,30 @@ class Agent(mp.Process):
     def start(self):
         if MP:
            mp.Process.start(self)
+else:
+ class Agent:
+   
+    def __init__(self,pod):
+
+        self.seed=Seed()
+        self.pod=pod
+         
+    def stepInit(self):
+        self.clientStep()
+            
+    def admin(self,world):
+        reap=world.reaper(self.pod)
+        
+    def waitForDone(self):         
+        pass    
+    
+    def start(self):        
+        pass
+    
+    def clientStep(self):
+         self.pod.step()       
+         self.pod.update_sensors()
+        
+            
+    
         

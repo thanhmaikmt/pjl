@@ -51,7 +51,7 @@ control=CursorControl()
 pod=CarPod([],control,(255,0,0))
 
 # we need to pass a list of pods to the world when we create it
-pod=[pod]     # 
+pods=[pod]     # 
 
 # create  the world
 myWorld=World(worldFile,dt,pods)
