@@ -4,6 +4,10 @@ from painter import *
 from pool import  *
 from admin import  *
 from simulation import *
+import cprofile
+
+
+
 
 run="carNN"
 #run="gravityNN"
