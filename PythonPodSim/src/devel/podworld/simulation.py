@@ -37,7 +37,7 @@ class Simulation:
     def run(self):
         """ start the simulation  
         """
-        dt=self.dt
+        dt=self.world.dt
         clock = gui.clock()
         frameRate=1.0/dt/self.slowMotionFactor
         self.tick_count=0
