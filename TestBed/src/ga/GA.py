@@ -4,6 +4,9 @@
 import world
 import array
 import random
+from Tkinter import *
+from gui import *
+
 
 POPSIZE      = 1000;          # population size      
 MAXITER      = 100;           # maximum iterations
@@ -25,17 +28,20 @@ def mate(a,b):
         g.str=array.array('u',myArray= a.str[0:i]+b[i:b.str.length])
         return g
 
-def random_token(self):
+def random_token():
         return random.randint(0,100)
+
+def mutate(g): # randomly replace a character
+        i=random.randint(0,str.length-1)
+        #g2=g.clone()
+        g.str[i]=random_token()
 
 
 class Gene:
     
-    
-
-    def mutate(self): # randomly replace a character
-        i=random.randint(0,str.length-1)
-        str[i]=self.random_token()
+    def clone(self):
+        g=Gene()
+        g.str=g[:]
  
  
    
@@ -56,13 +62,22 @@ def breedPopulation():
         newpop.append(gene)
 
         if random.random()<MUTATEPROB:
-            mutate(gene.string)
+            mutate(gene)
             
     return newpop
 
 
 if __name__ == '__main__':
 
+
+ 
+    master = Tk()
+
+    w = Canvas(master, width=xMax, height=yMax)
+    w.pack()
+
+
+    mainloop()   
 
 
     world= World()
@@ -76,22 +91,19 @@ if __name__ == '__main__':
     pop=[]
 
     for i in range(POPSIZE):
-        pop.append(Gene(seed()))
+        pop.append(random_gene())
 
     count=0    
 
     while  count< MAXITER:
 
         for m in pop:
-            m.fitness=evaluate(m.string)
+            m.fitness=world.evaluate(m)
 
         pop = sorted(pop, key = lambda x:x.fitness,reverse=True)
     
         print count,pop[0].string.tostring(),pop[0].fitness  
         
-        if pop[0].fitness >=  target_fitness:
-            break
-
         pop = breedPopulation();
         count += 1
 

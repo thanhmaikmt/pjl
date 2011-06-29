@@ -32,11 +32,3 @@ def random_point():
     return x,y
 
 
-def init(): 
-    master = Tk()
-
-    w = Canvas(master, width=xMax, height=yMax)
-    w.pack()
-
-
-    mainloop()   
