@@ -7,40 +7,50 @@ import cPickle
 from numpy import *
 import PIL.Image
 
-def grabImage(key):
-    x=reshape(t[0][key],(28,28))
-    x=x*256.0
+# get an image from the data set according to the given index
+
+def grabImage(index,set):
+    # print set[0][index]
+    x=reshape(set[0][index],(28,28))
+    x=x*256.0training_set[j],test_set[i]
     image=PIL.Image.fromarray(x)
     return image
+
+
+#  exit application
 
 def button_click_exit_mainloop (event):
     event.widget.quit() # this will cause mainloop to unblock.
 
-
+# compressed data
 data="mnist.pkl.gz"
 
 f=gzip.open(data)
 
+# load data into the 3 data sets
 print " LOADING .....",
-t,v,test=cPickle.load(f)    
+training_set,validation_set,test_set=cPickle.load(f)    
 print " DONE"
 
 
+# Root of the gui
 root = Tkinter.Tk()
-root.bind("<Button>", button_click_exit_mainloop)
-root.geometry('+%d+%d' % (100,100))
 
-tkpi=[]
+
+tkpimages=[]
 N=10
 iw=28
 ih=28
 # root.geometry('%dx%d' % (iw*N,ih))
 
+
+set=validation_set
+
 for i in range(N):
-    image1 = grabImage(i)     # .open(f)
-    tkpi.append(ImageTk.PhotoImage(image1))
-    label_image = Tkinter.Label(root,image=tkpi[i])
-    label_numb=Tkinter.Label(root,text=str(t[1][i]))
+    image1 = grabImage(i,set)          
+    tkpimages.append(ImageTk.PhotoImage(image1))
+    label_image = Tkinter.Label(root,image=tkpimages[i])
+    label_numb=Tkinter.Label(root,text=str(set[1][i]))
     label_image.grid(row=i,column=1)
     label_numb.grid(row=i,column=0)
 
