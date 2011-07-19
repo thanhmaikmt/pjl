@@ -15,8 +15,7 @@ big=1e8
 
 
 class World:
-    
-    
+     
     # min token value required to build line
     maxTok=10
 
