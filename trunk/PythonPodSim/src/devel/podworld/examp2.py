@@ -11,8 +11,8 @@ from gui import  *
 dt=0.1    
 
 # world definition file
-worldFile="carCircuit.world"
-
+# worldFile="carCircuit.world"
+worldFile="rectWorld.world"
 
 # Example of a user controller
 # This defines the class
@@ -40,6 +40,7 @@ class CursorControl:
 
         return control
 
+
 # this creates an "instance" of the class
 control=CursorControl()
 
@@ -48,9 +49,12 @@ control=CursorControl()
 # --- no snesors (empty list)  
 # --- it will use control
 # --- (255,0,0)   is the colour r,g,b
-pod=CarPod([],control,(255,0,0))
 
+pod=GravityPod([],control,(255,0,0))
+
+# pod=CarPod([],control,(255,255,0))
 # we need to pass a list of pods to the world when we create it
+
 pods=[pod]     # 
 
 # create  the world

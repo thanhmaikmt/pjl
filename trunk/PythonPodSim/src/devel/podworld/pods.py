@@ -120,7 +120,7 @@ class CarPod(Pod):
         
     def init(self):
         self.base_init()
-        self.mass  = 20.
+        self.mass  = 10.
         self.brake = 0.
         self.steer_factor=.05
         self.thrust_max=200.
@@ -206,8 +206,8 @@ class GravityPod(Pod):
 
     g = 2
 
-    def __init__(self,nSensor,sensorRange,col):
-        Pod.__init__(self,nSensor,sensorRange,col)
+    def __init__(self,sensors,plug,col):
+        Pod.__init__(self,sensors,plug,col)
         self.init()
      
     def init(self):
@@ -243,7 +243,7 @@ class GravityPod(Pod):
         xNext = state.x + state.dxdt*dt
         yNext = state.y + state.dydt*dt
 
-        wall=world.check_collide_with_wall(state.x,state.y,xNext,yNext)
+        wall,dmy=world.check_collide_with_wall(state.x,state.y,xNext,yNext)
         if wall == None:
             (p,n)=world.count_trips(state.x,state.y,xNext,yNext)
             state.pos_trips += p
