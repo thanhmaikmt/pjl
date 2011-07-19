@@ -95,6 +95,9 @@ class World:
                 self.read_pod_pos(fin)
 
         self.build_trip_wires()
+#        self.walls=N.array(self.walls)
+#        self.trips=N.array(self.trips)
+        
         
     def reaper(self,pod):
         if self.reaperPlug == None:
