@@ -48,8 +48,9 @@ set=validation_set
 
 for i in range(N):
     image1 = grabImage(i,set)          
-    tkpimages.append(ImageTk.PhotoImage(image1))
-    label_image = Tkinter.Label(root,image=tkpimages[i])
+    # tkpimages.append(ImageTk.PhotoImage(image1))
+    img=ImageTk.PhotoImage(image1)
+    label_image = Tkinter.Label(root,image=img)  # tkpimages[i])
     label_numb=Tkinter.Label(root,text=str(set[1][i]))
     label_image.grid(row=i,column=1)
     label_numb.grid(row=i,column=0)

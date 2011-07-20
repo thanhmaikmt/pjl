@@ -1,8 +1,14 @@
 import gzip
 import cPickle
-import numpy
 import time
-
+import os, sys
+import Tkinter
+import Image, ImageTk
+import gzip
+import cPickle
+import numpy 
+import PIL.Image
+import tkMessageBox
 
 def calc_dist(a,b):
     dist=0
@@ -13,6 +19,34 @@ def calc_dist(a,b):
 def calc_dist_numpy(a,b):
     c=a-b
     return (c*c).sum()
+
+
+def grabImage(img):
+    # print set[0][index]
+    x=numpy.reshape(img,(28,28))
+    x=x*256.0
+    image=PIL.Image.fromarray(x)
+    return image
+
+tkimgs=[None,None]
+
+def display(img1,lab1,img2,lab2):
+    
+    img1=grabImage(img1)
+    img2=grabImage(img2)
+    myrow=0
+    tkimgs[0]=ImageTk.PhotoImage(img1)
+    label_image1 = Tkinter.Label(frame,image=tkimgs[0])
+    label_numb1=Tkinter.Label(frame,text=str(lab1))
+    label_image1.grid(row=myrow,column=2)
+    label_numb1.grid(row=myrow,column=1)
+    
+    tkimgs[1]=ImageTk.PhotoImage(img2)
+    label_image2 = Tkinter.Label(frame,image=tkimgs[1])
+    label_numb2=Tkinter.Label(frame,text=str(lab2))
+    label_image2.grid(row=myrow,column=4)
+    label_numb2.grid(row=myrow,column=3)
+    frame.update()
 
 
 def doit():    
@@ -31,6 +65,7 @@ def doit():
     
      
     
+    countCorrect=0    #  counter for number of correct classifications
     
     
     #training_input=training_set[0]
@@ -50,11 +85,9 @@ def doit():
     
     BIG=1e32
     
-    nTrain=50000    # use first nTrain training examples
-    nTest=10000      # test first nTest test cases
+    nTrain=500    # use first nTrain training examples
+    nTest=10      # test first nTest test cases
     
-    countCorrect=0    #  counter for number of correct classifications
-    countFail=0
     
     for i in range(nTest):    # for all test cases
         
@@ -68,18 +101,27 @@ def doit():
                 mindist=dist
                 jNearest=j
      
-        # print training_output[jNearest],test_output[i],mindist
+        print training_output[jNearest],test_output[i],mindist
             
         if  training_output[jNearest] == test_output[i]:
             countCorrect += 1
         else:
-            countFail += 1
-            print i,":  " , (countCorrect*100.0)/(countCorrect+countFail), "%"
+            display(training_input[jNearest],training_output[jNearest], 
+                    test_input[i],test_output[i])
+            tkMessageBox.showinfo("Continue")
+                
             
     end=time.time()
     
     print countCorrect," out of ",nTest, " In ",end-start," secs    ",  (countCorrect*100.0)/nTest, "%"
 
+frame = Tkinter.Tk()
 
-if __name__ == "__main__":
-    doit()
+
+#frame=Tkinter.Frame(root)
+#
+b = Tkinter.Button(frame, text="RUN (RANDOM)", fg="black", command=doit)
+b.grid(row=0,column=0)
+frame.mainloop()
+
+
