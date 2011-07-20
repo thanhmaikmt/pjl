@@ -84,7 +84,7 @@ def draw_world(self,screen):
         
             col=(100,30,30)
             for t in self.trips:
-                pg.draw.line(screen,col,(t[0],t[1]),(t[2],t[3]),2)
+                pg.draw.line(screen,col,t[0],t[1],2)
                 
         
         

@@ -4,7 +4,7 @@ from painter import *
 from pool import  *
 from admin import  *
 from simulation import *
-import cprofile
+# import cprofile
 
 
 

@@ -4,13 +4,9 @@ Created on 21 Dec 2010
 @author: pjl
 '''
 
-from config import *
 from math import *
 from util import *
 from agent import *
-
-if NUMPY:
-    import numpy
 
 import gui
 
@@ -99,25 +95,6 @@ class World:
                 self.read_pod_pos(fin)
 
         self.build_trip_wires()
-        
-        p2_x_a=[]
-        p2_y_a=[]
-        p3_x_a=[]
-        p3_y_a=[]
-        
-        if NUMPY:
-            for wall in self.walls:
-                for seg in wall.segments:
-                    p2_x_a.append(seg[0])
-                    p2_y_a.append(seg[1])
-                    p3_x_a.append(seg[2])
-                    p3_y_a.append(seg[3])
-            
-            self.p2_x_a=numpy.array(p2_x_a)
-            self.p2_y_a=numpy.array(p2_y_a)
-            self.p3_x_a=numpy.array(p3_x_a)
-            self.p3_y_a=numpy.array(p3_y_a)
-         
 #        self.walls=N.array(self.walls)
 #        self.trips=N.array(self.trips)
         
@@ -165,7 +142,7 @@ class World:
                 
             else:
                 for l,r in zip(left.segments,right.segments):
-                    trips.append((l[0],l[1],r[0],r[1]))
+                    trips.append(((l[0],l[1]),(r[0],r[1])))
            
         
         for w in self.walls:
@@ -179,7 +156,7 @@ class World:
                 while True:
                     a1=segs[isegA1]
                     b1=segs[isegB1]
-                    trips.append((b1[0],b1[1],a1[0],a1[1]))
+                    trips.append(((b1[0],b1[1]),(a1[0],a1[1])))
                     
                     isegA2=isegA1+1
                     isegB2=isegB1-1
@@ -242,30 +219,10 @@ class World:
         
         for pod in self.pods:
             self.init_pod(pod)
-   
-   
-    
+        
     def find_closest_intersect(self,p0_x,p0_y,p1_x,p1_y):
-     tMin=2
-     wallMin=None
-     
-     if NUMPY:
-        
-      
-        (s,t,dmy)=intersect_numpy(p0_x,p0_y,p1_x,p1_y,self.p2_x_a,self.p2_y_a,self.p3_x_a,self.p3_y_a)
-        
-        bb = (t >= -small).__iand__(t <= (1+small)).__iand__(s >= -small).__iand__(s <= (1+small))
-        
-        
-        cnt=0;
-        for wall in self.walls:
-            for seg in wall.segments:    
-                if bb[cnt]:
-                   if t[cnt] < tMin:
-                        tMin=t[cnt]
-                        wallMin=wall
-                cnt+=1
-     else:
+        tMin=2
+        wallMin=None
         for wall in self.walls:
             for seg in wall.segments:
                 p2_x=seg[0]
@@ -273,14 +230,15 @@ class World:
                 p3_x=seg[2]
                 p3_y=seg[3]
                 (s,t,dmy)=intersect(p0_x,p0_y,p1_x,p1_y,p2_x,p2_y,p3_x,p3_y)
-                
-                if t >= -small and t <= 1+small and s >= -small and s <= 1+small:
-                        if t < tMin:
-                            tMin=t
-                            wallMin=wall
 
-     return (tMin,wallMin)
-     
+                if t >= -small and t <= 1+small and s >= -small and s <= 1+small:
+                    if t < tMin:
+                        tMin=t
+                        wallMin=wall
+
+        return (tMin,wallMin)
+        return
+
      
     def step(self):
       
@@ -313,9 +271,10 @@ class World:
                 p3_y=seg[3]
 
                 (s,t,dmy)=intersect(p0_x,p0_y,p1_x,p1_y,p2_x,p2_y,p3_x,p3_y)
+
                 if s >= 0 and s <= 1 and t >= 0 and t <= 1:
-                        #print s,t
-                        return wall,s
+                    #print s,t
+                    return wall,s
                 
         return None,None
 
@@ -332,18 +291,19 @@ class World:
         count_neg = 0
         
         for t in self.trips:
-                p2_x=t[0]
-                p2_y=t[1]
-                p3_x=t[2]
-                p3_y=t[3]
+                p2_x=t[0][0]
+                p2_y=t[0][1]
+                p3_x=t[1][0]
+                p3_y=t[1][1]
 
                 (s,t,fact)=intersect(p0_x,p0_y,p1_x,p1_y,p2_x,p2_y,p3_x,p3_y)
+
                 if s >= 0 and s <= 1 and t >= 0 and t <= 1:
-                        if fact > 0:
-                            count_pos += 1
-                        else:
-                            count_neg += 1
-                            
+                    if fact > 0:
+                        count_pos += 1
+                    else:
+                        count_neg += 1
+                        
         return (count_pos,count_neg)
   
       

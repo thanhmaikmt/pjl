@@ -3,7 +3,11 @@ Created on 21 Dec 2010
 
 @author: pjl
 '''
+from config import *
 
+if NUMPY:
+    import numpy
+    
 from math import *
 from util import *
 import gui
@@ -74,8 +78,13 @@ class Pod:
         self.base_init()    
         self.col=col
         self.base_init()
-   
-        
+        if NUMPY:
+            self.sensor_x1=len(sensors)*[0.0]
+            self.sensor_y1=len(sensors)*[0.0]
+            self.sensor_x2=len(sensors)*[0.0]
+            self.sensor_y2=len(sensors)*[0.0]
+           
+            
     def base_init(self):
         self.state=State() 
         self.state.ang=pi
@@ -91,14 +100,42 @@ class Pod:
         self.state.pos_trips=0
         self.state.neg_trips=0
         self.state.distance_travelled=0.0
+     
+    def update_sensors_todo_fixme(self):
+        world=self.world
+        state=self.state
+        
+        cnt=0
+        for sensor in self.sensors:
+            ang=sensor.ang_ref+state.ang
+            sensor.ang=ang
+            self.sensor_x1[cnt]=state.x
+            self.sensor_y1[cnt]=state.y
+            self.sensor_x2[cnt]=state.x+sensor.range*sin(ang)
+            self.sensor_y1[cnt]=state.y+sensor.range*cos(ang)
+            cnt+=1
+            
+        
+        (s,wall)=world.find_closest_intersect2_vec(self.sensor_x1,self.sensor_y1,self.sensor_x2,self.sensor_y2)
+        
+        cnt=0
+        for sensor in self.sensors:
+            sensor.val=s[cnt]*sensor.range
+            if wall[cnt] == None:
+                sensor.wall=None
+            else:
+                sensor.wall=wall[cnt].name 
         
     def update_sensors(self):
         world=self.world
         state=self.state
+        
+        
         for sensor in self.sensors:
             ang=sensor.ang_ref+state.ang
             sensor.ang=ang
             (s,wall)=world.find_closest_intersect(state.x,state.y,state.x+sensor.range*sin(ang),state.y+sensor.range*cos(ang))
+
             sensor.val=s*sensor.range
             if wall == None:
                 sensor.wall=None
