@@ -1,0 +1,2 @@
+examp1.py   -- 
+     simulation and a world with as rotating bar

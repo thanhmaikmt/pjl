@@ -6,13 +6,6 @@ from pods import *
 from world import *
 from gui import  *
 
-        
-# Time step
-dt=0.1    
-
-# world definition file
-# worldFile="carCircuit.world"
-worldFile="rectWorld.world"
 
 # Example of a user controller
 # This defines the class
@@ -23,12 +16,27 @@ class CursorControl:
     # it returns a "control" object which is used to control the pod
     
     def process(self,pod,dt):
-        
+
+                
         # what happens here is up to you
-        # I just use the user key presses to set the outputs.
+        # This example looks at  key press to set the control
+
         control=Control()
         keyinput = gui.get_pressed()    
+
+        #  ----  Just to demonstrate what information is available to use for input to the control
+        if keyinput[pg.K_x]:
+            # -------  This code prints out all the available information about the state of the pod
+            for attr, value in pod.state.__dict__.iteritems():
+                print str(attr)+ " "+ str(value) 
+        
+
+        if keyinput[pg.K_z]:
+            # print the sensor information
+            for  sensor in pod.sensors:
+                    print sensor
     
+        # --- use keypresses to determine control
         if keyinput[pg.K_LEFT]:
             control.left=.4
 
@@ -44,7 +52,7 @@ class CursorControl:
         return control
 
 
-# this creates an "instance" of the class
+# Creates an "instance" of a CursorControl
 control=CursorControl()
 
 
@@ -54,12 +62,19 @@ control=CursorControl()
 # --- (255,0,0)   is the colour r,g,b
 
 sensors=[]       #   no sensors
-pod=GravityPod(sensors,control,(255,0,0))
+pod=CarPod(sensors,control,(255,0,0))
 
 # pod=CarPod([],control,(255,255,0))
 # we need to pass a list of pods to the world when we create it
 
-pods=[pod]     # 
+pods=[pod]     #  list with just one element  
+
+    
+# world definition file
+#worldFile="carCircuit.world"
+worldFile="rectWorld.world"
+# Time step
+dt=0.1   
 
 # create  the world
 myWorld=World(worldFile,dt,pods)
