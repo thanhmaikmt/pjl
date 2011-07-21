@@ -53,13 +53,17 @@ class Sensor:
         self.name=name
 
     def to_string(self):
-
         return str(int(self.val*self.range))
 
 
-class State: pass
-
-
+class State: 
+    def __repr__(self):
+        txt=""
+        for attr, value in self.__dict__.iteritems():
+            txt+=str(attr)+ " "+ str(value)+"\n" 
+     
+        return txt
+        
 class Pod:
     """ Base class for all pods """
     

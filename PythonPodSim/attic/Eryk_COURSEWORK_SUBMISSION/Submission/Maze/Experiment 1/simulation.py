@@ -262,13 +262,13 @@ class World:
 
     def init_pod(self,pod):
             pod.init()
-            pod.x=self.podx
-            pod.y=self.pody
-            pod.ang=self.podang
-            pod.dxt=0
-            pod.dydt=0
-            pod.dangdt=0
-            pod.collide=False
+#            pod.x=self.podx
+#            pod.y=self.pody
+#            pod.ang=self.podang
+#            pod.dxdt=0
+#            pod.dydt=0
+#            pod.dangdt=0
+#            pod.collide=False
             
     def read_pod_pos(self,fin):
         line = fin.readline()
