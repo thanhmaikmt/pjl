@@ -7,8 +7,9 @@ Created on 1 Dec 2010
 from random import  *
 from math import *
 from pods import *
-
+from NNBrainPlug import *
 import pygame as pg
+from pool import  *
 
 sensorRange = 2000
 
@@ -24,13 +25,24 @@ MIN_AGE=.2
 N_TRIP=200
 
 layerSizes=[N_SENSORS+2,N_HIDDEN1,4]
-  
- 
+
+POP_SIZE=10
+
+class CarAngleGoal:
+        
+        def __init__(self,ang):
+            self.ang=ang
+            
+        def to_string(self):
+            return str(self.ang)
 #
 # 
 #
 class CarPlug:
 
+#pool = None
+
+    POP_SIZE=10
     RUN_NAME="carPlug"             # used for file names so you can tag different experiments
     FIT_FMT=" %5.1f "
     WORLD_FILE="carCircuit.world"     # world to use
@@ -38,11 +50,16 @@ class CarPlug:
     ###  START OF PROGRAM
     #max_input=[0,0,0,0,0,0,0]
         
-          
+    def __init__(self):
+      
+        brainPlug=BrainPlug(layerSizes)         
+        goals=[CarAngleGoal(.0),CarAngleGoal(-.5),CarAngleGoal(0.5)]
+        self.pool  = Pool_Mino(50,brainPlug,goals)    #  create a pool for fittest networks   
+    
     def postDraw(self,screen,fontMgr):pass
         
     # decide if we want to kill a pod        
-    def reap_pod(self,pod):
+    def __reap_pod(self,pod):
        
         dt=pod.world.dt
         
@@ -116,8 +133,18 @@ class CarPlug:
         """
         
         return control
-        
-    def createInitialPod(self,i):
+ 
+    def createInitialPods(self):
+        pods=[]
+        for i in range(POP_SIZE):     # create initial population on the circuit
+           brain=self.pool.create_new_brain()
+           pod = self.__createInitialPod(i)
+           pod.brain=brain
+           pods.append(pod)
+           
+        return pods
+
+    def __createInitialPod(self,i):
                   
         b=255-(i*167)%256
         g=(i*155)%256
@@ -131,6 +158,10 @@ class CarPlug:
         pod.current_goal=0
         return pod
     
+
+
+    def getReaper(self):
+        return self
     # If we are trying to evolve and pod dies
     
     def reaper(self,pod,world):
@@ -140,7 +171,7 @@ class CarPlug:
             return False
          
         if pool.reaping:            
-            fit_val=self.reap_pod(pod)
+            fit_val=self.__reap_pod(pod)
             if fit_val != None:   
                 " here then time to replace the pod"
                 # save current  brain and fitness in the pool
@@ -168,6 +199,7 @@ class CarPlug:
             
         return False
             
+
                           
     
 

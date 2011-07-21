@@ -8,7 +8,7 @@ import gui
        
 class Admin:  # use me to control the simulation
               # see comments to see what key hits do
-        
+    
     def process(self,sim):   
         
             # this is called just before each time step

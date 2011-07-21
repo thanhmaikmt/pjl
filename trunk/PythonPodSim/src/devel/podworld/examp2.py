@@ -19,6 +19,9 @@ worldFile="rectWorld.world"
 class CursorControl:
 
     # all controller must implement process
+    # this will get called each time step of the simulation
+    # it returns a "control" object which is used to control the pod
+    
     def process(self,pod,dt):
         
         # what happens here is up to you
@@ -50,7 +53,8 @@ control=CursorControl()
 # --- it will use control
 # --- (255,0,0)   is the colour r,g,b
 
-pod=GravityPod([],control,(255,0,0))
+sensors=[]       #   no sensors
+pod=GravityPod(sensors,control,(255,0,0))
 
 # pod=CarPod([],control,(255,255,0))
 # we need to pass a list of pods to the world when we create it

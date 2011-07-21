@@ -1,7 +1,7 @@
 from world import  *
 from agent import *
 from painter import *
-from pool import  *
+
 from admin import  *
 from simulation import *
 # import cprofile
@@ -13,24 +13,14 @@ run="carNN"
 #run="gravityNN"
 #run="carNN"
 
-class CarAngleGoal:
-        
-        def __init__(self,ang):
-            self.ang=ang
-            
-        def to_string(self):
-            return str(self.ang)
+
 
 if run == "carNN":
-    from NNBrainPlug import *
+ 
     import carplug 
 
     podPlug=carplug.CarPlug()
-    brainPlug=BrainPlug(carplug.layerSizes)
-     
    
-            
-    goals=[CarAngleGoal(.0),CarAngleGoal(-.5),CarAngleGoal(0.5)]
     
      
 elif run == "gravityNN":
@@ -52,24 +42,16 @@ elif run ==  "carParam":
 
 
 
-pool  = Pool_Mino(50,brainPlug,goals)    #  create a pool for fittest networks
-    
-pods=[]        #  pods on the circuits
-#pool = None
 
-POP_SIZE=10
 
-for i in range(POP_SIZE):     # create initial population on the circuit
-    brain=pool.create_new_brain()
-
-    pod = podPlug.createInitialPod(i)
-    pod.brain=brain
-    pods.append(pod)
-
+pods=podPlug.createInitialPods()
 ###  START OF PROGRAM
-reaperPlug=podPlug
+reaperPlug=podPlug.getReaper()
+
 dt    = .1
-world = World(podPlug.WORLD_FILE,dt,pods,reaperPlug,pool)
+
+world = World(podPlug.WORLD_FILE,dt,pods,reaperPlug)
+world.pool=podPlug.pool
 
 admin = Admin()
 sim   = Simulation(world,podPlug.RUN_NAME)
