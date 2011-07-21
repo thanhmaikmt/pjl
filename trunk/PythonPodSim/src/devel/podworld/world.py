@@ -222,13 +222,7 @@ class World:
             state.x=self.podx
             state.y=self.pody
             state.ang=self.podang
-#            state.dxdt=0
-#            state.dydt=0
-#            state.dangdt=0
-#            state.collide=False
-#            state.collide_count=0
-#            state.vel=0.0
-            
+
     def read_pod_pos(self,fin):
         line = fin.readline()
         linelist=line.split(',')
