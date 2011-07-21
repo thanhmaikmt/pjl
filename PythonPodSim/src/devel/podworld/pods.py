@@ -69,10 +69,10 @@ class Pod:
     right_poly_ref=[(5,5),(9,4),(12,5),(9,6)]
 
 
-    def __init__(self,sensors,plug,col):
+    def __init__(self,sensors,controller,col):
        
         self.message="init"
-        self.plug=plug
+        self.controller=controller
         self.control=Control()
         self.sensors=sensors
         self.base_init()    
@@ -176,7 +176,7 @@ class CarPod(Pod):
         world=self.world
         dt=world.dt
         state=self.state
-        self.control=self.plug.process(self,dt)
+        self.control=self.controller.process(self,dt)
         if self.control == None:
             return
         
@@ -268,7 +268,7 @@ class GravityPod(Pod):
         dt=world.dt
         
         # state=State(self)
-        self.control=self.plug.process(self,dt)
+        self.control=self.controller.process(self,dt)
         if self.control == None:
             return
         

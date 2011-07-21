@@ -62,7 +62,7 @@ class Wall:
 
 class World:
 
-    def __init__(self,fileName,dt,pods,reaperPlug=None,pool=None):
+    def __init__(self,fileName,dt,pods,reaperPlug=None):
 
         self.pods=pods
         self.dt=dt
@@ -77,7 +77,6 @@ class World:
         self.reaperPlug=reaperPlug
         self.blind=False
         self.podang=pi
-        self.pool=pool
         
         while True:
             line = fin.readline()
