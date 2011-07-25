@@ -50,7 +50,7 @@ reaperPlug=podPlug.getReaper()
 
 dt    = .1
 
-world = World(podPlug.WORLD_FILE,dt,pods,reaperPlug)
+world = World("../worlds/"+podPlug.WORLD_FILE,dt,pods,reaperPlug)
 world.pool=podPlug.pool
 
 admin = Admin()

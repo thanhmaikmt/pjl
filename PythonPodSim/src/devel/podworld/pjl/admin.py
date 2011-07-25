@@ -5,6 +5,7 @@ Created on 21 Dec 2010
 '''
 
 import gui
+import copy
        
 class Admin:  # use me to control the simulation
               # see comments to see what key hits do

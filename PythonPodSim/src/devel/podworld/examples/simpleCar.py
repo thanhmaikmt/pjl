@@ -62,7 +62,9 @@ control=CursorControl()
 # --- (255,0,0)   is the colour r,g,b
 
 sensors=[]       #   no sensors
-pod=CarPod(sensors,control,(255,0,0))
+pod=CarPod((255,0,0))
+pod.addSensors(sensors)
+pod.setController(control)
 
 # pod=CarPod([],control,(255,255,0))
 # we need to pass a list of pods to the world when we create it
@@ -72,7 +74,7 @@ pods=[pod]     #  list with just one element
     
 # world definition file
 #worldFile="carCircuit.world"
-worldFile="rectWorld.world"
+worldFile="../worlds/carCircuit.world"
 # Time step
 dt=0.1   
 
