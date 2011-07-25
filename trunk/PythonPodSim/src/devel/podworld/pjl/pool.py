@@ -7,7 +7,7 @@ Created on 21 Dec 2010
 from random import  *
 import pickle
 import copy
-from fitness import *
+#from fitness import *
 
 
 

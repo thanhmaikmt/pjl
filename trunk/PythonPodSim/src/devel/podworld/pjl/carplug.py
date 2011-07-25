@@ -17,7 +17,7 @@ BIG=10000
 
 MAX_AGE=100              # pods life span   
 N_HIDDEN1=7                 # number of neurons in hidden layer
-N_SENSORS=80             # number of sensors
+N_SENSORS=12            # number of sensors
 VEL_SCALE=1/80.0
 DANGDT_SCALE=1.0/3.0
 SENSOR_SCALE=1.0/100.0      # scale sensors (make more like 0-1)
@@ -154,7 +154,9 @@ class CarPlug:
             ang_ref=i*pi*2.0/N_SENSORS
             sensors.append(Sensor(ang_ref,sensorRange,"sensor"+str(i)))
            
-        pod=CarPod(sensors,self,(r,g,b))
+        pod=CarPod((r,g,b))
+        pod.addSensors(sensors)
+        pod.setController(self)
         pod.current_goal=0
         return pod
     

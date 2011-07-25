@@ -73,22 +73,26 @@ class Pod:
     right_poly_ref=[(5,5),(9,4),(12,5),(9,6)]
 
 
-    def __init__(self,sensors,controller,col):
+    def __init__(self,col):
        
         self.message="init"
-        self.controller=controller
         self.control=Control()
-        self.sensors=sensors
+        self.sensors=[]
         self.base_init()    
         self.col=col
         self.base_init()
+            
+    def addSensors(self,sensors): 
+        self.sensors.extend(sensors)
         if NUMPY:
             self.sensor_x1=len(sensors)*[0.0]
             self.sensor_y1=len(sensors)*[0.0]
             self.sensor_x2=len(sensors)*[0.0]
             self.sensor_y2=len(sensors)*[0.0]
-           
-            
+                    
+    def setController(self,controller):
+       self.controller=controller
+             
     def base_init(self):
         self.state=State() 
         self.state.ang=pi
@@ -155,9 +159,12 @@ class Pod:
 
 class CarPod(Pod):
  
-    def __init__(self,sensors,plug,col):
-        Pod.__init__(self,sensors,plug,col)
+    def __init__(self,col=(255,0,0)):
+        Pod.__init__(self,col)
         self.init()
+    
+    def setColour(self,col):
+        self.col=col
         
     def init(self):
         self.base_init()
