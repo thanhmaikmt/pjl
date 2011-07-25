@@ -39,27 +39,12 @@ import pods
 import world
 import math
 
-RUN_NAME="comobo_breed"             # used for file names so you can tag different experiments
-
 
 # The world
 WORLD_FILE="../worlds/carCircuit.world"     # world to use
 
-# An alternative world!!!
-#WORLD_FILE="car_circuit.txt"     # world to use
-#N_TRIP=200                       # big number because it is a loop
-
-
-
-#  parameters that could be varied
-    
-
-
 N_SENSORS=8              # number of sensors
-        # amount of mutation
 
-
-SEED_PROB=0.1             # probability a new thing is created from nothing
 
 # files used by program
 
@@ -96,8 +81,9 @@ class ParamBrain:
             x[i]=x[i] + (random.random()-0.5)*paramsScale[i]*MUTATE_SCALE
     
 
-                
+#   Pool is responsible for keeping track of the fittest solutions                
 POOL_SIZE=1              # size of pool of best brains
+SEED_PROB=0.1             # probability a new thing is created from nothing
 
 class Pool:  #  use me to store the best brains and create new brains
    
