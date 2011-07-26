@@ -2,7 +2,9 @@ import gzip
 import cPickle
 import numpy
 import time
-
+import sys
+#sys.path.append("../examples/knearest")
+import knearest
 
 def calc_dist(a,b):
     dist=0
@@ -43,40 +45,38 @@ def doit():
     test_output=test_set[1]
     training_output=training_set[1] 
     
-    # lets time this!! 
-    start=time.time()
     
     
     BIG=1e32
     
    
     
-    countCorrect=0    #  counter for number of correct classifications
-    countFail=0
     
-    for i in range(nTest):    # for all test cases
+    for k in range(1,20):
+    
+        countCorrect=0    #  counter for number of correct classifications
+        countFail=0    
+        for i in range(nTest):    # for all test cases
+            kn=knearest.Knearest(k)
+           
         
-        #  mindist and jNearest  keep track of best distance so far
-        mindist = BIG
-        jNearest =-1
+            for j in range(nTrain):
+                dist=calc_dist_numpy(training_input[j],test_input[i])
+                kn.add(dist,training_output[j])
+          
+          
+            # print training_output[jNearest],test_output[i],mindist
+          
+            result=kn.get_knearest()
+                  
+            if  result == test_output[i]:
+                countCorrect += 1
+            else:
+                countFail += 1
+            #    print i,":  " , (countCorrect*100.0)/(countCorrect+countFail), "%"
+                
     
-        for j in range(nTrain):
-            dist=calc_dist_numpy(training_input[j],test_input[i])
-            if dist < mindist:
-                mindist=dist
-                jNearest=j
-     
-        # print training_output[jNearest],test_output[i],mindist
-            
-        if  training_output[jNearest] == test_output[i]:
-            countCorrect += 1
-        else:
-            countFail += 1
-            print i,":  " , (countCorrect*100.0)/(countCorrect+countFail), "%"
-            
-    end=time.time()
-    
-    print countCorrect," out of ",nTest, " In ",end-start," secs    ",  (countCorrect*100.0)/nTest, "%"
+        print " k=",k,"  ", countCorrect,"/",nTest,  (countCorrect*100.0)/nTest, "%"
 
 
 if __name__ == "__main__":
