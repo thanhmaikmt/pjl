@@ -4,6 +4,7 @@ Created on 19 Jul 2011
 @author: pjl
 
 Demonstrate how to find the k nearest distances
+Now using a class to encapsulate 
 
 '''
 
@@ -20,6 +21,9 @@ class Knearest:
         
 # add a single pair if distance is less than any already stored
     def add(self,dist,out):
+        if dist > self.min_table[self.k-1][0]:
+            return
+        
         for i in range(self.k):         # go through the table
             if dist < self.min_table[i][0]:              # if distance less than a value already stored
                 self.min_table.insert(i,[dist,out])      # insert new pair
@@ -59,7 +63,7 @@ def test():
     dists = [4,5,2,1,6,7,8,9,1,20]
     outs  = [1,0,2,3,4,0,2,5,2,4]
     
-    k=6                      # number of nearest to look at            
+    k=1                     # number of nearest to look at            
     
     knearest=Knearest(k)     # create a Knearest object
     

@@ -23,7 +23,7 @@ def button_click_exit_mainloop (event):
     event.widget.quit() # this will cause mainloop to unblock.
 
 # compressed data
-data="mnist.pkl.gz"
+data="mnist_lite.pkl.gz"
 
 f=gzip.open(data)
 
@@ -44,13 +44,14 @@ ih=28
 # root.geometry('%dx%d' % (iw*N,ih))
 
 
-set=validation_set
+set=test_set
 
+img=[]
 for i in range(N):
     image1 = grabImage(i,set)          
     # tkpimages.append(ImageTk.PhotoImage(image1))
-    img=ImageTk.PhotoImage(image1)
-    label_image = Tkinter.Label(root,image=img)  # tkpimages[i])
+    img.append(ImageTk.PhotoImage(image1))
+    label_image = Tkinter.Label(root,image=img[i])  # tkpimages[i])
     label_numb=Tkinter.Label(root,text=str(set[1][i]))
     label_image.grid(row=i,column=1)
     label_numb.grid(row=i,column=0)

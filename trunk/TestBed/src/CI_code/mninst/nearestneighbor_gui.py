@@ -51,17 +51,18 @@ def display(img1,lab1,img2,lab2):
 
 def doit():    
         # compressed data 
-    data="mnist.pkl.gz"
+    data="mnist_lite.pkl.gz"
     f=gzip.open(data)
     
     # load data into the 3 data sets
     print " LOADING .....  DATA . . . . . ",
     training_set,validation_set,test_set=cPickle.load(f)    
     print " DONE"
-    
-    print "    Training set size: ",len(training_set[0])
-    print "  Validation set size: ",len(validation_set[0])
-    print "        Test set size: ",len(test_set[0])
+      
+    nTrain=len(training_set[0])    # use first nTrain training examples
+    nTest=len(test_set[0])     # test first nTest test cases 
+    print "    Training set size: ",nTrain
+    print "        Test set size: ",nTest
     
      
     
@@ -84,9 +85,7 @@ def doit():
     
     
     BIG=1e32
-    
-    nTrain=500    # use first nTrain training examples
-    nTest=10      # test first nTest test cases
+ 
     
     
     for i in range(nTest):    # for all test cases
@@ -108,7 +107,7 @@ def doit():
         else:
             display(training_input[jNearest],training_output[jNearest], 
                     test_input[i],test_output[i])
-            tkMessageBox.showinfo("Continue")
+            time.sleep(1)
                 
             
     end=time.time()
