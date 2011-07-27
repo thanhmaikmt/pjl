@@ -2,6 +2,7 @@ import sys
 import random
 import array
 
+
 POPSIZE      = 1000;          # population size	  
 MAXITER      = 100;           # maximum iterations
 MUTATEPROB   = 0.5;	      # mutation rate
