@@ -45,20 +45,7 @@ def loadBrain(stream):
 class FeedForwardBrain:
   
 
-    """  
-    def save(self,stream):
-            bb=1
-            pickle.dump(bb,stream)
-            
-            aa=1  
-            pickle.dump(aa,stream)
-            
-            ssz=copy.deepcopy(self.layer_size)
-            pickle.dump(ssz,stream)
-            
-            w=copy.deepcopy(self.weight)
-            pickle.dump(w,stream)
-    """
+  
   
     
     def __init__(self,sz,func=[None,sigmoid,sigmoid],weight=None):
@@ -188,7 +175,7 @@ class FeedForwardBrain:
         return self.out[self.num_layer - 1];
     
                     
-    def radom_mutate(self,amount):    
+    def random_mutate(self,amount):    
         
         for i in range(1,self.num_layer):
             a=self.weight[i]  
