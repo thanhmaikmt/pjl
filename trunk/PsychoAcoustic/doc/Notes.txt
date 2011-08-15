@@ -1,0 +1,49 @@
+==============================================
+
+If you want to launch the applet without the web class loader (might be
+faster when debugging/developing):
+
+Change from this line:
+
+AppletLauncher.launchAppletUsingURLClassLoader(PjlApplet.class.getName(),800,600,new URL("http://localhost:8080/psychoserver/applets/"),new String[] {"language=no","country=NO"});
+
+To this line:
+ //AppletLauncher.launchApplet(new PjlApplet(),800,600,new URL("http://localhost:8080/psychoserver/applets/"),new String[] {"language=no","country=NO"});
+
+What is the web class loader all about? 
+
+The reason is to get a view of what classes that should be available via
+http (to the remote brower class loader). This way you'll easily find if
+there are classes that the appletserver won't give away. If that is the
+case, you can add them to allowedClasses in web.xml (or you can disable
+the access control entirely - which is not recommended in production
+though...)
+
+You'll also see that it tries to write to a file called jarcontents.xml
+- this is a feature for creating a .jar on the fly. Currently this
+feature is not used - classes are loaded by the browser one by one...
+
+==============================================
+
+With your current setup you are able to debug client side code (the
+applet code) - set breakpoints e.g.
+
+If you want to be able to do the same with server-side code, you have to
+launch jboss from within Eclipse in debug mode. This way you'll also be
+able to modify methods of classes without having to restart jboss or
+redeploy the application.
+
+If modifying server side class structure (adding methods, new classes
+etc.) you need to at least redeploy. You can do this very easily by
+touching psychoserver.ear/META-INF/application.xml. This will trigger a
+scan of the application for new session beans, entity beans, classes and
+configuration.
+
+A tool to launch jboss from Eclipse is JBoss Eclipse IDE - which is an
+eclipse plugin. You can install it from within Eclipse (Help -> Software
+updates -> Find an install) - by adding the site:
+
+http://download.jboss.org/jbosside/updates/development
+
+This will also require you to install an EMF component which is
+available under the Callisto Discovery site.

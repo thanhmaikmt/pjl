@@ -1,0 +1,18 @@
+psycho-ds.xml     ( persistence provider with a jndi name PSYCHO )           
+psychoserver.ear/ 
+      META-INF/
+           application.xml    ( defines location ejb and web modules)
+      psychoserver.jar/
+           lmappletserver_conf.properties  ( ??? )
+           pjl.jar
+           lmappletserver-core.jar
+           CLASSPATH
+           META-INF/
+               MANIFEST.MF
+               jarcontents.xml   ( automatically created but not used yet?)
+               persistence.xml   ( persistence interface PSYCHO and hibernate)
+      psychoserver.war/
+          index.jsp              ( web page )
+          WEB-INF/
+              web.xml            ( a bit of magic is in here )
+
