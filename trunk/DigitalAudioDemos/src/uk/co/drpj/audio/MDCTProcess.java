@@ -77,15 +77,19 @@ public class MDCTProcess implements AudioProcess {
     public void close() throws Exception {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+    int nnnn=-1;
+    public void setBandQuantization(int nLevel, int band) {
 
-    public void setNumberOfLevels(int n, int band) {
-
-
-        quant[band] = (2.0f) / (n);
+        quant[band] =2.0f* (2.0f) / (nLevel);
         base[band] = -1.0f + quant[band] / 2.0f;
+        if (nnnn != nLevel) {
+            System.out.println(nLevel);
+            nnnn=nLevel;
+        }
+
 
 //            float tmp=base;
-//            for (int i=0;i<n;i++) {
+//            for (int i=0;i<nLevel;i++) {
 //                System.out.println(tmp);
 //                tmp +=quant;
 //            }

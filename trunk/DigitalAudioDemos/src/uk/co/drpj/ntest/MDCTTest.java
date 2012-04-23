@@ -56,7 +56,7 @@ public class MDCTTest {
 
             float buff[] = new float[N];
             buff[i] = 1.0f;
-            MDCT.ITransform(buff, N, N/2);
+            MDCT.Transform(buff, N, N/2);
             for (int k = 0; k < N; k++) {
                 System.out.print(buff[k] + " ");
             }
