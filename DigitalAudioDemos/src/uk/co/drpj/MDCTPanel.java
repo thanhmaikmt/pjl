@@ -44,7 +44,7 @@ public class MDCTPanel extends JPanel {
 
     //    private static JavaSoundAudioServer audioServer;
     private AudioBuffer chunk;
-   // private AudioBuffer chunk2;
+    // private AudioBuffer chunk2;
     // private  JFrame frame;
     private AudioPeakMonitor peakIn;
     private MeterPanel meterPanel;
@@ -58,6 +58,7 @@ public class MDCTPanel extends JPanel {
     private JLabel qlab;
     final Object readerMuex = new Object();
     private Timer timer;
+    private int nLogQuant = 15;
 
     public MDCTPanel() throws Exception {
 
@@ -77,8 +78,9 @@ public class MDCTPanel extends JPanel {
 
         final AudioProcess output = audioSystem.getOut();
         final float sampleRate = 44100.0f;
+        // int N=128;
         final AudioBuffer readChunk = new AudioBuffer(null, 2, 128, sampleRate);
-        final AudioBuffer mdctChunk = new AudioBuffer(null, 2, 128, sampleRate);
+        final AudioBuffer mdctChunk = new AudioBuffer(null, 2, 8*128, sampleRate);
 
         server.setClient(new AudioClient() {
 
@@ -99,11 +101,12 @@ public class MDCTPanel extends JPanel {
 
 
                 // Fill input buffer
-              //  System.out.println(" FILLING INPUT ");
+                //  System.out.println(" FILLING INPUT ");
                 while (inbuff.freeSpace() > size) {
                     synchronized (readerMuex) {
                         if (audioReader != null) {
                             if ((audioReader instanceof AudioReader) && ((AudioReader) audioReader).eof()) {
+                                break;
                             } else {
                                 readChunk.makeSilence();
                                 audioReader.processAudio(readChunk);
@@ -114,9 +117,9 @@ public class MDCTPanel extends JPanel {
                 }
 
 
-           //     System.out.println(" FILLING OUTPUT ");
+                //     System.out.println(" FILLING OUTPUT ");
 
-                while(outbuff.avail() < chunk.getSampleCount()) {
+                while (outbuff.avail() < chunk.getSampleCount()) {
                     inbuff.out.processAudio(mdctChunk);  // grab chunk
                     mdctizer.processAudio(mdctChunk);
                     outbuff.in.processAudio(mdctChunk);
@@ -131,7 +134,7 @@ public class MDCTPanel extends JPanel {
 //                    }
 //                }
 
-           //     System.out.println(" PLAYING OUTPUT ");
+                //     System.out.println(" PLAYING OUTPUT ");
 
                 peakIn.processAudio(chunk);
 
@@ -174,7 +177,7 @@ public class MDCTPanel extends JPanel {
             }
         });
         timer.start();
-
+        setQuantization();
         // setPreferredSize(new Dimension(500,80));
     }
 
@@ -187,7 +190,7 @@ public class MDCTPanel extends JPanel {
         }
 
     }
-    int nLevel = (int) Math.pow(2, 16);
+    // int nLevel = (int) Math.pow(2, 16);
 
     public void setAudioReader(AudioProcess reader) {
         synchronized (readerMuex) {
@@ -249,23 +252,23 @@ public class MDCTPanel extends JPanel {
 
         side.add(tt);
 
-        combo.setSelectedIndex(15);
-        //  combo.setEnabled(false);
-        combo.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                int n = (Integer) (combo.getSelectedItem());
-                nLevel = (int) Math.pow(2, n);
-                if (mdctizer != null) {
-                    for (int i = 0; i < mdctizer.getBandCount(); i++) {
-                        mdctizer.setNumberOfLevels(nLevel, i);
-                    }
-                    //        ditherer.setQuantizelevel(mdctizer.getQuant());
-                    //         qlab.setText(String.format("(q=%7.1g)", mdctizer.getQuant()));
-                }
-            }
-        });
-
+//        combo.setSelectedIndex(15);
+//        //  combo.setEnabled(false);
+//        combo.addActionListener(new ActionListener() {
+//
+//            public void actionPerformed(ActionEvent e) {
+//                int n = (Integer) (combo.getSelectedItem());
+//                nLevel = (int) Math.pow(2, n);
+//                if (mdctizer != null) {
+//                    for (int i = 0; i < mdctizer.getBandCount(); i++) {
+//                        mdctizer.setBandQuantization(nLevel, i);
+//                    }
+//                    //        ditherer.setQuantizelevel(mdctizer.getQuant());
+//                    //         qlab.setText(String.format("(q=%7.1g)", mdctizer.getQuant()));
+//                }
+//            }
+//        });
+//
 
 
 
@@ -318,18 +321,25 @@ public class MDCTPanel extends JPanel {
         combo.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                int n = (Integer) (combo.getSelectedItem());
-                nLevel = (int) Math.pow(2, n);
-                if (mdctizer != null) {
-                    for (int i = 0; i < mdctizer.getBandCount(); i++) {
-                        mdctizer.setNumberOfLevels(nLevel, i);
-                    }
-                }
+                nLogQuant = (Integer) (combo.getSelectedItem());
+                setQuantization();
             }
         });
         add(content, BorderLayout.CENTER);
         dither.setSelected(true);
         quant.setSelected(true);
+
+    }
+
+    void setQuantization() {
+        System.out.println(" Set quant " + nLogQuant);
+        int nLevel = (int) Math.pow(2, nLogQuant);
+        if (mdctizer != null) {
+            for (int i = 0; i < mdctizer.getBandCount(); i++) {
+                mdctizer.setBandQuantization(nLevel, i);
+            }
+        }
+
     }
 
     void dispose() {
