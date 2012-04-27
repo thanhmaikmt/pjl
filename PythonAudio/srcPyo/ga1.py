@@ -1,6 +1,13 @@
 from pyo import *
 from inspect import *
 
+
+
+# Proxy class to provide a view of a Node for the GA
+class Proxy:
+    
+    
+    
 class Factory:
     
     def __init__(self):
