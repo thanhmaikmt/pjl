@@ -8,6 +8,8 @@ from numpy import  *
 from math import *
 from numpy.linalg import *
 
+# Bc= 120 perpendicalur   250 parallel
+# Jc = 1-5 MA /cm/cm ?
 n_node=10
 n_eq=n_node*2
 h=1e-3
