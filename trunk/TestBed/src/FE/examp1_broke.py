@@ -111,6 +111,34 @@ def assemble(K,C,b,x,dxdt):
                     b[iJ2]+=Jc*s
                     b[iA2]-=Jc*s*termC
         
+
+
+def fixJ(K,C,b,x,dxdt):
+    
+    for i in range(n_node):
+        iJ1=i+n_node
+        J = abs(dxdt[iJ1])
+        s=sign(dxdt[iJ1])
+        
+        if J > Jc:
+            
+            # Fix J to s*Jc
+            # add to the r.h.s
+            for jEq in range(n_eq):
+                b[jEq] -= s*Jc*C[jEq,iJ1]
+            
+                # zero the matrix row and column for iJ1
+                C[iJ1,jEq]=0.0
+                C[jEq,iJ1]=0.0
+                K[iJ1,jEq]=0.0
+                K[jEq,iJ1]=0.0
+                  
+                # fix unknown J to s*Jc
+                C[iJ1,iJ1]=1.0
+                b[iJ1]=s*Jc
+                  
+          
+         
         
 
 tol=1e-3
@@ -120,11 +148,11 @@ for i in range(n_step):
     Ht=Ht_big*(i+0.5)/n_step
     print "iterating",Ht
     cnt=0
-    
+    rhs[:]=b-dot(K,x)
     while unstable:
         assemble(K,C,b,x,dxdt_guess)
+        #fixJ(K,C,b,x,dxdt_guess)
         A[:]=C+theta*dt*K
-        rhs[:]=b-dot(K,x)
         dxdt_new[:]=solve(A,rhs)
         tmp[:]=dxdt_guess-dxdt_new
         dxdt_guess[:]=dxdt_new
@@ -138,6 +166,6 @@ for i in range(n_step):
     x[:]=x+dt*dxdt
     
     P.plot(x_axis,dxdt[n_node:,])
-    print dxdt
+    #print dxdt[n_node:,]
 
 P.show()
