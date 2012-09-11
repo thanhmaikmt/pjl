@@ -11,6 +11,16 @@ from numpy import  *
 from math import *
 from numpy.linalg import *
 from math import  *
+import copy
+
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.collections import PolyCollection
+from matplotlib.colors import colorConverter
+import numpy as np
+
+
+
+
 
 # Bc= 120 perpendicalur   250 parallel
 # Jc = 1-5 MA /cm/cm ?
@@ -18,7 +28,7 @@ from math import  *
 Jc=1.0e6
 h=1e-3
 wid=20e-3
-t_end=1.0
+t_end=.1
 Itot=Jc*wid/1.5
 dt=5e-3
 n_step=int(t_end/dt)
@@ -50,8 +60,8 @@ mass_lumping=True
 Ht=0.0
 
 xx=array(range(n_node))
-x_axis = h*xx
-
+xx = h*xx
+yy=[]
 
 def assemble(K,C,b,x,dxdt):
     K.fill(0.0)
@@ -93,9 +103,9 @@ def assemble(K,C,b,x,dxdt):
                 termC = -h/2.0
                 J = abs(dxdt[iJ1])
                 s=sign(dxdt[iJ1])
-                if J < Jc :
-                    C[iA1,iJ1]=termC
-                    C[iJ1,iA1]=termC
+                if J < Jc:
+                    C[iA1,iJ1]+=termC
+                    C[iJ1,iA1]+=termC
                 else:
                     C[iJ1,iJ1]+=1.0
                     b[iJ1]+=Jc*s
@@ -103,19 +113,45 @@ def assemble(K,C,b,x,dxdt):
             
                 J = abs(dxdt[iJ2])
                 s= sign(dxdt[iJ2])
-                if J < Jc :
-                    C[iA2,iJ2]=termC
-                    C[iJ2,iA2]=termC
+                if J < Jc:
+                    C[iA2,iJ2]+=termC
+                    C[iJ2,iA2]+=termC
                 else:
                     C[iJ2,iJ2]+=1.0
                     b[iJ2]+=Jc*s
                     b[iA2]-=Jc*s*termC
+
+
+def fixJ(K,C,b,x,dxdt):
+    
+    for i in range(n_node):
+        iJ1=i+n_node
+        J = abs(dxdt[iJ1])
+        s=sign(dxdt[iJ1])
         
-        
+        if J > Jc:
+            
+            # Fix J to s*Jc
+            # add to the r.h.s
+            for jEq in range(n_eq):
+                b[jEq] -= s*Jc*C[jEq,iJ1]
+            
+                # zero the matrix row and column for iJ1
+                C[iJ1,jEq]=0.0
+                C[jEq,iJ1]=0.0
+                K[iJ1,jEq]=0.0
+                K[jEq,iJ1]=0.0
+                  
+                # fix unknown J to s*Jc
+                C[iJ1,iJ1]=1.0
+                b[iJ1]=s*Jc
+                          
 
 tol=1e-3
-
+time=0.0
+times=[]
 for i in range(n_step):
+   
     unstable=True
     Ht=Ht_big*(i+0.5)/n_step
     print "iterating",Ht
@@ -136,8 +172,59 @@ for i in range(n_step):
         
     dxdt[:]=dxdt_guess
     x[:]=x+dt*dxdt
-    
-    P.plot(x_axis,dxdt[n_node:,])
+    tt=copy.deepcopy(dxdt[n_node:,])
+    times.append(time)
+    yy.append(tt)
     print dxdt
+    time+=dt
 
-P.show()
+
+ 
+if True:
+    for y in yy:
+        P.plot(xx,y)
+    
+    P.show()
+    
+else:
+    fig = P.figure()
+    ax = fig.gca(projection='3d')
+    
+    cc = lambda arg: colorConverter.to_rgba(arg, alpha=0.6)
+    
+    ccc=[cc('b'),cc('g'),cc('r')] 
+    
+    verts = []
+   
+    
+    facecolors=[]
+    cnt=0
+    xxx=[0.0]
+    xxx.append(xx)
+    xxx.append(wid)
+  
+    for y in yy:
+        yyy=[0.0]
+        yyy.append(y)
+        yyy.append(0.0)
+        print shape(xxx),shape(yyy)
+        verts.append(zip(xxx,yyy))
+        facecolors.append(ccc[cnt])
+        cnt += 1
+        if cnt >= len(ccc):
+            cnt=0
+        
+    poly = PolyCollection(verts, facecolors)  # = [cc('r'), cc('g'), cc('b'),
+                                              # cc('y')])
+    poly.set_alpha(0.7)
+    ax.add_collection3d(poly, zs=times, zdir='y')
+    
+    ax.set_xlabel('x')
+    ax.set_xlim3d(0.0, wid)
+    
+    ax.set_ylabel('Time')
+    ax.set_ylim3d(0, t_end)
+    
+    ax.set_zlabel('J')
+    ax.set_zlim3d(-Jc, Jc)    
+    P.show()
