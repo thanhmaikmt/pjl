@@ -27,10 +27,10 @@ import numpy as np
 
 Jc=1.0e6
 h=1e-3
-wid=20e-3
+wid=40e-3
 t_end=.1
 Itot=Jc*wid/1.5
-dt=5e-3
+dt=1e-3
 n_step=int(t_end/dt)
 
 
@@ -62,6 +62,9 @@ Ht=0.0
 xx=array(range(n_node))
 xx = h*xx
 yy=[]
+
+doit=True
+
 
 def assemble(K,C,b,x,dxdt):
     K.fill(0.0)
@@ -101,50 +104,49 @@ def assemble(K,C,b,x,dxdt):
                 C[iJ2,iA2]=termC
         else:
                 termC = -h/2.0
-                J = abs(dxdt[iJ1])
-                s=sign(dxdt[iJ1])
-                if J < Jc:
-                    C[iA1,iJ1]+=termC
-                    C[iJ1,iA1]+=termC
-                else:
-                    C[iJ1,iJ1]+=1.0
-                    b[iJ1]+=Jc*s
-                    b[iA1]-=Jc*s*termC
-            
-                J = abs(dxdt[iJ2])
-                s= sign(dxdt[iJ2])
-                if J < Jc:
-                    C[iA2,iJ2]+=termC
-                    C[iJ2,iA2]+=termC
-                else:
-                    C[iJ2,iJ2]+=1.0
-                    b[iJ2]+=Jc*s
-                    b[iA2]-=Jc*s*termC
+             
+                C[iA1,iJ1]+=termC
+                C[iJ1,iA1]+=termC
+               
+                C[iA2,iJ2]+=termC
+                C[iJ2,iA2]+=termC
+              
 
 
 def fixJ(K,C,b,x,dxdt):
     
+    if not doit:
+        return
+    
     for i in range(n_node):
-        iJ1=i+n_node
-        J = abs(dxdt[iJ1])
-        s=sign(dxdt[iJ1])
+        iJ1 = i + n_node
+        J   = abs(dxdt[iJ1])
+        s   = sign(dxdt[iJ1])
         
-        if J > Jc:
-            
+        if J >= Jc:
             # Fix J to s*Jc
             # add to the r.h.s
             for jEq in range(n_eq):
                 b[jEq] -= s*Jc*C[jEq,iJ1]
             
+    for i in range(n_node):
+        iJ1 = i + n_node
+        J   = abs(dxdt[iJ1])
+        s   = sign(dxdt[iJ1])
+        
+        if J >= Jc:          
+            for jEq in range(n_eq):
                 # zero the matrix row and column for iJ1
-                C[iJ1,jEq]=0.0
-                C[jEq,iJ1]=0.0
-                K[iJ1,jEq]=0.0
-                K[jEq,iJ1]=0.0
+                if iJ1 != jEq:
+                    C[iJ1,jEq]=0.0
+                    C[jEq,iJ1]=0.0
+                    K[iJ1,jEq]=0.0
+                    K[jEq,iJ1]=0.0
                   
                 # fix unknown J to s*Jc
-                C[iJ1,iJ1]=1.0
-                b[iJ1]=s*Jc
+                
+            C[iJ1,iJ1]=1.0
+            b[iJ1]=s*Jc
                           
 
 tol=1e-3
@@ -159,6 +161,11 @@ for i in range(n_step):
     
     while unstable:
         assemble(K,C,b,x,dxdt_guess)
+        fixJ(K,C,b,x,dxdt_guess)
+        if i == 1 and cnt == 0:
+            for i in range(n_eq):
+                print C[i],b[i]
+                
         A[:]=C+theta*dt*K
         rhs[:]=b-dot(K,x)
         dxdt_new[:]=solve(A,rhs)
