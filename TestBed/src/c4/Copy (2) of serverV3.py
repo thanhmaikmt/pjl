@@ -248,8 +248,7 @@ class Connection(threading.Thread):
     #    if self.game != None:
      #       self.game.leave(self)
         
-        if connections.has_key(self.name):
-            del connections[self.name]
+        del connections[self.name]
            
         print self.name+": closed"            
         
@@ -272,7 +271,6 @@ class Connection(threading.Thread):
                 break
             else:
                 self.send("? Sorry the name "+ name + " is being used by another player try another name ")
-                self.close()
                 return
                 
         self.name=name
@@ -321,7 +319,7 @@ class Connection(threading.Thread):
                     self.game.record_move(self,data)
                     opo=self.myopo();
                     if opo != None:
-                        opo.send(data) 
+                        opo.sendIfOpen(data) 
                
                     
             elif data[0] == 'g' or data[0] == 'G' and self.myopo() == None:
