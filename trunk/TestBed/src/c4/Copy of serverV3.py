@@ -248,8 +248,7 @@ class Connection(threading.Thread):
     #    if self.game != None:
      #       self.game.leave(self)
         
-        if connections.has_key(self.name):
-            del connections[self.name]
+        del connections[self.name]
            
         print self.name+": closed"            
         
@@ -257,9 +256,11 @@ class Connection(threading.Thread):
     def sendIfOpen(self,data):
         if self.client_socket==None:
             return
+        try:
+            self.client_socket.send(data)
+        except:
+            print " socket seems broken "
         
-        self.client_socket.send(data)
-  
     def run(self):
  
         print self.name+": Accepting connection from ", address
@@ -268,12 +269,11 @@ class Connection(threading.Thread):
             name=self.recieve()  
             c=connections.get(name)
             if c == None:
-                self.send("! OK ")
+                self.sendIfOpen("! OK ")
                 break
             else:
                 self.send("? Sorry the name "+ name + " is being used by another player try another name ")
-                self.close()
-                return
+                
                 
         self.name=name
         connections[self.name]=self
