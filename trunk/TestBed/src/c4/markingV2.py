@@ -11,13 +11,13 @@ class Player:
         pass
         self.record=[]
 
+
+
 def markgame(f,p1,p2):
     
     opo={p1:p2,p2:p1}
     pover={p1:' ',p2:' '}
-        
-    
-    
+            
     
     b=c4board.Board()
     
@@ -46,9 +46,13 @@ def markgame(f,p1,p2):
                 pover[player]="?Played after game over against: "+opop
                 continue
             
-        
-            
+               
             col=int(toks[1][1:])
+            
+            if col < 0 or col > 6:
+                pover[player]="?Played illegal move against: "+opop
+                continue
+            
             b.do_move(col)
             #print b
             
@@ -85,12 +89,24 @@ def markgame(f,p1,p2):
                 pover[player]='L:'+opop
             
             
-            
+    if pover[p1]==' ':
+        pover[p1]="?No claim against "+p2+" "+state
+           
+    if pover[p2]==' ':
+        pover[p2]="?No claim against "+p1+" "+state
+        
+        
+               
     return pover
             
 # directory to log stuff
 myHomeDir=os.getcwd()
+
+myHomeDir="/home/c4/marking/"
+
 logDir=os.path.join(myHomeDir,"c4gamelog")
+
+
 
 files=glob.glob(logDir+"/*")
 
@@ -99,6 +115,8 @@ files=glob.glob(logDir+"/*")
     
 
 for f in files:
+    print f
+
     toks=f.split('/')
     g=toks[-1]
     toks=g.split('_')
@@ -122,7 +140,11 @@ for f in files:
 
 for p in players:
     
-    print p,">", players[p].record
+    print "******",p,"****************************************************"
+    
+    for res in  players[p].record:
+        print res
+        
     
 #print pover
 
