@@ -72,7 +72,7 @@ class Board:
                             if c == prev:
                                 count += 1
                                 if count == 3:
-                                    return c+" wins"
+                                    return c
                         prev=c
            
                         
@@ -81,7 +81,7 @@ class Board:
             if x == ' ':
                 return  ' '            
             
-        return 'draw'
+        return 'D'
         
         
 if __name__ == "__main__":
