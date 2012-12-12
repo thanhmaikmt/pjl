@@ -1005,6 +1005,7 @@ def checkForCustomModules():
             for file in files:
                 try:
                     filepath = os.path.join(path, file)
+                    print filepath
                     execfile(vars.vars["toSysEncoding"](filepath), globals())
                     vars.vars["EXTERNAL_MODULES"].update(MODULES)
                 except:
