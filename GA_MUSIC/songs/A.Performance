@@ -1,0 +1,32 @@
+music.ElementScore 
+6328483114474102216_480_60 
+Score 
+music.Band 
+X 
+Band 
+3  No of voices
+music.jsyn.Sample 
+HiHat 
+Melodic 
+1  Lowest pitch
+1  Highest pitch
+HIHAT 
+music.Rythm 
+1301525800608762058_480_15_8 
+Rythm 
+music.jsyn.DBuff 
+Dbuff1 
+Melodic 
+60  Lowest pitch
+80  Highest pitch
+music.Melody 
+808092948665741210_480_15_4_2939345593509771493 
+Melody 
+music.jsyn.ResoVoice 
+VIBES1 
+Melodic 
+70  Lowest pitch
+80  Highest pitch
+music.Melody 
+4916229316453414037_480_15_4_5508109533148416222 
+Melody 

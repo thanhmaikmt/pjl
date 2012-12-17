@@ -1,0 +1,15 @@
+#BlueJ class context
+comment0.target=class\ PerformanceFrame
+comment0.text=\nWrite\ a\ description\ of\ class\ PerformanceFrame\ here.\n\n@author\ DR\ pJ\ \n@version\ 1\n\n
+comment1.target=sitem
+comment2.params=e
+comment2.target=void\ windowClosing(WindowEvent)
+comment3.target=cnt
+comment4.params=c
+comment4.target=WindowCloser(PerformanceControl)
+comment5.params=o\ arg
+comment5.target=void\ update(Observable,Object)
+comment6.params=p
+comment6.target=PerformanceFrame(Performance)
+comment7.target=performance
+numComments=8

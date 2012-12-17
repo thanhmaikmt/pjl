@@ -1,0 +1,40 @@
+music.ElementScore 
+8434526648740371004_480_60 
+Score 
+music.jsyn.JsynBand 
+X 
+Band 
+4  No of voices
+music.jsyn.Sample 
+Cow 
+Melodic 
+1  Lowest pitch
+1  Highest pitch
+CowBell 
+music.Rythm 
+8480487967471597296_480_15_8 
+Rythm 
+music.jsyn.DBuff 
+Dbuff1 
+Melodic 
+60  Lowest pitch
+80  Highest pitch
+music.Melody 
+3498094232011438070_480_15_4_1059108296657177931 
+Melody 
+music.jsyn.DBuff 
+Dbuff2 
+Melodic 
+70  Lowest pitch
+100  Highest pitch
+music.Melody 
+2245283185027624025_480_15_4_8450280248429497770 
+Melody 
+music.jsyn.ResoVoice 
+VIBES1 
+Melodic 
+70  Lowest pitch
+80  Highest pitch
+music.Melody 
+2474593797535090340_480_15_4_368510356875229723 
+Melody 

@@ -1,0 +1,16 @@
+#BlueJ class context
+comment0.target=class\ Panel2D
+comment1.params=subject\ d
+comment1.target=void\ update(Observable,Object)
+comment10.target=frameRate
+comment2.params=height\ width
+comment2.target=Panel2D(int,int)
+comment3.target=population
+comment4.params=g1
+comment4.target=void\ paintComponent(Graphics)
+comment5.target=h
+comment6.target=observeThresh
+comment7.target=w
+comment8.target=skip
+comment9.target=skipLast
+numComments=11

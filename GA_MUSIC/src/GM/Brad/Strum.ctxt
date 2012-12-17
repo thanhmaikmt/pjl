@@ -1,0 +1,19 @@
+#BlueJ class context
+comment0.target=class\ Strum
+comment1.target=strDelayin
+comment10.target=strDA0
+comment11.target=strBurst
+comment12.target=strSamp
+comment13.params=
+comment13.target=Strum()
+comment14.target=strBdata
+comment2.target=strDAmix
+comment3.target=strSet
+comment4.params=start\ freq\ tf0\ tfNy\ amp\ squish
+comment4.target=void\ go(int,double,double,double,double,int)
+comment5.target=strDCfilt
+comment6.target=strDA3
+comment7.target=strDelay
+comment8.target=strDA2
+comment9.target=strDA1
+numComments=15

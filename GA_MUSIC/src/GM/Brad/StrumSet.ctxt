@@ -1,0 +1,23 @@
+#BlueJ class context
+comment0.target=class\ StrumSet
+comment1.target=a3
+comment10.target=delsamps
+comment11.target=dca1
+comment12.target=dca0
+comment13.params=freq\ tF0\ tNy
+comment13.target=void\ sset(double,double,double)
+comment14.target=dcz1
+comment15.params=squish
+comment15.target=void\ squisher(int)
+comment2.target=a2
+comment3.target=a1
+comment4.params=
+comment4.target=StrumSet()
+comment5.params=f\ tF\ tN
+comment5.target=StrumSet(double,double,double)
+comment6.target=a0
+comment7.target=dcb1
+comment8.params=amp\ squish
+comment8.target=void\ randfill(double,int)
+comment9.target=ninit
+numComments=16

@@ -1,0 +1,9 @@
+#BlueJ class context
+comment0.target=class\ ControlPanel
+comment1.target=panel2D
+comment2.params=panel2D
+comment2.target=ControlPanel(Panel2D)
+comment3.target=t
+comment4.params=e
+comment4.target=void\ actionPerformed(ActionEvent)
+numComments=5

@@ -1,0 +1,25 @@
+#BlueJ class context
+comment0.target=class\ PlayerControl
+comment1.params=val
+comment1.target=void\ setEnabled(boolean)
+comment10.target=key
+comment11.target=player
+comment12.target=band
+comment13.params=e
+comment13.target=void\ actionPerformed(ActionEvent)
+comment14.params=l
+comment14.target=void\ removePropertyChangeListener(PropertyChangeListener)
+comment2.params=key
+comment2.target=Object\ getValue(String)
+comment3.params=l
+comment3.target=void\ addPropertyChangeListener(PropertyChangeListener)
+comment4.params=key\ o
+comment4.target=void\ putValue(String,Object)
+comment5.target=voiceSelector
+comment6.target=butName
+comment7.params=voice\ band\ key\ butName
+comment7.target=PlayerControl(Voice,Band,String,String)
+comment8.target=voice
+comment9.params=
+comment9.target=boolean\ isEnabled()
+numComments=15

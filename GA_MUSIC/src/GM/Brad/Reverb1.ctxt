@@ -1,0 +1,26 @@
+#BlueJ class context
+comment0.target=class\ Reverb1
+comment1.target=NUM_ELEMENTS
+comment10.target=myMixer
+comment11.target=amplitude
+comment11.text=Scale\ the\ output\ of\ this\ units\ delay\ line.\ \n
+comment12.target=myFeedback
+comment13.params=delayTime
+comment13.target=Reverb1Element(double)
+comment14.target=myFilter
+comment15.target=myDelay
+comment16.target=input
+comment16.text=Input\ signal\ to\ be\ reverberated.\ \n
+comment17.target=mix
+comment17.text=\nSignal\ to\ be\ mixed\ with\ this\ units\ output.\ Generally\nthe\ output\ of\ another\ Reverb1Element.\n\n
+comment2.target=busInput
+comment3.params=
+comment3.target=Reverb1()
+comment4.target=dryGain
+comment5.target=times
+comment6.target=myMixer
+comment7.target=busIn
+comment8.target=delays
+comment9.target=feedback
+comment9.text=Amount\ of\ this\ unit's\ delayed\ output\ that\ gets\ fed\ back\ into\ delay\ line.\ \n
+numComments=18

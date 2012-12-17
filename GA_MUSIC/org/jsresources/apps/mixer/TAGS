@@ -1,0 +1,36 @@
+
+/home/matthias/java/jsresources/apps/mixer/src/org/jsresources/apps/mixer/SystemMixer.java,95
+public class SystemMixerSystemMixer32,940
+	public static void main(SystemMixer.main42,1049
+
+/home/matthias/java/jsresources/apps/mixer/src/org/jsresources/apps/mixer/SystemMixerFrame.java,1216
+public class SystemMixerFrameSystemMixerFrame69,2185
+    public SystemMixerFrame(SystemMixerFrame.SystemMixerFrame83,2411
+    private List getPortMixers(SystemMixerFrame.getPortMixers116,3319
+    private boolean arePortsSupported(SystemMixerFrame.arePortsSupported138,3888
+    private Port.Info[] getPortInfo(SystemMixerFrame.getPortInfo164,4329
+    private JPanel createMixerPanel(SystemMixerFrame.createMixerPanel192,4925
+    private JPanel createPortPanel(SystemMixerFrame.createPortPanel226,5618
+    private JComponent createControlComponent(SystemMixerFrame.createControlComponent260,6764
+    private JComponent createControlComponent(SystemMixerFrame.createControlComponent286,7392
+    private JComponent createControlComponent(SystemMixerFrame.createControlComponent300,7722
+    private JComponent createControlComponent(SystemMixerFrame.createControlComponent314,8086
+    private JComponent createControlComponent(SystemMixerFrame.createControlComponent342,9006
+    private void setTickSpacings(SystemMixerFrame.setTickSpacings387,10239
+    private static boolean isBalanceOrPan(SystemMixerFrame.isBalanceOrPan424,11026
+    private static void out(SystemMixerFrame.out430,11229
+
+/home/matthias/java/jsresources/apps/mixer/src/org/jsresources/apps/mixer/BooleanControlButtonModel.java,388
+public class BooleanControlButtonModelBooleanControlButtonModel33,978
+    public BooleanControlButtonModel(BooleanControlButtonModel.BooleanControlButtonModel44,1161
+    public void setSelected(BooleanControlButtonModel.setSelected50,1259
+    public boolean isSelected(BooleanControlButtonModel.isSelected56,1352
+    private static void out(BooleanControlButtonModel.out62,1428
+
+/home/matthias/java/jsresources/apps/mixer/src/org/jsresources/apps/mixer/FloatControlBoundedRangeModel.java,493
+public class FloatControlBoundedRangeModelFloatControlBoundedRangeModel32,985
+    public FloatControlBoundedRangeModel(FloatControlBoundedRangeModel.FloatControlBoundedRangeModel44,1211
+    public void setValue(FloatControlBoundedRangeModel.setValue61,1837
+    public int getValue(FloatControlBoundedRangeModel.getValue71,2065
+    private float getScaleFactor(FloatControlBoundedRangeModel.getScaleFactor77,2162
+    private static void out(FloatControlBoundedRangeModel.out82,2235

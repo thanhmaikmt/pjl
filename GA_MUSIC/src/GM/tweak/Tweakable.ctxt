@@ -1,0 +1,23 @@
+#BlueJ class context
+comment0.target=class\ Tweakable
+comment1.params=
+comment1.target=Comparable\ getMaximum()
+comment10.params=s
+comment10.target=void\ set(String)
+comment11.params=n
+comment11.target=void\ set(Number)
+comment12.params=
+comment12.target=Number\ getNumber()
+comment2.params=label\ n\ min\ max
+comment2.target=Tweakable(String,Number,Comparable,Comparable)
+comment3.params=
+comment3.target=String\ toString()
+comment4.target=n
+comment5.params=
+comment5.target=String\ getLabel()
+comment6.params=
+comment6.target=Comparable\ getMinimum()
+comment7.target=min
+comment8.target=max
+comment9.target=label
+numComments=13

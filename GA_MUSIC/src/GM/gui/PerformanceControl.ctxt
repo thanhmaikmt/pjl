@@ -1,0 +1,22 @@
+#BlueJ class context
+comment0.target=class\ PerformanceControl
+comment1.params=val
+comment1.target=void\ setEnabled(boolean)
+comment10.params=e
+comment10.target=void\ actionPerformed(ActionEvent)
+comment11.params=l
+comment11.target=void\ removePropertyChangeListener(PropertyChangeListener)
+comment2.params=key
+comment2.target=Object\ getValue(String)
+comment3.params=l
+comment3.target=void\ addPropertyChangeListener(PropertyChangeListener)
+comment4.params=key\ o
+comment4.target=void\ putValue(String,Object)
+comment5.target=butName
+comment6.target=performance
+comment7.params=
+comment7.target=boolean\ isEnabled()
+comment8.target=key
+comment9.params=performance\ key\ butName
+comment9.target=PerformanceControl(Performance,String,String)
+numComments=12

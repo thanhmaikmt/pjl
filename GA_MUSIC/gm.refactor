@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE refactor PUBLIC "-//Borland Software Corporation//Refactor 1.0//EN" "http://www.borland.com/devsupport/jbuilder/dtds/refactor_1_0.dtd">
+
+<refactor>
+  <rename-class id="7AP0AFM82RDE8S64ALUC6PW0" creation-time="Sun Sep 18 09:40:15.966 BST 2005">
+    <old-class-name>GM.gui.PlayerPanel</old-class-name>
+    <new-class-name>GM.gui.PlayerItem</new-class-name>
+  </rename-class>
+  <rename-class id="6AP0AFM82RDE8S64ALUC6PW0" creation-time="Sun Sep 18 09:40:54.159 BST 2005">
+    <old-class-name>GM.gui.SectionPanel</old-class-name>
+    <new-class-name>GM.gui.SectionItem</new-class-name>
+  </rename-class>
+  <rename-class id="5AP0AFM82RDE8S64ALUC6PW0" creation-time="Sun Sep 18 09:41:21.014 BST 2005">
+    <old-class-name>GM.gui.SectionRollPanel</old-class-name>
+    <new-class-name>GM.gui.SectionPanel</new-class-name>
+  </rename-class>
+  <rename-class id="4AP0AFM82RDE8S64ALUC6PW0" creation-time="Sun Sep 18 09:41:40.162 BST 2005">
+    <old-class-name>GM.gui.SectionPanel</old-class-name>
+    <new-class-name>GM.gui.SectionView</new-class-name>
+  </rename-class>
+  <rename-class id="3AP0AFM82RDE8S64ALUC6PW0" creation-time="Sun Sep 18 09:42:09.439 BST 2005">
+    <old-class-name>GM.gui.PianoRollPanel</old-class-name>
+    <new-class-name>GM.gui.PhraseView</new-class-name>
+  </rename-class>
+  <rename-class id="2AP0AFM82RDE8S64ALUC6PW0" creation-time="Sun Sep 18 09:42:29.726 BST 2005">
+    <old-class-name>GM.gui.PianoRollContainer</old-class-name>
+    <new-class-name>GM.gui.PianoRoll</new-class-name>
+  </rename-class>
+  <rename-class id="1AP0AFM82RDE8S64ALUC6PW0" creation-time="Sun Sep 18 09:42:45.903 BST 2005">
+    <old-class-name>GM.gui.PlayerListPanel</old-class-name>
+    <new-class-name>GM.gui.PlayerView</new-class-name>
+  </rename-class>
+  <rename-class id="0AP0AFM82RDE8S64ALUC6PW0" creation-time="Sun Sep 18 09:43:05.922 BST 2005">
+    <old-class-name>GM.gui.PhrasePanel</old-class-name>
+    <new-class-name>GM.gui.PhraseItem</new-class-name>
+  </rename-class>
+  <rename-class id="7AP0H3TWMSDEHRRPHLUC6PW0" creation-time="Mon Sep 19 12:06:42.889 BST 2005">
+    <old-class-name>GM.music.Section</old-class-name>
+    <new-class-name>GM.music.Part</new-class-name>
+  </rename-class>
+  <rename-class id="7AP0PI2YWTDEC1HDHLUC6PW0" creation-time="Tue Sep 20 09:35:24.093 BST 2005">
+    <old-class-name>GM.gui.SectionView</old-class-name>
+    <new-class-name>GM.gui.PartView</new-class-name>
+  </rename-class>
+  <rename-class id="6AP0PI2YWTDEC1HDHLUC6PW0" creation-time="Tue Sep 20 09:35:51.599 BST 2005">
+    <old-class-name>GM.gui.SectionItem</old-class-name>
+    <new-class-name>GM.gui.PartItem</new-class-name>
+  </rename-class>
+  <rename-field id="7AP0TM7OSUDEF2JPCLUC6PW0" creation-time="Wed Sep 21 00:23:31.872 BST 2005">
+    <declaring-class-name>GM.music.Song</declaring-class-name>
+    <old-field-name>sections</old-field-name>
+    <declared-field-type>Ljava/util/Vector;</declared-field-type>
+    <new-field-name>parts</new-field-name>
+  </rename-field>
+  <rename-class id="7AP093R8DVDEEP0V6LUC6PW0" creation-time="Wed Sep 21 09:59:22.529 BST 2005">
+    <old-class-name>GM.javasound.Untitled1</old-class-name>
+    <new-class-name>GM.javasound.JavaSoundInfo</new-class-name>
+  </rename-class>
+  <rename-class id="7AP05LC2AXDE9H771LUC6PW0" creation-time="Thu Sep 22 18:05:57.280 BST 2005">
+    <old-class-name>GM.gui.TopFrame$CloneSectionAction</old-class-name>
+    <new-class-name>GM.gui.TopFrame$ClonePartAction</new-class-name>
+  </rename-class>
+  <rename-method id="7AP0NBZCCYDEBX9I7LUC6PW0" creation-time="Fri Sep 23 11:57:58.735 BST 2005">
+    <declaring-class-name>GM.music.Song</declaring-class-name>
+    <declared-method-signature>()V</declared-method-signature>
+    <old-method-name>rebuildSections</old-method-name>
+    <new-method-name>rebuildParts</new-method-name>
+  </rename-method>
+  <rename-method id="6AP0NBZCCYDEBX9I7LUC6PW0" creation-time="Fri Sep 23 11:58:13.166 BST 2005">
+    <declaring-class-name>GM.music.Song</declaring-class-name>
+    <declared-method-signature>()LGM/music/Part;</declared-method-signature>
+    <old-method-name>currentSection</old-method-name>
+    <new-method-name>currentPart</new-method-name>
+  </rename-method>
+  <rename-method id="5AP0NBZCCYDEBX9I7LUC6PW0" creation-time="Fri Sep 23 11:58:29.510 BST 2005">
+    <declaring-class-name>GM.music.Song</declaring-class-name>
+    <declared-method-signature>(LGM/music/Part;)V</declared-method-signature>
+    <old-method-name>appendSection</old-method-name>
+    <new-method-name>appendpart</new-method-name>
+  </rename-method>
+  <rename-method id="4AP0NBZCCYDEBX9I7LUC6PW0" creation-time="Fri Sep 23 11:58:38.206 BST 2005">
+    <declaring-class-name>GM.music.Song</declaring-class-name>
+    <declared-method-signature>(LGM/music/Part;)V</declared-method-signature>
+    <old-method-name>appendpart</old-method-name>
+    <new-method-name>appendPart</new-method-name>
+  </rename-method>
+  <rename-class id="7AP0ZVBHT6EE1L8IALUC6PW0" creation-time="Thu Sep 29 10:19:24.523 BST 2005">
+    <old-class-name>GM.gui.OverViewPanel</old-class-name>
+    <new-class-name>GM.gui.GlobalUnMuteSoloPanel</new-class-name>
+  </rename-class>
+  <rename-class id="6AP0ZVBHT6EE1L8IALUC6PW0" creation-time="Thu Sep 29 13:10:02.835 BST 2005">
+    <old-class-name>GM.gui.LayoutData</old-class-name>
+    <new-class-name>GM.gui.Layout</new-class-name>
+  </rename-class>
+  <rename-class id="7AP03SSJA7EEBBGZBLUC6PW0" creation-time="Thu Sep 29 18:17:13.200 BST 2005">
+    <old-class-name>GM.gui.VoiceParameterPanel</old-class-name>
+    <new-class-name>GM.gui.VoiceCntrl</new-class-name>
+  </rename-class>
+  <rename-class id="7AP0JSTT68EEE9YB9LUC6PW0" creation-time="Fri Sep 30 09:20:48.784 BST 2005">
+    <old-class-name>GM.gui.VoiceSelectPanel</old-class-name>
+    <new-class-name>GM.gui.VoiceCntrlFrame</new-class-name>
+  </rename-class>
+  <rename-class id="6AP0JSTT68EEE9YB9LUC6PW0" creation-time="Fri Sep 30 09:21:39.952 BST 2005">
+    <old-class-name>GM.gui.LeftPanel</old-class-name>
+    <new-class-name>GM.gui.VoiceCntrlPanel</new-class-name>
+  </rename-class>
+  <rename-class id="5AP0JSTT68EEE9YB9LUC6PW0" creation-time="Fri Sep 30 09:23:05.052 BST 2005">
+    <old-class-name>GM.gui.VoiceCntrlFrame</old-class-name>
+    <new-class-name>GM.gui.VoiceSelectPanel</new-class-name>
+  </rename-class>
+  <rename-class id="4AP0JSTT68EEE9YB9LUC6PW0" creation-time="Fri Sep 30 09:38:34.571 BST 2005">
+    <old-class-name>GM.gui.GlobalUnMuteSoloPanel</old-class-name>
+    <new-class-name>GM.gui.PlayerViewHeader</new-class-name>
+  </rename-class>
+  <rename-class id="7AP02KNLWDEECEMAALUC6PW0" creation-time="Tue Oct 04 09:21:08.350 BST 2005">
+    <old-class-name>GM.music.Pallete</old-class-name>
+    <new-class-name>GM.music.Hub</new-class-name>
+  </rename-class>
+  <rename-class id="6AP02KNLWDEECEMAALUC6PW0" creation-time="Tue Oct 04 09:22:16.041 BST 2005">
+    <old-class-name>GM.music.Hub</old-class-name>
+    <new-class-name>GM.javasound.Hub</new-class-name>
+  </rename-class>
+  <rename-class id="7AP0TCZQXGEEYJVZBLUC6PW0" creation-time="Thu Oct 06 12:16:35.062 BST 2005">
+    <old-class-name>GM.util.Mangle</old-class-name>
+    <new-class-name>GM.util.Mangler</new-class-name>
+  </rename-class>
+  <rename-class id="7AP0AYK2NJEERN39CLUC6PW0" creation-time="Sat Oct 08 09:40:59.022 BST 2005">
+    <old-class-name>GM.gui.PhraseDragButton</old-class-name>
+    <new-class-name>GM.gui.DragPanel</new-class-name>
+  </rename-class>
+  <rename-class id="7AP0VNY89OEEBNWAFLUC6PW0" creation-time="Tue Oct 11 15:12:52.966 BST 2005">
+    <old-class-name>GM.gui.DragPanel</old-class-name>
+    <new-class-name>GM.gui.DragPanelIcon</new-class-name>
+  </rename-class>
+  <rename-class id="6AP0VNY89OEEBNWAFLUC6PW0" creation-time="Tue Oct 11 15:13:17.108 BST 2005">
+    <old-class-name>GM.gui.PianoPanel</old-class-name>
+    <new-class-name>GM.gui.DragPanel</new-class-name>
+  </rename-class>
+  <rename-class id="7AP033I1DSEENXI75LUC6PW0" creation-time="Fri Oct 14 12:10:08.076 BST 2005">
+    <old-class-name>GM.javasound.javaSoundConnectFrame</old-class-name>
+    <new-class-name>GM.javasound.ConnectFrame</new-class-name>
+  </rename-class>
+</refactor>
+

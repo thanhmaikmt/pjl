@@ -1,0 +1,61 @@
+music.ElementScore 
+6881806892653687492_480_60 
+Score 
+music.javasound.JavaSoundBand 
+X 
+Band 
+6  No of voices
+music.javasound.JavaSoundVoice 
+Chan1 
+Melodic 
+60  Lowest pitch
+80  Highest pitch
+1 
+music.Melody 
+3656613535333084903_480_30_4_4078374171236937510 
+Melody 
+music.javasound.JavaSoundVoice 
+Chan4 
+Melodic 
+60  Lowest pitch
+80  Highest pitch
+4 
+music.Melody 
+8824644863473953312_480_30_4_143309812688940895 
+Melody 
+music.javasound.JavaSoundVoice 
+Chan6 
+Melodic 
+60  Lowest pitch
+80  Highest pitch
+6 
+music.Melody 
+5874683696357600476_480_30_4_5979118657972564622 
+Melody 
+music.javasound.JavaSoundVoice 
+Chan7 
+Melodic 
+60  Lowest pitch
+80  Highest pitch
+7 
+music.Melody 
+3092699952862749348_480_30_4_5822216339350712280 
+Melody 
+music.javasound.JavaSoundVoice 
+Chan8 
+Melodic 
+60  Lowest pitch
+80  Highest pitch
+8 
+music.Melody 
+8626381826421649407_480_30_4_3378526529360567251 
+Melody 
+music.javasound.JavaSoundVoice 
+Chan9 
+Melodic 
+60  Lowest pitch
+80  Highest pitch
+9 
+music.Melody 
+5164392580251159030_480_30_4_2027745796466439403 
+Melody 

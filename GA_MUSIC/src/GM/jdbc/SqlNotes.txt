@@ -1,0 +1,4 @@
+USE  tbl;
+SHOW TABLES;
+DESCRIBE tbl
+GRANT ALL ON simphoney.* TO 'pjl'@'ee-sal' IDENTIFIED BY "1amG0d";

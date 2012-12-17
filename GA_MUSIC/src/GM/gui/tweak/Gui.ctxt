@@ -1,0 +1,21 @@
+#BlueJ class context
+comment0.target=class\ Gui
+comment1.target=panel
+comment2.params=
+comment2.target=void\ start()
+comment3.params=args
+comment3.target=void\ main(String[])
+comment4.params=
+comment4.target=String\ getAppletInfo()
+comment5.params=
+comment5.target=String[][]\ getParameterInfo()
+comment6.params=
+comment6.target=void\ stop()
+comment6.text=\nCalled\ by\ the\ browser\ or\ applet\ viewer\ to\ inform\ this\ Applet\ that\nit\ should\ stop\ its\ execution.\ It\ is\ called\ when\ the\ Web\ page\ that\ncontains\ this\ Applet\ has\ been\ replaced\ by\ another\ page,\ and\ also\njust\ before\ the\ Applet\ is\ to\ be\ destroyed.\ If\ you\ do\ not\ have\ any\nresources\ that\ you\ need\ to\ release\ (such\ as\ threads\ that\ you\ may\nwant\ to\ stop)\ you\ can\ remove\ this\ method.\n\n
+comment7.target=isApplet
+comment8.params=
+comment8.target=void\ destroy()
+comment8.text=\nCalled\ by\ the\ browser\ or\ applet\ viewer\ to\ inform\ this\ Applet\ that\ it\nis\ being\ reclaimed\ and\ that\ it\ should\ destroy\ any\ resources\ that\ it\nhas\ allocated.\ The\ stop\ method\ will\ always\ be\ called\ before\ destroy.\ \nIf\ you\ do\ not\ have\ any\ resources\ that\ you\ need\ to\ release\ you\ can\ \nremove\ this\ method.\n\n
+comment9.params=
+comment9.target=void\ init()
+numComments=10

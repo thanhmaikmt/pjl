@@ -1,0 +1,682 @@
+package Brad;							      <
+							      <
+import java.util.*;								import java.util.*;								
+import java.awt.*;								import java.awt.*;								
+import com.softsynth.jsyn.*;								import com.softsynth.jsyn.*;								
+/**								/**								
+ * Reverberation								 * Reverberation								
+ * This simple reverb uses one pole low pass filters in the f								 * This simple reverb uses one pole low pass filters in the f								
+ * loop of several delay lines.								 * loop of several delay lines.								
+ *								 *								
+ * Reverb1 has a bus style input so multiple sources can be e								 * Reverb1 has a bus style input so multiple sources can be e								
+ *								 *								
+ * @author (C) 1997 Phil Burk, SoftSynth.com, All Rights Rese								 * @author (C) 1997 Phil Burk, SoftSynth.com, All Rights Rese								
+ */								 */								
+																
+																
+class Reverb1Element extends SynthCircuit								class Reverb1Element extends SynthCircuit								
+{								{								
+	DelayUnit         myDelay;									DelayUnit         myDelay;								
+	Filter_1o1p       myFilter;									Filter_1o1p       myFilter;								
+	MultiplyAddUnit   myFeedback;									MultiplyAddUnit   myFeedback;								
+	MultiplyAddUnit   myMixer;									MultiplyAddUnit   myMixer;								
+																		
+/** Input signal to be reverberated. */								/** Input signal to be reverberated. */								
+	SynthInput        input;									SynthInput        input;								
+/**								/**								
+ * Signal to be mixed with this units output. Generally								 * Signal to be mixed with this units output. Generally								
+ * the output of another Reverb1Element.								 * the output of another Reverb1Element.								
+ */								 */								
+	SynthInput        mix;									SynthInput        mix;								
+/** Scale the output of this units delay line. */								/** Scale the output of this units delay line. */								
+	SynthInput        amplitude;									SynthInput        amplitude;								
+/* Amount of this unit's delayed output that gets fed back in								/* Amount of this unit's delayed output that gets fed back in								
+	SynthInput        feedback;									SynthInput        feedback;								
+																
+	public Reverb1Element( double delayTime )									public Reverb1Element( double delayTime )								
+	throws SynthException									throws SynthException								
+	{									{								
+		super();										super();								
+																
+		add( myDelay       = new DelayUnit(delayTime)										add( myDelay       = new DelayUnit(delayTime)								
+		add( myFilter      = new Filter_1o1p());										add( myFilter      = new Filter_1o1p());								
+		add( myFeedback    = new MultiplyAddUnit());										add( myFeedback    = new MultiplyAddUnit());								
+		add( myMixer       = new MultiplyAddUnit());										add( myMixer       = new MultiplyAddUnit());								
+																
+		myDelay.output.connect( myMixer.inputA );										myDelay.output.connect( myMixer.inputA );								
+		myDelay.output.connect( myFilter.input );										myDelay.output.connect( myFilter.input );								
+		myFilter.output.connect( myFeedback.inputA );										myFilter.output.connect( myFeedback.inputA );								
+		myFeedback.output.connect( myDelay.input );										myFeedback.output.connect( myDelay.input );								
+																
+		addPort( feedback = myFeedback.inputB, "Feedb										addPort( feedback = myFeedback.inputB, "Feedb								
+		addPort( input = myFeedback.inputC, "Input" )										addPort( input = myFeedback.inputC, "Input" )								
+		addPort( amplitude = myMixer.inputB, "Amplitu										addPort( amplitude = myMixer.inputB, "Amplitu								
+		addPort( mix = myMixer.inputC, "Mix" );										addPort( mix = myMixer.inputC, "Mix" );								
+		addPort( output = myMixer.output );										addPort( output = myMixer.output );								
+																
+		feedback.set( -0.90 );										feedback.set( -0.90 );								
+	}									}								
+}								}								
+																
+public class Reverb1 extends SynthCircuit								public class Reverb1 extends SynthCircuit								
+{								{								
+	final static int NUM_ELEMENTS = 6; // 6 recommended b									final static int NUM_ELEMENTS = 6; // 6 recommended b								
+	Reverb1Element    delays[] = new Reverb1Element[NUM_E									Reverb1Element    delays[] = new Reverb1Element[NUM_E								
+	MultiplyAddUnit   myMixer;									MultiplyAddUnit   myMixer;								
+	BusReader         busIn;									BusReader         busIn;								
+	double times[] = { 0.050, 0.056, 0.061, 0.068, 0.072,									double times[] = { 0.050, 0.056, 0.061, 0.068, 0.072,								
+																
+	public SynthBusInput   busInput;							      |		SynthBusInput   busInput;								
+	public SynthInput      dryGain;							      |		SynthInput      dryGain;								
+																
+	public Reverb1() 									public Reverb1() 								
+	throws SynthException									throws SynthException								
+	{									{								
+																
+		add( busIn   = new BusReader());										add( busIn   = new BusReader());								
+		add( myMixer = new MultiplyAddUnit());										add( myMixer = new MultiplyAddUnit());								
+																
+		for( int i=0; i<delays.length; i++ )										for( int i=0; i<delays.length; i++ )								
+		{										{								
+			Reverb1Element delay = new Reverb1Ele											Reverb1Element delay = new Reverb1Ele								
+			delays[i] = delay;											delays[i] = delay;								
+			add( delay );											add( delay );								
+			busIn.output.connect( delay.input );											busIn.output.connect( delay.input );								
+			delay.amplitude.set( 0.9/NUM_ELEMENTS											delay.amplitude.set( 0.9/NUM_ELEMENTS								
+			if( i>0 ) delays[i-1].output.connect(											if( i>0 ) delays[i-1].output.connect(								
+		}										}								
+																
+		busIn.output.connect( myMixer.inputA );										busIn.output.connect( myMixer.inputA );								
+		delays[ NUM_ELEMENTS-1 ].output.connect( myMi										delays[ NUM_ELEMENTS-1 ].output.connect( myMi								
+																						
+		addPort( busInput = busIn.busInput );										addPort( busInput = busIn.busInput );								
+		addPort( dryGain = myMixer.inputB, "dryGain" 										addPort( dryGain = myMixer.inputB, "dryGain" 								
+		addPort( output = myMixer.output );										addPort( output = myMixer.output );								
+		dryGain.set( 0.7 );										dryGain.set( 0.7 );								
+		compile();										compile();								
+	}									}								
+}								}								
+/*  Strum -- basic plucked-string object (for use with JSyn)	/*  Strum -- basic plucked-string object (for use with JSyn)
+ *								 *
+ *  based on Charlie Sullivan's version of the plucked-string	 *  based on Charlie Sullivan's version of the plucked-string
+ *	(from the RTcmix version, START() )			 *	(from the RTcmix version, START() )
+ *								 *
+ *  uses StrumSet.java to calculate params			 *  uses StrumSet.java to calculate params
+ *								 *
+ *		Brad Garton	11/2001				 *		Brad Garton	11/2001
+ */								 */
+
+package Brad;						      <
+							      <
+import java.awt.*;						import java.awt.*;
+import com.softsynth.jsyn.*;					import com.softsynth.jsyn.*;
+import com.softsynth.jsyn.circuits.*;				import com.softsynth.jsyn.circuits.*;
+
+public class Strum extends SynthCircuit			      |	class Strum extends SynthCircuit
+{								{
+	SynthSample		strBurst;				SynthSample		strBurst;
+	short []		strBdata;				short []		strBdata;
+	SampleReader_16F1	strSamp;				SampleReader_16F1	strSamp;
+	InterpolatingDelayUnit	strDelay;				InterpolatingDelayUnit	strDelay;
+	AddUnit			strDelayin;				AddUnit			strDelayin;
+
+	StrumSet		strSet;					StrumSet		strSet;
+
+	InterpolatingDelayUnit	strDA0;					InterpolatingDelayUnit	strDA0;
+	InterpolatingDelayUnit	strDA1;					InterpolatingDelayUnit	strDA1;
+	InterpolatingDelayUnit	strDA2;					InterpolatingDelayUnit	strDA2;
+	InterpolatingDelayUnit	strDA3;					InterpolatingDelayUnit	strDA3;
+	SynthMixer		strDAmix;				SynthMixer		strDAmix;
+
+	Filter_HighShelf	strDCfilt;				Filter_HighShelf	strDCfilt;
+
+	public Strum()							public Strum()
+	{								{
+		strSet = new StrumSet();					strSet = new StrumSet();
+
+		strSamp = new SampleReader_16F1();				strSamp = new SampleReader_16F1();
+		add(strSamp);							add(strSamp);
+
+		strDelay = new InterpolatingDelayUnit(0.1);			strDelay = new InterpolatingDelayUnit(0.1);
+		add(strDelay);							add(strDelay);
+		strDelayin = new AddUnit();					strDelayin = new AddUnit();
+		add(strDelayin);						add(strDelayin);
+
+		// pluck filter							// pluck filter
+		strDA0 = new InterpolatingDelayUnit(1.0/44100			strDA0 = new InterpolatingDelayUnit(1.0/44100
+		add(strDA0);							add(strDA0);
+		strDA1 = new InterpolatingDelayUnit(2.0/44100			strDA1 = new InterpolatingDelayUnit(2.0/44100
+		add(strDA1);							add(strDA1);
+		strDA2 = new InterpolatingDelayUnit(3.0/44100			strDA2 = new InterpolatingDelayUnit(3.0/44100
+		add(strDA2);							add(strDA2);
+		strDA3 = new InterpolatingDelayUnit(4.0/44100			strDA3 = new InterpolatingDelayUnit(4.0/44100
+		add(strDA3);							add(strDA3);
+		strDAmix = new SynthMixer(4, 1);				strDAmix = new SynthMixer(4, 1);
+		add(strDAmix);							add(strDAmix);
+
+		// filter out DC						// filter out DC
+		strDCfilt = new Filter_HighShelf();				strDCfilt = new Filter_HighShelf();
+		add(strDCfilt);							add(strDCfilt);
+
+		strSamp.output.connect(strDelayin.inputA);			strSamp.output.connect(strDelayin.inputA);
+		strDelayin.output.connect(strDelay.input);			strDelayin.output.connect(strDelay.input);
+
+		// pluck filter							// pluck filter
+		strDelay.output.connect(strDA0.input);				strDelay.output.connect(strDA0.input);
+		strDelay.output.connect(strDA1.input);				strDelay.output.connect(strDA1.input);
+		strDelay.output.connect(strDA2.input);				strDelay.output.connect(strDA2.input);
+		strDelay.output.connect(strDA3.input);				strDelay.output.connect(strDA3.input);
+		strDAmix.connectInput(0, strDA0.output, 0);			strDAmix.connectInput(0, strDA0.output, 0);
+		strDAmix.connectInput(1, strDA1.output, 0);			strDAmix.connectInput(1, strDA1.output, 0);
+		strDAmix.connectInput(2, strDA2.output, 0);			strDAmix.connectInput(2, strDA2.output, 0);
+		strDAmix.connectInput(3, strDA3.output, 0);			strDAmix.connectInput(3, strDA3.output, 0);
+		strDAmix.connectOutput(0, strDCfilt.input, 0)			strDAmix.connectOutput(0, strDCfilt.input, 0)
+
+		strDA0.delay.set(1.0/44100.0);					strDA0.delay.set(1.0/44100.0);
+		strDA1.delay.set(2.0/44100.0);					strDA1.delay.set(2.0/44100.0);
+		strDA2.delay.set(3.0/44100.0);					strDA2.delay.set(3.0/44100.0);
+		strDA3.delay.set(4.0/44100.0);					strDA3.delay.set(4.0/44100.0);
+
+
+		// filter out DC -- this isn't really being d			// filter out DC -- this isn't really being d
+		// but it seems to work; tends to shorten ver			// but it seems to work; tends to shorten ver
+		strDCfilt.frequency.set(20.0);					strDCfilt.frequency.set(20.0);
+		strDCfilt.gain.set(1.0);					strDCfilt.gain.set(1.0);
+		strDCfilt.slope.set(1.0);					strDCfilt.slope.set(1.0);
+		strDCfilt.output.connect(strDelayin.inputB);			strDCfilt.output.connect(strDelayin.inputB);
+
+		output = strDelay.output;					output = strDelay.output;
+	}								}
+
+	public void go(int start, double freq, double tf0, do		public void go(int start, double freq, double tf0, do
+/*								/*
+ *  start == starting time in JSyn ticks			 *  start == starting time in JSyn ticks
+ *  freq == frequency in Hz					 *  freq == frequency in Hz
+ *  tf0 == decay time of fundamental				 *  tf0 == decay time of fundamental
+ *  tfNy == decay time at Nyquist				 *  tfNy == decay time at Nyquist
+ *  amp == amp (32768 max)					 *  amp == amp (32768 max)
+ *  squish == lowpass filter of original noise burst 0-sharp,	 *  squish == lowpass filter of original noise burst 0-sharp,
+ *								 *
+*/								*/
+	{								{
+		int i, dlength;							int i, dlength;
+
+		strSet.sset(freq, tf0, tfNy);					strSet.sset(freq, tf0, tfNy);
+		strSet.randfill(amp, squish);					strSet.randfill(amp, squish);
+		dlength = (int)strSet.delsamps;					dlength = (int)strSet.delsamps;
+
+		// not sure why "17" is the magic number for 			// not sure why "17" is the magic number for 
+		// I suspect the 8-sample delay + 1 unit dela			// I suspect the 8-sample delay + 1 unit dela
+		strDelay.delay.set(start, (double)(dlength-17			strDelay.delay.set(start, (double)(dlength-17
+
+		strBurst = new SynthSample(dlength);				strBurst = new SynthSample(dlength);
+		strBdata = new short[dlength];					strBdata = new short[dlength];
+		for (i = 0; i < dlength; i++)					for (i = 0; i < dlength; i++)
+		{								{
+			strBdata[i] = (short)strSet.ninit[i];				strBdata[i] = (short)strSet.ninit[i];
+		}								}
+		strBurst.write(strBdata);					strBurst.write(strBdata);
+		strBdata = null;						strBdata = null;
+
+		strDAmix.setGain(start, 0, 0, strSet.a0);			strDAmix.setGain(start, 0, 0, strSet.a0);
+		strDAmix.setGain(start, 1, 0, strSet.a1);			strDAmix.setGain(start, 1, 0, strSet.a1);
+		strDAmix.setGain(start, 2, 0, strSet.a2);			strDAmix.setGain(start, 2, 0, strSet.a2);
+		strDAmix.setGain(start, 3, 0, strSet.a3);			strDAmix.setGain(start, 3, 0, strSet.a3);
+		strDCfilt.amplitude.set(start, strSet.dca0);			strDCfilt.amplitude.set(start, strSet.dca0);
+
+		strSamp.samplePort.queue(start, strBurst, 0, 			strSamp.samplePort.queue(start, strBurst, 0, 
+	}								}
+}								}
+
+
+package Brad;						      <
+							      <
+/*  StrumSet -- object to set up coeffs + other data for the 	/*  StrumSet -- object to set up coeffs + other data for the 
+ *	synthesis object					 *	synthesis object
+ *								 *
+ *  based on Charlie Sullivan's version of the plucked-string	 *  based on Charlie Sullivan's version of the plucked-string
+ *	(from the RTcmix version, START() )			 *	(from the RTcmix version, START() )
+ *								 *
+ *		Brad Garton	11/2001				 *		Brad Garton	11/2001
+ */								 */
+
+import java.lang.*;						import java.lang.*;
+
+public class StrumSet extends Object				public class StrumSet extends Object
+{								{
+	public double a0, a1, a2, a3; // plucked-string filte		public double a0, a1, a2, a3; // plucked-string filte
+	public double dcz1, dcb1, dca1, dca0; // dc-blocking 		public double dcz1, dcb1, dca1, dca0; // dc-blocking 
+	public double delsamps; // length of delay line			public double delsamps; // length of delay line
+	public double[] ninit; // initial noise array, feed i		public double[] ninit; // initial noise array, feed i
+
+	public StrumSet() {}						public StrumSet() {}
+
+	public StrumSet(double f, double tF, double tN)			public StrumSet(double f, double tF, double tN)
+	{								{
+		sset(f, tF, tN);						sset(f, tF, tN);
+	}								}
+
+	public void sset(double freq, double tF0, double tNy)		public void sset(double freq, double tF0, double tNy)
+	{								{
+
+// original note from Charlie follows -- the "strumq" struct 	// original note from Charlie follows -- the "strumq" struct 
+// now public vars -- BGG					// now public vars -- BGG
+/* Sets up strumq structure for strum to use as plucked strin	/* Sets up strumq structure for strum to use as plucked strin
+   Uses a two point averaging filter to adjust the phase for 	   Uses a two point averaging filter to adjust the phase for 
+   correct pitch, and then uses a linear phase three point av	   correct pitch, and then uses a linear phase three point av
+   filter to adjust the fundamental frequency to decay in tim	   filter to adjust the fundamental frequency to decay in tim
+   and in time tNy at the Nyquist frequency.  In some cases, 	   and in time tNy at the Nyquist frequency.  In some cases, 
+   decay time at the Nyquist frequency (which always must be 	   decay time at the Nyquist frequency (which always must be 
+   tf0) will not be exactly as requested, but a wide range of	   tf0) will not be exactly as requested, but a wide range of
+   is possible.  The two point and three point filters are co	   is possible.  The two point and three point filters are co
+   a single four point filter.  A single pole dc-blocking fil	   a single four point filter.  A single pole dc-blocking fil
+   because the four point filter may have some gain a dc, and	   because the four point filter may have some gain a dc, and
+   response can cause problems with clicks and what not.	   response can cause problems with clicks and what not.
+   Randfill must be called after (and not before) this routin	   Randfill must be called after (and not before) this routin
+   first time, as it initializes some things in the strumq st	   first time, as it initializes some things in the strumq st
+   This routine does not initialize them so it may be used to	   This routine does not initialize them so it may be used to
+   during the course of a note.					   during the course of a note.
+
+                    Charlie Sullivan				                    Charlie Sullivan
+                    1/87                                     	                    1/87                                     
+
+		double SR;							double SR;
+		double xlen, xerr;						double xlen, xerr;
+		double dH0, dHNy, H01, H02, HNy1, HNy2, H;			double dH0, dHNy, H01, H02, HNy1, HNy2, H;
+		double w0, tgent, c, c1, c2, s, g, aa0, aa1;			double w0, tgent, c, c1, c2, s, g, aa0, aa1;
+		double ncycles0, ncyclesNy, temp;				double ncycles0, ncyclesNy, temp;
+
+		SR = 44100.0; // change this later...				SR = 44100.0; // change this later...
+		xlen = 1.0/freq*SR;						xlen = 1.0/freq*SR;
+		w0 = freq/SR*2.0*Math.PI;					w0 = freq/SR*2.0*Math.PI;
+
+		// ncycles is not an integer,and is number of			// ncycles is not an integer,and is number of
+		ncycles0 = freq * tF0;						ncycles0 = freq * tF0;
+		ncyclesNy = freq * tNy;						ncyclesNy = freq * tNy;
+
+		// level will be down to -20db after t				// level will be down to -20db after t
+		dH0 = Math.pow(0.1, (1.0/ncycles0));				dH0 = Math.pow(0.1, (1.0/ncycles0));
+		dHNy = Math.pow(0.1, (1.0/ncyclesNy));				dHNy = Math.pow(0.1, (1.0/ncyclesNy));
+
+		delsamps = Math.floor(xlen - 1.0); // public 			delsamps = Math.floor(xlen - 1.0); // public 
+		xerr = delsamps - xlen + 1.0; // xerr will be			xerr = delsamps - xlen + 1.0; // xerr will be
+
+		/* Calculate the phase shift needed from two-			/* Calculate the phase shift needed from two-
+			filter, calculate the filter coeffici				filter, calculate the filter coeffici
+			y = c1*xn + (1-c1)*x(n-1)  */					y = c1*xn + (1-c1)*x(n-1)  */
+		tgent = Math.tan(xerr*w0);  // tan of theta			tgent = Math.tan(xerr*w0);  // tan of theta
+		c = Math.cos(w0);						c = Math.cos(w0);
+		s = Math.sin(w0);						s = Math.sin(w0);
+		c1 = (-s - c*tgent)/(tgent*(1.0 - c) - s);			c1 = (-s - c*tgent)/(tgent*(1.0 - c) - s);
+		c2 = 1.0 - c1;							c2 = 1.0 - c1;
+
+		// effect of this filter on amplitude respons			// effect of this filter on amplitude respons
+		H01 = Math.sqrt(c2*c2*s*s + (c1*(1.0-c)+c) * 			H01 = Math.sqrt(c2*c2*s*s + (c1*(1.0-c)+c) * 
+		HNy1 = Math.abs(2.0*c1 - 1.0);					HNy1 = Math.abs(2.0*c1 - 1.0);
+
+		/* Now add three point linear phase averaging			/* Now add three point linear phase averaging
+			with delay of 1, y = xn*a0 + xn-1*a1 				with delay of 1, y = xn*a0 + xn-1*a1 
+			and a gain or loss factor, g, so that				and a gain or loss factor, g, so that
+			has response H02 and HNy2 to make the				has response H02 and HNy2 to make the
+			response of all the filters dH0 and d				response of all the filters dH0 and d
+		H02 = dH0/H01;							H02 = dH0/H01;
+		if (HNy1 > 0.0) {						if (HNy1 > 0.0) {
+			HNy2 = dHNy/HNy1;						HNy2 = dHNy/HNy1;
+		} else {							} else {
+			HNy2 = 1.e10;							HNy2 = 1.e10;
+		}								}
+
+		g = (2.0*H02 - (1.0-c)*HNy2)/(1.0 + c);				g = (2.0*H02 - (1.0-c)*HNy2)/(1.0 + c);
+		aa1 = (HNy2/g + 1.0)/2.0;					aa1 = (HNy2/g + 1.0)/2.0;
+
+		/* For this filter to be monotonic low pass, 			/* For this filter to be monotonic low pass, 
+			between 1/2 and 1, if it isn't respon				between 1/2 and 1, if it isn't respon
+			won't be as specified, but it will be				won't be as specified, but it will be
+			 close as is feasible */					 close as is feasible */
+		if(aa1 < 0.5)							if(aa1 < 0.5)
+		{								{
+			aa1 = 0.5;							aa1 = 0.5;
+			H = (1.0 - aa1)*c + aa1;					H = (1.0 - aa1)*c + aa1;
+			g = H02/H;							g = H02/H;
+		}								}
+
+		if(aa1 > 1.0)							if(aa1 > 1.0)
+		{								{
+			aa1 = 1.0;							aa1 = 1.0;
+			g = H02;							g = H02;
+		}								}
+
+		aa0 = (1.0 - aa1)/2.0;						aa0 = (1.0 - aa1)/2.0;
+		aa0 *= g;							aa0 *= g;
+		aa1 *= g;							aa1 *= g;
+
+		/* Now combine the two and three point averag			/* Now combine the two and three point averag
+			into one four point filter with					into one four point filter with
+			coefficients a0-a3  (public vars) */				coefficients a0-a3  (public vars) */
+		a0 = aa0*c1;							a0 = aa0*c1;
+		a1 = aa0*c2 + aa1*c1;						a1 = aa0*c2 + aa1*c1;
+		a2 = aa0*c1 + aa1*c2;						a2 = aa0*c1 + aa1*c2;
+		a3 = aa0*c2;							a3 = aa0*c2;
+
+		// set up dc blocking filter					// set up dc blocking filter
+		temp = Math.PI*(freq/18.0/SR);					temp = Math.PI*(freq/18.0/SR);
+		dca0 = 1.0/(1.0 + temp); // public var				dca0 = 1.0/(1.0 + temp); // public var
+		dca1 = -dca0; // public var					dca1 = -dca0; // public var
+		dcb1 = dca0*(1.0 - temp); // public var				dcb1 = dca0*(1.0 - temp); // public var
+	}								}
+
+	public void randfill(double amp, int squish)			public void randfill(double amp, int squish)
+	{								{
+// charlie's original note:					// charlie's original note:
+/* Fills plucked string structure q with random values, and i	/* Fills plucked string structure q with random values, and i
+	Call only after a call to sset.					Call only after a call to sset.
+	Can be used with zero amplitude to just initialize th		Can be used with zero amplitude to just initialize th
+	Squish models the softness of a plucking implement by		Squish models the softness of a plucking implement by
+	the values put in the string with an averaging filter		the values put in the string with an averaging filter
+	The filter makes squish passes.  The loss of amplitud		The filter makes squish passes.  The loss of amplitud
+	fundamental frequency is compensated for, but the ove		fundamental frequency is compensated for, but the ove
+	of the squished string is lowered, as the energy at o		of the squished string is lowered, as the energy at o
+	is decreased.  */						is decreased.  */
+
+		double total, average;						double total, average;
+		int i;								int i;
+
+		dcz1 = 0.0; // public var for dc filter;			dcz1 = 0.0; // public var for dc filter;
+
+		// ninit is set up here to allow sset to rein			// ninit is set up here to allow sset to rein
+		// NOTE:  this is probably a memory leak...			// NOTE:  this is probably a memory leak...
+		ninit = new double[(int)delsamps]; // public 			ninit = new double[(int)delsamps]; // public 
+
+		// fill with white noise and subtract any dc 			// fill with white noise and subtract any dc 
+		total = 0.0;							total = 0.0;
+		for (i = 0; i < delsamps; i++)					for (i = 0; i < delsamps; i++)
+		{								{
+			ninit[i] = (Math.random()*2.0 - 1.0) 				ninit[i] = (Math.random()*2.0 - 1.0) 
+			total += ninit[i];						total += ninit[i];
+		}								}
+
+		average = total/delsamps;					average = total/delsamps;
+		for (i = 0; i < delsamps; i++) {				for (i = 0; i < delsamps; i++) {
+			ninit[i] -= average;						ninit[i] -= average;
+		}								}
+
+		squisher(squish);						squisher(squish);
+	}								}
+
+
+	void squisher(int squish)					void squisher(int squish)
+	{								{
+
+// charlie's original note:					// charlie's original note:
+/* Routine for use with 'strum' plucked string.  Called by ra	/* Routine for use with 'strum' plucked string.  Called by ra
+	Low- pass filters vales of string, squish times.  Com		Low- pass filters vales of string, squish times.  Com
+	for loss of level at fundamental, but not for overall		for loss of level at fundamental, but not for overall
+
+		int i, j, p1, p2;						int i, j, p1, p2;
+		double mult;							double mult;
+
+		p1 = (int)delsamps - 1;						p1 = (int)delsamps - 1;
+		p2 = (int)delsamps - 2;						p2 = (int)delsamps - 2;
+
+		mult = Math.abs(1.0/(2.0*Math.cos(2.0*Math.PI			mult = Math.abs(1.0/(2.0*Math.cos(2.0*Math.PI
+
+		for(j = 0; j < squish; j++)					for(j = 0; j < squish; j++)
+		{								{
+			for(i = 0; i < delsamps; i++)					for(i = 0; i < delsamps; i++)
+			{								{
+				ninit[i] = mult*(ninit[p2]+ni					ninit[i] = mult*(ninit[p2]+ni
+				p2 = p1;							p2 = p1;
+				p1 = i;								p1 = i;
+			}								}
+		}								}
+	}								}
+}								}
+/* VibDist -- the distortion/feedback Strum instrument		/* VibDist -- the distortion/feedback Strum instrument
+ *	with randomly-varying vibrato!  yay!  (for use with J	 *	with randomly-varying vibrato!  yay!  (for use with J
+ *								 *
+ *  based on Charlie Sullivan's version of the plucked-string	 *  based on Charlie Sullivan's version of the plucked-string
+ *      (from the RTcmix version, VSTART1() )			 *      (from the RTcmix version, VSTART1() )
+ *								 *
+ *  uses StrumSet.java to set the params			 *  uses StrumSet.java to set the params
+ *								 *
+ *              Brad Garton     12/2001				 *              Brad Garton     12/2001
+ */								 */
+
+package Brad;						      <
+							      <
+import java.awt.*;						import java.awt.*;
+import com.softsynth.jsyn.*;					import com.softsynth.jsyn.*;
+import com.softsynth.jsyn.circuits.*;				import com.softsynth.jsyn.circuits.*;
+
+							      |	class VibDist extends SynthCircuit
+public class VibDist extends SynthCircuit		      <
+{								{
+	SynthSample		vdstBurst;				SynthSample		vdstBurst;
+	short []		vdstBdata;				short []		vdstBdata;
+	SampleReader_16F1	vdstSamp;				SampleReader_16F1	vdstSamp;
+	InterpolatingDelayUnit	vdstDelay;				InterpolatingDelayUnit	vdstDelay;
+	AddUnit			vdstDelayin;				AddUnit			vdstDelayin;
+
+	StrumSet		vdstSet;				StrumSet		vdstSet;
+
+	InterpolatingDelayUnit	vdstDA0;				InterpolatingDelayUnit	vdstDA0;
+	InterpolatingDelayUnit	vdstDA1;				InterpolatingDelayUnit	vdstDA1;
+	InterpolatingDelayUnit	vdstDA2;				InterpolatingDelayUnit	vdstDA2;
+	InterpolatingDelayUnit	vdstDA3;				InterpolatingDelayUnit	vdstDA3;
+	SynthMixer		vdstDAmix;				SynthMixer		vdstDAmix;
+
+	Filter_HighShelf	vdstDCfilt;				Filter_HighShelf	vdstDCfilt;
+
+	SynthTable		distTable;				SynthTable		distTable;
+	MultiplyUnit		vdstDistin;				MultiplyUnit		vdstDistin;
+	WaveShaper		vdstDist;				WaveShaper		vdstDist;
+	double []		distTdata = new double[11];		double []		distTdata = new double[11];
+
+	InterpolatingDelayUnit	vdstFBdelay;				InterpolatingDelayUnit	vdstFBdelay;
+	MultiplyUnit		vdstFBgain;				MultiplyUnit		vdstFBgain;
+	AddUnit			vdstFBadd;				AddUnit			vdstFBadd;
+
+	SineOscillator		vibOsc;					SineOscillator		vibOsc;
+	AddUnit			vibAdd;					AddUnit			vibAdd;
+	RedNoise		vibChange;				RedNoise		vibChange;
+	AddUnit			vibChadd;				AddUnit			vibChadd;
+
+	public VibDist()						public VibDist()
+	{								{
+		int i;								int i;
+
+		vdstSet = new StrumSet();					vdstSet = new StrumSet();
+
+		vdstSamp = new SampleReader_16F1();				vdstSamp = new SampleReader_16F1();
+		add(vdstSamp);							add(vdstSamp);
+
+		vdstDelay = new InterpolatingDelayUnit(0.1);			vdstDelay = new InterpolatingDelayUnit(0.1);
+		add(vdstDelay);							add(vdstDelay);
+		vdstDelayin = new AddUnit();					vdstDelayin = new AddUnit();
+		add(vdstDelayin);						add(vdstDelayin);
+
+		// pluck filter							// pluck filter
+		vdstDA0 = new InterpolatingDelayUnit(1.0/4410			vdstDA0 = new InterpolatingDelayUnit(1.0/4410
+		add(vdstDA0);							add(vdstDA0);
+		vdstDA1 = new InterpolatingDelayUnit(2.0/4410			vdstDA1 = new InterpolatingDelayUnit(2.0/4410
+		add(vdstDA1);							add(vdstDA1);
+		vdstDA2 = new InterpolatingDelayUnit(3.0/4410			vdstDA2 = new InterpolatingDelayUnit(3.0/4410
+		add(vdstDA2);							add(vdstDA2);
+		vdstDA3 = new InterpolatingDelayUnit(4.0/4410			vdstDA3 = new InterpolatingDelayUnit(4.0/4410
+		add(vdstDA3);							add(vdstDA3);
+		vdstDAmix = new SynthMixer(4, 1);				vdstDAmix = new SynthMixer(4, 1);
+		add(vdstDAmix);							add(vdstDAmix);
+
+		// filter out DC						// filter out DC
+		vdstDCfilt = new Filter_HighShelf();				vdstDCfilt = new Filter_HighShelf();
+		add(vdstDCfilt);						add(vdstDCfilt);
+
+		// feedback system						// feedback system
+		vdstFBdelay = new InterpolatingDelayUnit(0.1)			vdstFBdelay = new InterpolatingDelayUnit(0.1)
+		add(vdstFBdelay);						add(vdstFBdelay);
+		vdstFBgain = new MultiplyUnit();				vdstFBgain = new MultiplyUnit();
+		add(vdstFBgain);						add(vdstFBgain);
+		vdstFBadd = new AddUnit();					vdstFBadd = new AddUnit();
+		add(vdstFBadd);							add(vdstFBadd);
+
+		vdstSamp.output.connect(vdstFBadd.inputA);			vdstSamp.output.connect(vdstFBadd.inputA);
+		vdstDelayin.output.connect(vdstDelay.input);			vdstDelayin.output.connect(vdstDelay.input);
+
+		// pluck filter							// pluck filter
+		vdstDelay.output.connect(vdstDA0.input);			vdstDelay.output.connect(vdstDA0.input);
+		vdstDelay.output.connect(vdstDA1.input);			vdstDelay.output.connect(vdstDA1.input);
+		vdstDelay.output.connect(vdstDA2.input);			vdstDelay.output.connect(vdstDA2.input);
+		vdstDelay.output.connect(vdstDA3.input);			vdstDelay.output.connect(vdstDA3.input);
+		vdstDAmix.connectInput(0, vdstDA0.output, 0);			vdstDAmix.connectInput(0, vdstDA0.output, 0);
+		vdstDAmix.connectInput(1, vdstDA1.output, 0);			vdstDAmix.connectInput(1, vdstDA1.output, 0);
+		vdstDAmix.connectInput(2, vdstDA2.output, 0);			vdstDAmix.connectInput(2, vdstDA2.output, 0);
+		vdstDAmix.connectInput(3, vdstDA3.output, 0);			vdstDAmix.connectInput(3, vdstDA3.output, 0);
+		vdstDAmix.connectOutput(0, vdstDCfilt.input, 			vdstDAmix.connectOutput(0, vdstDCfilt.input, 
+
+		vdstDA0.delay.set(1.0/44100.0);					vdstDA0.delay.set(1.0/44100.0);
+		vdstDA1.delay.set(2.0/44100.0);					vdstDA1.delay.set(2.0/44100.0);
+		vdstDA2.delay.set(3.0/44100.0);					vdstDA2.delay.set(3.0/44100.0);
+		vdstDA3.delay.set(4.0/44100.0);					vdstDA3.delay.set(4.0/44100.0);
+
+
+		// filter out DC -- this isn't really being d			// filter out DC -- this isn't really being d
+		vdstDCfilt.frequency.set(20.0);					vdstDCfilt.frequency.set(20.0);
+		vdstDCfilt.gain.set(1.0);					vdstDCfilt.gain.set(1.0);
+		vdstDCfilt.slope.set(1.0);					vdstDCfilt.slope.set(1.0);
+		vdstDCfilt.output.connect(vdstDelayin.inputB)			vdstDCfilt.output.connect(vdstDelayin.inputB)
+
+
+		// distortion -- see note in Dist.java				// distortion -- see note in Dist.java
+		for (i = 0; i < 3; i++)						for (i = 0; i < 3; i++)
+		{								{
+			distTdata[i] = 0.8;						distTdata[i] = 0.8;
+		}								}
+		distTdata[3] = 0.6;						distTdata[3] = 0.6;
+		distTdata[4] = 0.2;						distTdata[4] = 0.2;
+		distTdata[5] = 0.0;						distTdata[5] = 0.0;
+		distTdata[6] = -0.2;						distTdata[6] = -0.2;
+		distTdata[7] = -0.6;						distTdata[7] = -0.6;
+		for (i = 8; i < 11; i++)					for (i = 8; i < 11; i++)
+		{								{
+			distTdata[i] =- 0.8;						distTdata[i] =- 0.8;
+		}								}
+
+		distTable = new SynthTable(distTdata);				distTable = new SynthTable(distTdata);
+		vdstDist = new WaveShaper();					vdstDist = new WaveShaper();
+		add(vdstDist);							add(vdstDist);
+		vdstDist.tablePort.setTable(distTable);				vdstDist.tablePort.setTable(distTable);
+		vdstDistin = new MultiplyUnit();				vdstDistin = new MultiplyUnit();
+		add(vdstDistin);						add(vdstDistin);
+
+		vdstDelay.output.connect(vdstDistin.inputA);			vdstDelay.output.connect(vdstDistin.inputA);
+		vdstDistin.output.connect(vdstDist.input);			vdstDistin.output.connect(vdstDist.input);
+
+		// feedback system						// feedback system
+		vdstDist.output.connect(vdstFBgain.inputA);			vdstDist.output.connect(vdstFBgain.inputA);
+		vdstFBgain.output.connect(vdstFBdelay.input);			vdstFBgain.output.connect(vdstFBdelay.input);
+		vdstFBdelay.output.connect(vdstFBadd.inputB);			vdstFBdelay.output.connect(vdstFBadd.inputB);
+		vdstFBadd.output.connect(vdstDelayin.inputA);			vdstFBadd.output.connect(vdstDelayin.inputA);
+
+		// vibrato							// vibrato
+		vibOsc = new SineOscillator();					vibOsc = new SineOscillator();
+		add(vibOsc);							add(vibOsc);
+		vibAdd = new AddUnit();						vibAdd = new AddUnit();
+		add(vibAdd);							add(vibAdd);
+		vibChange = new RedNoise();					vibChange = new RedNoise();
+		add(vibChange);							add(vibChange);
+		vibChadd = new AddUnit();					vibChadd = new AddUnit();
+		add(vibChadd);							add(vibChadd);
+
+		vibChange.output.connect(vibChadd.inputA);			vibChange.output.connect(vibChadd.inputA);
+		vibChadd.output.connect(vibOsc.frequency);			vibChadd.output.connect(vibOsc.frequency);
+		vibOsc.output.connect(vibAdd.inputA);				vibOsc.output.connect(vibAdd.inputA);
+		vibAdd.output.connect(vdstDelay.delay);				vibAdd.output.connect(vdstDelay.delay);
+									
+		output = vdstDist.output;					output = vdstDist.output;
+	}								}
+
+	public void go(int start, double freq, double tf0, do		public void go(int start, double freq, double tf0, do
+	{								{
+/*								/*
+ *  start == starting time in JSyn ticks			 *  start == starting time in JSyn ticks
+ *  freq == frequency in Hz					 *  freq == frequency in Hz
+ *  tf0 == decay time of fundamental				 *  tf0 == decay time of fundamental
+ *  tfNy == decay time at Nyquist				 *  tfNy == decay time at Nyquist
+ *  amp == amp (32768 max)					 *  amp == amp (32768 max)
+ *  squish == lowpass filter of original noise burst 0-sharp,	 *  squish == lowpass filter of original noise burst 0-sharp,
+ *  dgain == distortion gain (1.0 gives almost no dist, 11.0 	 *  dgain == distortion gain (1.0 gives almost no dist, 11.0 
+ *  fbfreq == sets the delay length of the feedback loop (cal	 *  fbfreq == sets the delay length of the feedback loop (cal
+ *  fbgain == feedback multiplier -- low values work well (0.	 *  fbgain == feedback multiplier -- low values work well (0.
+ *      high values force quick distortion sound		 *      high values force quick distortion sound
+ *  vibamt == mulitplier of basic freq to give you the vibrat	 *  vibamt == mulitplier of basic freq to give you the vibrat
+ *	e.g. 0.01 will give you 1 1% variation around the cen	 *	e.g. 0.01 will give you 1 1% variation around the cen
+ *  vfreqlo == low vibrato rate					 *  vfreqlo == low vibrato rate
+ *  vfreqhi == hi vibrato rate					 *  vfreqhi == hi vibrato rate
+ *								 *
+*/								*/
+
+		int i, dlength;							int i, dlength;
+
+		vdstSet.sset(freq, tf0, tfNy);					vdstSet.sset(freq, tf0, tfNy);
+		vdstSet.randfill(amp, squish);					vdstSet.randfill(amp, squish);
+		dlength = (int)vdstSet.delsamps;				dlength = (int)vdstSet.delsamps;
+
+		vibChadd.inputB.set(start, (vfreqlo+vfreqhi)/			vibChadd.inputB.set(start, (vfreqlo+vfreqhi)/
+		vibChange.frequency.set(start, vfreqlo);			vibChange.frequency.set(start, vfreqlo);
+		vibChange.amplitude.set(start, (vfreqhi-vfreq			vibChange.amplitude.set(start, (vfreqhi-vfreq
+		vibOsc.amplitude.set(start, 1.0/freq - 1.0/(f			vibOsc.amplitude.set(start, 1.0/freq - 1.0/(f
+		vibAdd.inputB.set(start, (double)(dlength-17)			vibAdd.inputB.set(start, (double)(dlength-17)
+
+		vdstBurst = new SynthSample(dlength);				vdstBurst = new SynthSample(dlength);
+		vdstBdata = new short[dlength];					vdstBdata = new short[dlength];
+		for (i = 0; i < dlength; i++)					for (i = 0; i < dlength; i++)
+		{								{
+			vdstBdata[i] = (short)vdstSet.ninit[i				vdstBdata[i] = (short)vdstSet.ninit[i
+		}								}
+		vdstBurst.write(vdstBdata);					vdstBurst.write(vdstBdata);
+		vdstBdata = null;						vdstBdata = null;
+
+		vdstDAmix.setGain(start, 0, 0, vdstSet.a0);			vdstDAmix.setGain(start, 0, 0, vdstSet.a0);
+		vdstDAmix.setGain(start, 1, 0, vdstSet.a1);			vdstDAmix.setGain(start, 1, 0, vdstSet.a1);
+		vdstDAmix.setGain(start, 2, 0, vdstSet.a2);			vdstDAmix.setGain(start, 2, 0, vdstSet.a2);
+		vdstDAmix.setGain(start, 3, 0, vdstSet.a3);			vdstDAmix.setGain(start, 3, 0, vdstSet.a3);
+		vdstDCfilt.amplitude.set(start, vdstSet.dca0)			vdstDCfilt.amplitude.set(start, vdstSet.dca0)
+
+		vdstDistin.inputB.set(start, dgain/amp);			vdstDistin.inputB.set(start, dgain/amp);
+		vdstDist.amplitude.set(start, amp);				vdstDist.amplitude.set(start, amp);
+
+		vdstFBdelay.delay.set(start,fbfreq/44100.0);			vdstFBdelay.delay.set(start,fbfreq/44100.0);
+		vdstFBgain.inputB.set(start,fbgain);				vdstFBgain.inputB.set(start,fbgain);
+
+		vdstSamp.samplePort.queue(start, vdstBurst, 0			vdstSamp.samplePort.queue(start, vdstBurst, 0
+	}								}
+
+	public void alter(int start, double freq, double tf0,		public void alter(int start, double freq, double tf0,
+	{								{
+// alter params without replucking				// alter params without replucking
+// see listing of params under the go() method			// see listing of params under the go() method
+
+		int i, dlength;							int i, dlength;
+
+		vdstSet.sset(freq, tf0, tfNy);					vdstSet.sset(freq, tf0, tfNy);
+		dlength = (int)vdstSet.delsamps;				dlength = (int)vdstSet.delsamps;
+
+		vibChadd.inputB.set(start, (vfreqlo+vfreqhi)/			vibChadd.inputB.set(start, (vfreqlo+vfreqhi)/
+		vibChange.frequency.set(start, vfreqlo);			vibChange.frequency.set(start, vfreqlo);
+		vibChange.amplitude.set(start, (vfreqhi-vfreq			vibChange.amplitude.set(start, (vfreqhi-vfreq
+		vibOsc.amplitude.set(start, 1.0/freq - 1.0/(f			vibOsc.amplitude.set(start, 1.0/freq - 1.0/(f
+		vibAdd.inputB.set(start, (double)(dlength-17)			vibAdd.inputB.set(start, (double)(dlength-17)
+
+		vdstDAmix.setGain(start, 0, 0, vdstSet.a0);			vdstDAmix.setGain(start, 0, 0, vdstSet.a0);
+		vdstDAmix.setGain(start, 1, 0, vdstSet.a1);			vdstDAmix.setGain(start, 1, 0, vdstSet.a1);
+		vdstDAmix.setGain(start, 2, 0, vdstSet.a2);			vdstDAmix.setGain(start, 2, 0, vdstSet.a2);
+		vdstDAmix.setGain(start, 3, 0, vdstSet.a3);			vdstDAmix.setGain(start, 3, 0, vdstSet.a3);
+		vdstDCfilt.amplitude.set(start, vdstSet.dca0)			vdstDCfilt.amplitude.set(start, vdstSet.dca0)
+
+		vdstDistin.inputB.set(start, dgain/amp);			vdstDistin.inputB.set(start, dgain/amp);
+		vdstDist.amplitude.set(start, amp);				vdstDist.amplitude.set(start, amp);
+
+		vdstFBdelay.delay.set(start, 1.0/fbfreq);			vdstFBdelay.delay.set(start, 1.0/fbfreq);
+		vdstFBgain.inputB.set(start, fbgain);				vdstFBgain.inputB.set(start, fbgain);
+	}								}
+}								}

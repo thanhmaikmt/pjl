@@ -1,0 +1,12 @@
+#BlueJ class context
+comment0.target=class\ GeneIO
+comment0.text=\nWrite\ a\ description\ of\ class\ GeneIO\ here.\n\n@author\ DR\ pJ\ \n@version\ 1\n\n
+comment1.params=
+comment1.target=File\ selectFile()
+comment2.params=
+comment2.target=GeneWriter\ getPerformanceWriter()
+comment2.text=\nConstructor\ for\ objects\ of\ class\ GeneIO\n\n
+comment3.target=base
+comment4.params=
+comment4.target=GeneReader\ getPerformanceReader()
+numComments=5
