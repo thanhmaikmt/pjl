@@ -15,7 +15,7 @@ srate=44100
 s = Server(sr=srate).boot()
 
 # change this path to link to an existing sound on the computer
-son = '../snds/baseballmajeur_m.aif'
+son = 'snds/baseballmajeur_m.aif'
 info = sndinfo(son)
 a = SfPlayer(son, mul=.25).mix(1).out()
 
@@ -29,8 +29,8 @@ fin = FFT(a[0]*100, overlaps=1)
 mag = Sqrt(fin["real"]*fin["real"] + fin["imag"]*fin["imag"])
 #rec = MatrixRec(mag*2-1, m, 0).play()
 rec = MatrixRec(mag, m, 0).play()
-#metro= Metro(float(size)/srate)
-#func=TrigFunc(metro,foo)
+metro= Metro(float(size)/srate)
+func=TrigFunc(metro,foo)
 metro.play()
 
 s.gui(locals())

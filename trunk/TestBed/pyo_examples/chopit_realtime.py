@@ -6,7 +6,7 @@ s = Server(sr=rate, nchnls=8, buffersize=512, duplex=1).boot()
 
 MIN_THRESH = -40   # Minimum threshold in dB (signal must fall below this
 
-input = Input([6])
+input = Input(0)
 
 ABSTIME1 = 0
 
