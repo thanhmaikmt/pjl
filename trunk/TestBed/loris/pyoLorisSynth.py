@@ -1,19 +1,25 @@
+import loris, os, time
 from pyo import *
-s = Server().boot()
-
-
 import math
-    
-    
+
+s = Server().boot()
     
 class PartialOsc:
     
+    """
+    Oscillator for a single Partial
     
-    def __init__(self,part,sr,size):
+    part is a loris Partial list.
+    
+    output(t)=(ampTone+ampNoise*LPF(whiteNoise)))*sin(freq*2*pi*t+phase)
+ 
+    """
+    
+    def __init__(self,part,sr,size,fade):
             
         init_phase=part.initialPhase()
         
-        # pyo want phase as a number between 0 - 1
+        # pyo wants phase as a number between 0 - 1
         init_phase=init_phase/math.pi/2.0
         
         if init_phase < 0.0:
@@ -22,13 +28,18 @@ class PartialOsc:
         assert init_phase >= 0.0 and init_phase < 1.0
             
     
+        # make 3 envelopes to control the 
+        #   amplitude of the tone
+        #     "       of the noise
+        #    frequency of the oscillator
+        #  We add points before and after the end of the list because the list does not contain zeros at these points
+        #  
         ampNoiseList=[(0,0)]
         ampToneList=[(0,0)]
         freqList=[(0,0)]
         
         cnt=0
-        fade=.001
-        
+
         for bp in part:
             t_sec=bp.time()
         
@@ -37,7 +48,7 @@ class PartialOsc:
             bw=bp.bandwidth()
         
             if cnt == 0:
-                if t_sec < fade:
+                if t_sec > fade:
                     t=int((t_sec-fade)*sr)
                 else:
                     t=1
@@ -61,7 +72,8 @@ class PartialOsc:
         ampNoiseList.append((t,0))
         freqList.append((t,f))
         
-        assert t < size
+        if t >=size :
+            print t , size
         
         dur=float(size)/sr
 
@@ -74,14 +86,20 @@ class PartialOsc:
         self.ampNoiseTab=LinTable(ampNoiseList,size)
         self.freqTab=LinTable(freqList,size)
         
+        
         self.ampTone=Osc(table=self.ampToneTab,freq=1.0/dur)
         self.ampNoise=Osc(table=self.ampNoiseTab,freq=1.0/dur)
         self.freq=Osc(table=self.freqTab,freq=1.0/dur)
         
         self.white = Noise() 
+        
+        # low pass filter the noise 
+        # loris uses 4 forward and back coeffecients but pyo only has a bi quad.
+        # TODO implement general digital filter in pyo
         self.mod=Biquad(self.white, freq=500, q=1, type=0, mul=self.ampNoise, add=self.ampTone)
                                 
-        self.osc=Sine(freq=self.freq,mul=self.mod,phase=(init_phase/math.pi/2.0))
+        
+        self.osc=Sine(freq=self.freq,mul=self.mod,phase=init_phase)
         
         
     def out(self):
@@ -90,72 +108,53 @@ class PartialOsc:
 
 
 class LorisSynth:
+    """
+    A set of OScillators one for each Partial.
     
-    def __init__(self,parts,sr,size):
+    """
+    
+    
+    def __init__(self,parts,sr,size,fade):
         
         self.oscs=[]
         
         for part in parts:
-            osc=PartialOsc(part,sr,size)
+            osc=PartialOsc(part,sr,size,fade)
             self.oscs.append(osc)
 
-        
+
     def out(self):
         for osc in self.oscs:
             osc.out()
             
             
+parts=loris.importSpc("flute.spc")
 
 
-
-import loris, os, time
-
-print ' Using Loris version', loris.version()
-
-
-
-
-def analysis(file,resolutionHz,freqDrift,ampFloor,fund):
-
-    a = loris.Analyzer( resolutionHz)
-    a.setFreqDrift(freqDrift  )
-    a.setAmpFloor( ampFloor )
+if True:
+    cnt=0
+    for part in parts:
+        #print "*****************************************"
+        #it=part.iterator()
+        #while not it.atEnd():
+        #    bp=it.next()
+        #    print "t:",bp.time(), " a:",bp.amplitude()," bw:",bp.bandwidth()," f:",bp.frequency()," p:",bp.phase()
+        cnt+=1
+    print " There are ",cnt," Partials "
     
-    
-    path = os.getcwd()
-    cf = loris.AiffFile( file )
-    v = cf.samples()
-    samplerate = cf.sampleRate()
-    size=len(v)
-    
-    clar = a.analyze( v, samplerate )
-    
-    loris.channelize( clar, fund )
-    loris.distill( clar )
-    return clar,size,samplerate
-    
-  
-def analysis(file,resolutionHz,freqDrift,ampFloor,fund):
-  
-    a = loris.Analyzer( 270 )       # reconfigure Analyzer
-    a.setFreqDrift( 30 )
-    v = loris.AiffFile( os.path.join(path, 'flute.aiff') ).samples()
-    flut = a.analyze( v, samplerate )
-    
-    # loris.channelize( flut, loris.createFreqReference( flut, 291*.8, 291*1.2, 50 ), 1 )
-    refenv = a.fundamentalEnv()
-    loris.channelize( flut, refenv, 1 )
-    loris.distill( flut )
-  
+t=0
+for part in parts:
+   for bp in part:
+       t=max(t,bp.time()) 
+       
+       
 
+print " t max = ",t
+fade=0.001
+samplerate=44100
+size=int(samplerate*(t+2*fade))
 
-    
-path = os.getcwd()
-file = os.path.join(path, 'clarinet.aiff')    
-clar,size,samplerate=analysis(file,390,30,-80,415)
-
-
-synth=LorisSynth(clar,samplerate,size)
+synth=LorisSynth(parts,samplerate,size,fade)
 synth.out()
 
 s.gui(locals())
