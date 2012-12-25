@@ -142,6 +142,8 @@ refenv = a.fundamentalEnv()
 loris.channelize( flut, refenv, 1 )
 loris.distill( flut )
 
+
+
 # check flute synthesis:
 loris.exportAiff( 'flutOK.pytest.aiff', loris.synthesize( flut, samplerate ), samplerate, 16 )
 
