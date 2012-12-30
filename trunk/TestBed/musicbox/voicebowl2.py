@@ -6,24 +6,13 @@ s.start()
 
 
 #t.graph()
+noise=Noise()
+lpf=Biquad(noise, freq=100, q=20, type=2)
 
-src=Input(0)
+noise.ctrl()
+lpf.ctrl()
 
-src.out()
-
-#rnd = Randi(min=.97, max=1.03, freq=[.143,.2,.165,.111])
-
-
-
-#src.out()
-
-
-
-
-#rnd2 = Randi(min=.5, max=1.0, freq=[.13,.22,.155,.171])
-#det = Sig(0.75, mul=rnd2)
-#rnd3 = Randi(min=.95, max=1.05, freq=[.145,.2002,.1055,.071])
-fx = AllpassWG([src,src], freq=[100,210,500], feed=1., detune=0.5, mul=.25)
+fx = AllpassWG(lpf, freq=1, feed=.999999, detune=0.0, mul=.25)
 
 fx.out()
 
