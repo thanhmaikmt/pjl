@@ -19,6 +19,7 @@ vert=[(0,0),(1,0),(1,1),(0,1)]
 # arcs for each vertex
 seglim=[(270,90),(180,90),(90,90),(0,90)]
 
+
 # edge  maps  a side to its local vertices
 edge={0:(0,1),1:(1,2),2:(2,3),3:(3,0)}
 
