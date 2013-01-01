@@ -12,8 +12,6 @@ def decodeOutlet(string,ptr):
 
 
 def decode_goal(string,ptr,posC,w):
-    
-            pos=Pos(posC,w.width)
         
             ptr+=1
             val1=intFromChar(string[ptr])
@@ -57,7 +55,7 @@ def decode_goal(string,ptr,posC,w):
                 cnt+=1
               
             #print piece[c],":", "sides=",sideList,"colours=",ncolors,colourList
-            goal=Goal(pos,sideList,colourList)
+            goal=Goal(w.cells[posC],sideList,colourList)
             w.goals.append(goal)
             ptr  += 1
             posC += 1
@@ -66,8 +64,6 @@ def decode_goal(string,ptr,posC,w):
 
 
 def decode_outlet(string,ptr,posC,w):
-    
-            pos=Pos(posC,w.width)
         
             
             colourList=[]
@@ -99,7 +95,7 @@ def decode_outlet(string,ptr,posC,w):
                 
             #print sideInt
             #print piece[c],":", "sides=",sides[sideInt],"colours=",colourList
-            o=OutLet(pos,sideInt,colourList,w)
+            o=OutLet(w.cells[posC],sideInt,colourList)
             w.outlets.append(o)
             ptr  += 1
             posC += 1
@@ -151,7 +147,7 @@ def decoder(string):
         
         if solution:
             print "track(",pos.x,",",pos.y,")=",c
-            trk=Track(pos,c,w)
+            trk=Track(w.cells[posC],c)
             w.tracks.append(trk)
             ptr+=1
             posC+=1
@@ -165,7 +161,7 @@ def decoder(string):
             ptr+=1
             side=intFromChar(string[ptr])
             ptr+=1
-            split=Splitter(pos,side)
+            split=Splitter(w.cells[posC],side)
             w.splitters.append(split)
             posC+=1
           
@@ -185,7 +181,7 @@ def decoder(string):
             
             sideA=sval/7
             sideB=sval%7
-            p=Painter(pos,sideA,sideB,cval)
+            p=Painter(w.cells[posC],sideA,sideB,cval)
             w.painters.append(p)
             ptr  += 1
             posC += 1
