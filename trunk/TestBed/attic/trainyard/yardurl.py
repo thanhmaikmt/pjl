@@ -4,12 +4,7 @@ from world import *
 from defs import *
 
 
-        
-   
-def decodeOutlet(string,ptr):
-        
-    return ptr
-
+ 
 
 def decode_goal(string,ptr,posC,w):
         
@@ -56,7 +51,7 @@ def decode_goal(string,ptr,posC,w):
               
             #print piece[c],":", "sides=",sideList,"colours=",ncolors,colourList
             goal=Goal(w.cells[posC],sideList,colourList)
-            w.goals.append(goal)
+            #w.goals.append(goal)
             ptr  += 1
             posC += 1
             return ptr,posC
@@ -96,7 +91,7 @@ def decode_outlet(string,ptr,posC,w):
             #print sideInt
             #print piece[c],":", "sides=",sides[sideInt],"colours=",colourList
             o=OutLet(w.cells[posC],sideInt,colourList)
-            w.outlets.append(o)
+            
             ptr  += 1
             posC += 1
             return ptr,posC
@@ -112,6 +107,8 @@ def decoder(string):
     print "Size is:",width,height
     
     w=World(width,height)
+    
+    gene=w.blank_gene()
     
     ptr=2
     
@@ -139,16 +136,17 @@ def decoder(string):
             if inc < 10 and inc > 0:
                 posC += inc
                 ptr+=1
-                print posC
+                #print posC
                 continue
 
         pos=Pos(posC,w.width)
         
         
         if solution:
-            print "track(",pos.x,",",pos.y,")=",c
-            trk=Track(w.cells[posC],c)
-            w.tracks.append(trk)
+            #print "track(",pos.x,",",pos.y,")=",c
+            #trk=Track(w.cells[posC],segments_from_type[c],c)
+            gene.str[posC]=char_from_id.index(c)
+            #w.tracks.append(trk)
             ptr+=1
             posC+=1
             continue
@@ -162,7 +160,7 @@ def decoder(string):
             side=intFromChar(string[ptr])
             ptr+=1
             split=Splitter(w.cells[posC],side)
-            w.splitters.append(split)
+            #w.splitters.append(split)
             posC+=1
           
             
@@ -182,18 +180,21 @@ def decoder(string):
             sideA=sval/7
             sideB=sval%7
             p=Painter(w.cells[posC],sideA,sideB,cval)
-            w.painters.append(p)
+            
+            #w.painters.append(p)
             ptr  += 1
             posC += 1
 
         elif c=='R':
-            print " Rock"
-            r=Rock(pos)
-            w.rocks.append(r)
+            #print " Rock"
+            r=Rock(w.cells[posC])
             ptr+=1
             posC += 1
-            
-    return w
+      
+    print gene.str
+    
+          
+    return w,gene
         
         
 def worldFromUrl(url):
