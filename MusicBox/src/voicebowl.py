@@ -1,7 +1,19 @@
 from pyo import *
+
+pm_list_devices()
+
+num=5
+# num = input("Enter your Midi interface number : ")
+
+
+
 s = Server().boot()
 s.start()
+s.setMidiInputDevice(num)
+
 t = CurveTable([(0,0.0),(512,0.97),(1024,-0.94),(1536,0.0),(8192,0.0000)])
+t.graph()
+
 src1=Input(6)
 #src1.out()
 
