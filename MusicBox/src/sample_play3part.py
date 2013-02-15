@@ -7,16 +7,18 @@ from pyo import *
 pm_list_devices()
 
 s = Server()
-idev=5
+idev=3
 s.setMidiInputDevice(idev)
 s.boot()
 
 amps=[]
-ctrlnumbs=[107,108,109,110]
+#ctrlnumbs=[107,108,109,110]  #   novation remote
+ctrlnumbs=[74,71,81,91]  #   novation remote
 
 for c in ctrlnumbs:
-    amps.append(Midictl(c))
-
+    ctrl=Midictl(c)
+    amps.append(ctrl)
+    
 
 loops=(("part1",0,.5),("part1",4.66,0.3),("part1",9.32,.07))
 
@@ -61,15 +63,15 @@ for loop,amp in zip(loops,amps):
     tables.append(tab)
     dur=tab.getDur()
     freq = tab.getRate()
-    osc = Osc(tab, freq=1.0 / dur)   #,mul=amp)
+    osc = Osc(tab, freq=1.0 / dur,mul=amp).play(delay=loop[1])
     oscs.append(osc)#
     
     if doPan:
         pp=SPan(osc)  # ,pan=loop[2])
         pans.append(pp)
-        pp.out(delay=loop[1])
+        pp.out()
     else:
-        osc.out(delay=loop[1])
+        osc.out()
     cnt+=1
 
 s.gui(locals())

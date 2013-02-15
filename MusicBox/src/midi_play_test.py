@@ -8,8 +8,9 @@ s.setMidiInputDevice(3)
 
 s.boot()   
 
-notes = Notein(poly=4,scale=1)
+notes = Notein(poly=4,scale=1,first=60, last=72)
 
+pp=Print(notes['pitch'])
 
 trigs=notes['velocity']
 freqs=notes['pitch']

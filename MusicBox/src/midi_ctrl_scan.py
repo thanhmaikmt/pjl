@@ -6,7 +6,7 @@ from pyo import *
 import time
 
 pm_list_devices()
-num=5
+num=3                          # 3 work    5 home
 # num = input("Enter your Midi interface number : ")
 
 s = Server(duplex=0)
