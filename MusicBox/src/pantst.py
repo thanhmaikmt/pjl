@@ -6,7 +6,7 @@ from pyo import *
 s = Server()
 s.boot()
 
-loops=(("part1",0),("impro1",0.5))
+loops=(("part1",0),("impro1",4.66))
 
 samps=[]
 tables=[]
@@ -24,15 +24,13 @@ for loop in loops:
     tables.append(tab)
     dur=tab.getDur()
     osc = Osc(tab, freq=1.0 / dur)
+    osc.play(delay=loop[1])
+
     oscs.append(osc)
         
-    if doPan:farnell
-    
-        pp=SPan(osc)
-        pans.append(pp)
-        pp.out(delay=loop[1])
-    else:
-        osc.out(delay=loop[1])
-
+    pp=SPan(osc)
+    pans.append(pp)
+    pp.out()
+  
 
 s.gui(locals())

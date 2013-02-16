@@ -7,7 +7,7 @@ from pyo import *
 pm_list_devices()
 
 s = Server()
-idev=3
+idev=5
 s.setMidiInputDevice(idev)
 s.boot()
 
@@ -53,7 +53,6 @@ for name in oneshot:
     envs.append(env)
     cnt+=1
 
-doPan=True
 
 for loop,amp in zip(loops,amps):
     infile=os.path.join(path, loop[0]+'.wav')
@@ -66,12 +65,8 @@ for loop,amp in zip(loops,amps):
     osc = Osc(tab, freq=1.0 / dur,mul=amp).play(delay=loop[1])
     oscs.append(osc)#
     
-    if doPan:
-        pp=SPan(osc)  # ,pan=loop[2])
-        pans.append(pp)
-        pp.out()
-    else:
-        osc.out()
-    cnt+=1
-
+    pp=SPan(osc,pan=loop[2],mul=amp)
+    pans.append(pp)
+    pp.out()
+   
 s.gui(locals())
