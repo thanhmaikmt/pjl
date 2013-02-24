@@ -7,13 +7,13 @@ from pyo import *
 pm_list_devices()
 
 s = Server()
-idev=5
+idev=9
 s.setMidiInputDevice(idev)
 s.boot()
 
 amps=[]
-#ctrlnumbs=[107,108,109,110]  #   novation remote
-ctrlnumbs=[74,71,81,91]  #   novation remote
+ctrlnumbs=[107,108,109,110]  #   novation remote
+#ctrlnumbs=[74,71,81,91]  #   novation remote
 
 for c in ctrlnumbs:
     ctrl=Midictl(c)
