@@ -25,7 +25,7 @@ def _print_device_info():
                (i, interf, name, opened, in_out))
         
 
-casio_i = 3 ; casio_o = 2;
+midi_i = 3 ; midi_o = 8;
 
 pygame.init()
 
@@ -39,13 +39,13 @@ pygame.midi.init()
 
 _print_device_info()
 
-midi_in = pygame.midi.Input(casio_i)
+midi_in = pygame.midi.Input(midi_i)
 #window = pygame.display.set_mode((468, 60))
 
 
 instruments=[6,28,13]
 
-midi_out = pygame.midi.Output(casio_o, 0)
+midi_out = pygame.midi.Output(midi_o, 0)
 
 for i in range(len(instruments)):
     midi_out.set_instrument(instruments[i],i)
