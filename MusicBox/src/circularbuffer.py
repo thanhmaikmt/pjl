@@ -1,10 +1,10 @@
-import numpy
+import numpy as np
 
 
 class CircularBuffer():
     def __init__(self , n , dtype = 'f'):
       
-        self.array = numpy.zeros(n*2 , dtype = dtype)
+        self.array = np.zeros(n*2 , dtype = dtype)
         self.tail=n
         self.N=n
         self.cnt=0
@@ -31,8 +31,8 @@ class CircularBuffer():
     def get_head(self):
         return self.array[self.tail]
         
-    def getWindow(self):
-        return self.array[self.tail-n:self.tail]
+    def get_window(self):
+        return self.array[self.tail-self.N:self.tail]
 
     def get_count(self):
         return self.cnt 
