@@ -1,5 +1,30 @@
 #!/usr/bin/env python
 # encoding: utf-8
+#
+# showing how pipes can be used to run a beat analysis thread
+
+"""
+
+ Fronm the client
+
+ self.proc=subprocess.Popen(["python -i beatserver.py"], shell=True,
+                                       stdin=subprocess.PIPE,
+                                      stdout=subprocess.PIPE)
+            
+            
+#            ,
+#                                       stderr=subprocess.STDOUT,
+#                                       stdout=        self.pipe.subprocess.PIPE)
+            
+            self.pipe   = self.proc.stdin
+            self.stdout = self.proc.stdout
+            
+        
+        tt = time stamp
+        
+        self.pipe.write("stomper.add_event("+str(tt)+",1.0)")    
+"""
+
 
 import numpy as np
 import time
@@ -75,6 +100,8 @@ buf=circularbuffer.CircularBuffer(n)
 stomper= Stomper(buf,dt)
 analysis=Analysis(stomper)
 
+
+## --- test code 
 if False:
     tt=0.0
     while True:
