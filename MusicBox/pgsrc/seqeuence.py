@@ -1,6 +1,6 @@
 
 
-class Seqeuncer:
+class Sequencer:
     
     def __init__(self):
         self.sequences=[]
