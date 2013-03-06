@@ -28,57 +28,89 @@ def _print_device_info():
  
 class PgMidi(threading.Thread):
         
-    def __init__(self,midi_in=1,midi_out=0):
+    def __init__(self):
         pygame.init()
     
     
-        pygame.fastevent.init()
-        event_get = pygame.fastevent.get
-        event_post = pygame.fastevent.post
+        #pygame.fastevent.init()
+        #event_get = pygame.fastevent.get
+        #event_post = pygame.fastevent.post
         
         pygame.midi.init()
     
-    
         _print_device_info()
-        
-        self.midi_in = pygame.midi.Input(midi_i)
+        threading.Thread.__init__(self);
+    
+    def set_midi_in(self,midi_in):    
+        self.midi_in = pygame.midi.Input(midi_in)
     #window = pygame.display.set_mode((468, 60))
     
-    
+    def set_midi_out(self,midi_out):    
+
         instruments=[6,28,13]
     
-        self.midi_out = pygame.midi.Output(midi_o, 0)
+        self.midi_out = pygame.midi.Output(midi_out, 0)
     
         for i in range(len(instruments)):
-            self.midi_out.set_instrument(instruments[i],i)
+            self.midi_out.set_instrument(instruments[i],i) 
 
-        threading.Thread.__init__(self);
+
 
     def run(self):         
         self.running=True
+        
         while self.running:       
             if self.midi_in.poll():
                 midi_events = self.midi_in.read(10)
-            
-                for x in midi_events:
-                        print (x)
-            
+                
+                print (midi_events)
+                
+                if not self.running:
+                    break
                 self.midi_out.write(midi_events)
-                time.sleep(0.0001) 
+                if not self.running:
+                    break
+               
+            else:
+                time.sleep(0.001)
+                 
+        print " quitting pgmidi deamon"
             
-    def stop(self):
-        self.runningg=False
+    def halt(self):
+        self.running=False 
+   
+        print " Halt 1"
+        self.join()
+        print " halt 2"
+         
+    #window = pygame.display.set_mode((468, 60))
+    
+        evts=[[[0b10110000,120,0],0]]
+
+        self.midi_out.write(evts)
+        print " halt 3"
+     
         del self.midi_in
         del self.midi_out
         
+        print " halt 4"
+     
         pygame.midi.quit()
+        print " halt 5"
+     
+        pygame.quit()
+        print " Halt 6"
+        
+        
         
         #
 if __name__ == "__main__":
     
-    midi_i = 3 ; midi_o = 8;
-    
     e=PgMidi()
+    e.set_midi_in(3)
+    e.set_midi_out(5)
     e.start()
+    time.sleep(4)
+    e.halt()
     
     
