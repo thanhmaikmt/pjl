@@ -88,11 +88,14 @@ class PyMidi(threading.Thread):
 if __name__ == "__main__":
     
     # test code
-    
+    #  create PyMidi to initialize misi system.
     mid=PyMidi()
+
     
+    # print devicess
     mid.print_device_info()
     
+    # define input and output channels
     # adjust these for hardware reported by above
     mid.set_midi_in(3)
     mid.set_midi_out(5)
@@ -105,18 +108,24 @@ if __name__ == "__main__":
     
         
     # simple handler to pass events to midi_out device
+    # define a hander for midi events
     def myhandler(evts):
-     
+        """
+        This version prints then forwards event to the midi out.
+        """
         for e in evts:
             e[0][0]+=9
                
         mid.midi_out.write(evts)
         print (evts)
      
+    # register the handler
     mid.set_callback(myhandler) 
        
     # start deamon
     mid.start()
+    
+    
     
     tt=raw_input("Hit cr to quit:")
     #wait a few secs then halt

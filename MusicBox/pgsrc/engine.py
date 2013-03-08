@@ -1,5 +1,5 @@
 #  Engine calls a call_back every tick
-#  Calls idle while it waits for the next tick
+#  yields using sleep to allow multithreading
 
 import time
 import threading
@@ -20,14 +20,14 @@ class Engine(threading.Thread):
         tick=0
     
         while self.running:
+            
+            # spin until next tick
             while tnow < tnext:
-                if self.idle != None:
-                    self.idle()
-                tnow=time.time()
-                
-            if self.call_back != None:
-                self.call_back(tick)
-                
+                # yeild to other threads
+                time.sleep(0.001) 
+                tnow=time.time()       
+            
+            self.call_back(tick)
             tnext+=self.dt
             tick+=1
             
