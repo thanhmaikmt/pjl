@@ -84,8 +84,9 @@ void establishContact() {
 
 import serial
 ser = serial.Serial()
-ser.port = "/dev/ttyACM0" # may be called something different
-ser.baudrate =921600  # may be different
+ser.port="/dev/tty.usbmodem1411"
+#ser.port = "/dev/ttyACM0" # may be called something different
+ser.baudrate =9600  # may be different
 ser.open()
 if ser.isOpen():
     while True:

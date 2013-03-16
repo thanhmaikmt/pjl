@@ -11,9 +11,11 @@ class PyMidi(threading.Thread):
                 # register tidy up function to be called at exit.
     
         threading.Thread.__init__(self);
-        
+        #atexit.register(self.halt)
         # defualt handler prints midi evts
         self.handler=self.default_handler
+        self.midi_in = None
+        self.midi_out = None
         
     def print_device_info(self):
         for i in range( midi.get_count()):
@@ -67,15 +69,19 @@ class PyMidi(threading.Thread):
         self.running=False      # flag deamon to halt.
         self.join()             # wait for thread to halt
         print  "Halting 2"
-     
+        self.cleanup()
+        
+    def cleanup(self):
         # send all note off event to avoid hanging.
         
         evts=[[[0b10110000,120,0],0]]
         self.midi_out.write(evts)
      
         # clean up
-        del self.midi_in
-        del self.midi_out
+        if self.midi_in != None:
+            del self.midi_in
+        if self.midi_out != None:
+            del self.midi_out
      
         print  "Halting 3"
      
