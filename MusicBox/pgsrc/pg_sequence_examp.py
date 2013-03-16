@@ -1,6 +1,6 @@
-import engine as engine
+import pygame.midi as pymidi
 import time
-import pymidi
+from music import  *
 
 
 
@@ -18,7 +18,7 @@ def idle():
 ticks_per_beat=3*4*5
 bpm=60
 
-seq=engine.Engine(bpm,ticks_per_beat,call_back,idle)
+seq=Engine(bpm,ticks_per_beat,call_back,idle)
 
 
 midi=pymidi.PyMidi()

@@ -4,7 +4,20 @@ import time
 import atexit
 
 
-class PyMidi(threading.Thread):
+
+
+class Device:
+    
+    def __init__(self,id,interf, name, input, output, opened):
+        self.id=id
+        self.interf=interf
+        self.name=name
+        self.input=input
+        self.output=output
+        self.opened=opened
+        
+    
+class Engine(threading.Thread):
         
     def __init__(self):
         midi.init()
@@ -17,11 +30,12 @@ class PyMidi(threading.Thread):
         self.midi_in = None
         self.midi_out = None
         
-    def print_device_info(self):
+    def device_info(self):
+        devs=[]
         for i in range( midi.get_count()):
             r = midi.get_device_info(i)
             (interf, name, input, output, opened) = r
-    
+            devs.append(Device(i,interf, name, input, output, opened))
             in_out = ""
             if input:
                 in_out = "(input)"
@@ -30,6 +44,8 @@ class PyMidi(threading.Thread):
     
             print ("%2i: interface :%s:, name :%s:, opened :%s:  %s" %
                    (i, interf, name, opened, in_out))
+            
+        return devs
             
     def set_midi_in(self,midi_in):    
         self.midi_in = midi.Input(midi_in)
@@ -90,51 +106,4 @@ class PyMidi(threading.Thread):
         print  "Halting 4"
      
      
-        
-if __name__ == "__main__":
-    
-    # test code
-    #  create PyMidi to initialize misi system.
-    mid=PyMidi()
-
-    
-    # print devicess
-    mid.print_device_info()
-    
-    # define input and output channels
-    # adjust these for hardware reported by above
-    mid.set_midi_in(3)
-    mid.set_midi_out(5)
-    
-    
-    #evts=[[[0b10110000,0,120],0],[[0b10110000,32,0],0]]
-    #mid.midi_out.write(evts)
-    #vts=[[[0b10110000,0,120],0],[[0b10110000,32,0],0]]
-    #mid.midi_out.write([[[0xc0,0],0]])
-    
-        
-    # simple handler to pass events to midi_out device
-    # define a hander for midi events
-    def myhandler(evts):
-        """
-        This version prints then forwards event to the midi out.
-        """
-        for e in evts:
-            e[0][0]+=9
-               
-        mid.midi_out.write(evts)
-        print (evts)
-     
-    # register the handler
-    mid.set_callback(myhandler) 
-       
-    # start deamon
-    mid.start()
-    
-    
-    
-    tt=raw_input("Hit cr to quit:")
-    #wait a few secs then halt
-    mid.halt()
-    
-    
+ 
