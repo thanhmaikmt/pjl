@@ -1,6 +1,5 @@
-#Sun Mar 03 12:33:30 GMT 2013
 eclipse.preferences.version=1
-encoding//src/autometro1.py=utf-8
-encoding//src/beatanalysis.py=utf-8
-encoding//src/beatserver.py=utf-8
-encoding//src/midiExamp.py=utf-8
+encoding//srcold/autometro1.py=utf-8
+encoding//srcold/beatanalysis.py=utf-8
+encoding//srcold/beatserver.py=utf-8
+encoding//srcold/midiExamp.py=utf-8
