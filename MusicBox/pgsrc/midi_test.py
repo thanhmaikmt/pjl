@@ -31,6 +31,8 @@ if __name__ == "__main__":
             
     # define input and output channels
     # adjust these for hardware reported by above
+    
+    print midi_in,midi_out
     mid.set_midi_in(midi_in)
     mid.set_midi_out(midi_out)
     
@@ -47,8 +49,8 @@ if __name__ == "__main__":
         """
         This version prints then forwards event to the midi out.
         """
-        #for e in evts:
-        #    e[0][0]+=9
+        for e in evts:
+            e[0][0]+=1
                
         mid.midi_out.write(evts)
         print (evts)

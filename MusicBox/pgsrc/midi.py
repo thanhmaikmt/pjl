@@ -105,5 +105,51 @@ class Engine(threading.Thread):
            
         print  "Halting 4"
      
-     
- 
+
+class Instrument:
+    
+    
+    def __init__(self,midi_out,channel):
+        
+        self.midi_out=midi_out
+        self.channel=channel
+        
+        
+
+    def note_on(self, note, velocity):
+        """turns a midi note on.  Note must be off.
+        Output.note_on(note, velocity=None, channel = 0)
+
+        Turn a note on in the output stream.  The note must already
+        be off for this to work correctly.
+        """
+      
+        self.midi_out.write_short(0x90+self.channel, note, velocity)
+
+    def note_off(self, note, velocity=None):
+        """turns a midi note off.  Note must be on.
+        Output.note_off(note, velocity=None, channel = 0)
+
+        Turn a note off in the output stream.  The note must already
+        be on for this to work correctly.
+        """
+        if velocity is None:
+            velocity = 0
+
+        self.midi_out.write_short(0x80 + self.channel, note, velocity)
+
+
+    def set_instrument(self, instrument_id):
+        """select an instrument, with a value between 0 and 127
+        Output.set_instrument(instrument_id, channel = 0)
+
+        """
+        if not (0 <= instrument_id <= 127):
+            raise ValueError("Undefined instrument id: %d" % instrument_id)
+
+        self.midi_out.write_short(0xc0+self.channel, instrument_id)
+        
+        
+        
+                            
+    

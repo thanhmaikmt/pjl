@@ -29,7 +29,7 @@ midi.print_device_info()
 midi.set_midi_in(3)
 midi.set_midi_out(5)
     
-    # simple handler to pass events to midi_out device
+# simple handler to pass events to midi_out device
 def myhandler(evts):
         midi.midi_out.Write(evts)
         

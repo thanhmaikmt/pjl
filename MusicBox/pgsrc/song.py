@@ -1,10 +1,20 @@
 
+class 
+ s:
+    
+    
+    def __init__(self):
+        
+        
+
+
+
 from music import *
 
-        
-        
   
 if __name__ == "__main__":    
+    
+    
     
     phrase=Phrase()
     phrase.add(0,"one")
@@ -19,10 +29,8 @@ if __name__ == "__main__":
             print event
     
     
-    
     worker=Scheduler(phrase,Player())
-    
-    
+        
     seq=Sequencer()
     worker.schedule(0,10,seq)
     

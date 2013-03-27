@@ -38,39 +38,48 @@ class Engine(Thread):
             tnext+=self.dt
             tick+=1
             
-            
+ 
 
 class Event:
-    
-    def __init__(self,tick,message):
-        self.tick=tick
-        self.message=message
-        
-    def __gt__(self,a):
-        return self.tick > a.tick
-    
-    def __lt__(self,a):
-        return self.tick < a.tick
-    
-    def __eq__(self,a):
-        return self.tick == a.tick
-        
-        
-
-class Message(Event):
     
     """
     A Message extends an event with a Player.
     The player must be able to send the message of the event
     The event.tick is used by the Sequencer to schedule the message 
     """
-    def __init__(self,event,player):
-        self.player=player
-        Event.__init__(self,event.tick,event.message)
+    def __init__(self,tick):
+        self.tick=tick
         
-    def send(self):
-        self.player.play(self.message)
+#    def fire(self):
+#        print (self)," Fired "
+
+
+class MessageEvent(Event):
     
+    """
+    A Message extends an event with a Player.
+    The player must be able to send the message of the event
+    The event.tick is used by the Sequencer to schedule the message 
+    """
+    def __init__(self,tick,mess):
+        Event.__init__(self, tick)
+        self.mess=mess
+
+class PlayerEvent(MessageEvent):
+    
+    """
+    A Message extends an event with a Player.
+    The player must be able to send the message of the event
+    The event.tick is used by the Sequencer to schedule the message 
+    """
+    def __init__(self,tick,mess,player):
+        MessageEvent.__init__(self, tick,mess)
+        self.player=player
+
+        
+    def fire(self):
+        self.player.play(self.mess)
+
     
 class Phrase:
     """
@@ -80,8 +89,8 @@ class Phrase:
         self.list=linkedlist.OrderedLinkedList()
         
         
-    def add(self,tick,message):
-        self.list.insert(Event(tick,message))
+    def add(self,tick,mess):
+        self.list.insert(MessageEvent(tick,mess))
  
          
     def __iter__(self):
@@ -103,11 +112,11 @@ class Scheduler:
     def schedule(self,start,to,sequencer):
         
         for node in self.phrase:
-            if node.data.tick < start:
+            if node.tick < start:
                 continue
-            if node.data.tick > to:
+            if node.tick > to:
                 break
-            sequencer.add(Message(node.data,self.player))
+            sequencer.add(PlayerEvent(node.tick,node.data.mess,self.player))
             
   
 
@@ -119,15 +128,14 @@ class Sequencer:
     must call play_events_at(at) with at incrementing each call
     """
     
-    def __init__(self):
-        self.sequence=linkedlist.OrderedLinkedList()
+    def __init__(self,ticks_per_beat,bpm):
         
-        self.sequence.insert(Message(Event(-1,None),None))
-        self.sequence.insert(Message(Event(sys.maxint,None),None))
-        ticks_per_beat=1
-        bpm=60
+        self.sequence=linkedlist.OrderedLinkedList()        
+        self.sequence.insert(Event(-1))
+        self.sequence.insert(Event(sys.maxint))
         self.engine=Engine(bpm,ticks_per_beat,self.play_events_at)
         self.tick=0
+        self.ticks_per_beat=ticks_per_beat
         
         # self.prev is last event to be played
         self.prev=self.sequence.head
@@ -135,15 +143,20 @@ class Sequencer:
         
         # next should be OK providing we have an end event in the sequence
 
-    def add(self,mess):
+    def tickAtBeat(self,beat):
+        return int(beat*self.ticks_per_beat)
+    
+    def add(self,event):
         
         """
-        mess must have a tick field (imutable)
-        mess must implement send()
+        event must have a int tick field
+        event must have a mess must implement send()
         """
         
-        self.sequence.insert(mess)
+        self.sequence.insert(event)
+      
         
+          
     def start(self):
         """
         start the engine which should call play_events_at(at)
@@ -158,13 +171,47 @@ class Sequencer:
         print at
         
         # if next event is after at just return
-        if self.prev.next.data.tick > at:
+        if self.prev.next.tick > at:
             return
         
         # catch up by skipping missed events
-        while self.prev.next.data.tick < at:
+        while self.prev.next.tick < at:
             self.prev=self.prev.next
         
-        while self.prev.next.data.tick  == at:
+        while self.prev.next.tick  == at:
             self.prev=self.prev.next
-            self.prev.data.send()
+            self.prev.data.fire()
+
+
+
+
+class Player:
+        
+    def __init__(self,inst):
+        self.inst=inst
+        
+    def play(self,mess):
+        print (mess)   
+        mess.send(self.inst)
+        
+        
+        
+class NoteOn:
+        
+    def __init__(self,pitch,vel):
+        self.pitch=pitch
+        self.vel=vel
+        
+    def send(self,inst):
+        inst.note_on(self.pitch,self.vel)
+        
+        
+class NoteOff:
+        
+    def __init__(self,pitch,vel=0):
+        self.pitch=pitch
+        self.vel=vel
+        
+    def send(self,inst):
+        inst.note_off(self.pitch,self.vel)
+        
