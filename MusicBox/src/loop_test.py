@@ -31,22 +31,32 @@ if __name__ == "__main__":
     inst=Instrument(mid.midi_out,1)
     
 
-    phrase=Phrase()
-    phrase.add(0,NoteOn(60,90))
-    phrase.add(1,NoteOff(60))
-    phrase.add(3,NoteOn(61,90))
-    phrase.add(4,NoteOff(61))    
-    phrase.add(3,NoteOn(66,90))
-    phrase.add(4,NoteOff(66))
-    phrase.add(2,NoteOn(60,90))
-    phrase.add(5,NoteOff(60))
-   
+    phrase=Phrase(period=4)
     
+    
+    for i in range(12):
+        phrase.add(i/3.0,NoteOn(60+i,90))
+        phrase.add((i+1)/3.0,NoteOff(60))
+    
+    class Repeater(Event):
+        
+        def __init__(self,time,period,phrase,inst,seq):
+            self.time=time
+            Event.__init__(self, time)
+            self.scheduler=Scheduler(phrase,Player(inst),seq)
+            self.period=phrase.period
+        
+        def fire(self):
+            print " Send "  
+            self.scheduler.scheduleAt(seq.time)
+            self.time+=self.period
+            seq.add(self)
+          
    
          
-    ticks_per_beat=2*2*3*5
-    seq=Sequencer(ticks_per_beat=ticks_per_beat,bpm=120)
-    seq.schedule_at(0,phrase,Player(inst))
+    seq=Sequencer(ticks_per_beat=1,bpm=120)
+   
+    seq.add(Repeater(0,))
     
     seq.start()
     

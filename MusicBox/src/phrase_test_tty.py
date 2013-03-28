@@ -11,22 +11,15 @@ if __name__ == "__main__":
     phrase.add(2,"two")
     phrase.add(2,"anothertwo")
    
-   
-        
-                     
-    
+
     class Player:
         
         def play(self,event):
             print event
-    
-    
-    worker1=Scheduler(phrase,Player())
-   
-    
+     
         
     seq=Sequencer()
-    worker1.schedule(0,10,seq)
+    seq.schedule_at(0,phrase,Player())
     
     seq.start()
     

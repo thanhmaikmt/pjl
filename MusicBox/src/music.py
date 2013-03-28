@@ -9,7 +9,7 @@ class Engine(Thread):
 
 
     """
-    Engine calls a call_back every tick
+    Engine calls a call_back every time
       yields using sleep to allow multithreading
     """
 
@@ -28,7 +28,7 @@ class Engine(Thread):
     
         while self.running:
             
-            # spin until next tick
+            # spin until next time
             while tnow < tnext:
                 # yeild to other threads
                 time.sleep(SLEEP_TIME) 
@@ -39,86 +39,69 @@ class Engine(Thread):
             tick+=1
             
  
+#
+#class Event:
+#    
+#    """
+#    Base class for timed objects.
+#    The event.time is used by the Sequencer to schedule the message.
+#    derived classes should implement fire() 
+#    """
+#    def __init__(self,time):
+#        self.time=time
+#        
+##    def fire(self):
+##        print (self)," Fired "
+#
+#
+#class MessageEvent(Event):
+#    
+#    """
+#    A Message extends an event with a message.
+#    We can store phrases as a list of messages.
+#    """
+#    def __init__(self,time,mess):
+#        Event.__init__(self, time)
+#        self.mess=mess
 
-class Event:
+class Playable:
     
     """
-    A Message extends an event with a Player.
+    A PlayerEvent extends a Message with a Player.
     The player must be able to send the message of the event
-    The event.tick is used by the Sequencer to schedule the message 
+    The event.time is used by the Sequencer to schedule the message 
     """
-    def __init__(self,tick):
-        self.tick=tick
-        
-#    def fire(self):
-#        print (self)," Fired "
-
-
-class MessageEvent(Event):
-    
-    """
-    A Message extends an event with a Player.
-    The player must be able to send the message of the event
-    The event.tick is used by the Sequencer to schedule the message 
-    """
-    def __init__(self,tick,mess):
-        Event.__init__(self, tick)
+    def __init__(self,mess,player):
         self.mess=mess
-
-class PlayerEvent(MessageEvent):
-    
-    """
-    A Message extends an event with a Player.
-    The player must be able to send the message of the event
-    The event.tick is used by the Sequencer to schedule the message 
-    """
-    def __init__(self,tick,mess,player):
-        MessageEvent.__init__(self, tick,mess)
         self.player=player
 
         
     def fire(self):
         self.player.play(self.mess)
 
-    
+
+
+   
+
+ 
 class Phrase:
     """
     Is a list of Events
     """
-    def __init__(self):
+    def __init__(self,period=None):
         self.list=linkedlist.OrderedLinkedList()
+        self.period=period
         
-        
-    def add(self,tick,mess):
-        self.list.insert(MessageEvent(tick,mess))
+    def add(self,time,mess):
+        self.list.insert(time,mess)
  
          
     def __iter__(self):
         return self.list.__iter__()
 
         
-  
-class Scheduler:
-    
-    """
-    Adds messages to the sequencer to play a segment of a phrase
-    using a player.
-    """
-
-    def __init__(self,phrase,player):
-        self.phrase=phrase   
-        self.player=player   
-        
-    def schedule(self,start,to,sequencer):
-        
-        for node in self.phrase:
-            if node.tick < start:
-                continue
-            if node.tick > to:
-                break
-            sequencer.add(PlayerEvent(node.tick,node.data.mess,self.player))
-            
-  
+ 
+   
 
 class Sequencer:
     
@@ -128,13 +111,14 @@ class Sequencer:
     must call play_events_at(at) with at incrementing each call
     """
     
-    def __init__(self,ticks_per_beat,bpm):
+    def __init__(self,ticks_per_beat=2*2*3*4,bpm=120):
+        
         
         self.sequence=linkedlist.OrderedLinkedList()        
-        self.sequence.insert(Event(-1))
-        self.sequence.insert(Event(sys.maxint))
-        self.engine=Engine(bpm,ticks_per_beat,self.play_events_at)
-        self.tick=0
+        self.sequence.insert(-1,None)
+        self.sequence.insert(sys.maxint,None)
+        self.engine=Engine(bpm,ticks_per_beat,self._play_events_at)
+        self.time=0
         self.ticks_per_beat=ticks_per_beat
         
         # self.prev is last event to be played
@@ -143,17 +127,23 @@ class Sequencer:
         
         # next should be OK providing we have an end event in the sequence
 
-    def tickAtBeat(self,beat):
+    def _real_to_tick(self,beat):
         return int(beat*self.ticks_per_beat)
-    
-    def add(self,event):
+   
+   
+    def schedule_at(self,start,phrase,player):    
+        for node in phrase:
+            self.add(node.time+start,Playable(node.data,player))
+            
+   
+    def add(self,time,event):
         
         """
-        event must have a int tick field
+        event must have a int time field
         event must have a mess must implement send()
         """
         
-        self.sequence.insert(event)
+        self.sequence.insert(self._real_to_tick(time),event)
       
         
           
@@ -163,7 +153,7 @@ class Sequencer:
         """
         self.engine.start()
                   
-    def play_events_at(self,at):
+    def _play_events_at(self,at):
         
         """
         Play messages and advance the time.
@@ -171,14 +161,14 @@ class Sequencer:
         print at
         
         # if next event is after at just return
-        if self.prev.next.tick > at:
+        if self.prev.next.time > at:
             return
         
         # catch up by skipping missed events
-        while self.prev.next.tick < at:
+        while self.prev.next.time < at:
             self.prev=self.prev.next
         
-        while self.prev.next.tick  == at:
+        while self.prev.next.time  == at:
             self.prev=self.prev.next
             self.prev.data.fire()
 

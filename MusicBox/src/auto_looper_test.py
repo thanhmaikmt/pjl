@@ -4,30 +4,26 @@ from music import *
   
 if __name__ == "__main__":    
     
- 
-    
         
-    seq=Sequencer()
-    
+    seq=Sequencer(ticks_per_beat=1,bpm=120)
         
+    class Repeater(Event):
         
-    class Mess(Event):
-        
-        def __init__(self,tick,data):
-            self.tick=tick
+        def __init__(self,time):
+            self.time=time
             
-            Event.__init__(self, tick, data,None)
+            Event.__init__(self, time)
             
         
-        def send(self):
+        def fire(self):
             print " Send "  
-            self.tick+=3
+            self.time+=3
             seq.add(self)
              #TODO delete etc.....
             
          
          
-    mess=Mess(0,None)
+    mess=Repeater(0)
     seq.add(mess)
     
     seq.start()
