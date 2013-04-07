@@ -4,13 +4,13 @@ class Node:
     
     def __init__(self,time,data,next=None):
         self.data = data  # contains the data
-        self.time = time
+        self.tick = time
         self.next = next # contains the reference to the next node
-        #self.time = data.time
+        #self.tick = data.tick
         
     def _insert_after(self,time,data):
-        assert time >= self.time
-        assert not self.next or self.next.time >= time
+        assert time >= self.tick
+        assert not self.next or self.next.tick >= time
         
         new_node = Node(time,data,self.next) # create a new node
         self.next=new_node
@@ -43,7 +43,7 @@ class OrderedLinkedList:
         ptrPrev=None
         ptrNext=self.head
         
-        while ptrNext != None and  ptrNext.time <= time:
+        while ptrNext != None and  ptrNext.tick <= time:
             ptrPrev=ptrNext
             ptrNext=ptrNext.next
            
@@ -115,5 +115,5 @@ if __name__ == "__main__":
 #    print "---------------------"
 #    for x in mylist:
 #        print x.data.mess
-#        if x.data.time == 3:
+#        if x.data.tick == 3:
 #            mylist.insert(Data(4,4))

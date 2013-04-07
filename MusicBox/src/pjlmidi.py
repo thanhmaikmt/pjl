@@ -1,8 +1,8 @@
-import pygame.midi as midi
+import pygame.midi as pgmidi
 import threading
 import time
 import atexit
-
+from setup import *
 
 
 
@@ -17,23 +17,72 @@ class Device:
         self.opened=opened
         
     
-class Engine(threading.Thread):
+class MidiEngine(threading.Thread):
         
     def __init__(self):
-        midi.init()
-                # register tidy up function to be called at exit.
+        pgmidi.init()
+        # register tidy up function to be called at exit.
     
         threading.Thread.__init__(self);
         #atexit.register(self.halt)
         # defualt handler prints midi evts
         self.handler=self.default_handler
-        self.midi_in = None
-        self.midi_out = None
+     
+        
+        # print devicess
+        self.devs=self.device_info()
+        
+        self.out_dev=[]
+        self.in_dev=[]
+        self.running=False
+        
+        
+    def open_midi_out(self,midi_out_names):
+        midi_out_id=-1
+        
+        for dev in self.devs:
+                    
+            if dev.output:
+                for name in midi_out_names:
+                    if name in dev.name:
+                        print "OPENING MIDI OUT", dev.id,dev.name
+
+                        midi_out_id=dev.id
+                        o=pgmidi.Output(midi_out_id, 0)
+                        self.out_dev.append(o)
+                        return o
+                        break
+                    
+              
+        print "Device not found :",midi_out_names
+        
+    
+        
+    def open_midi_in(self,midi_in_names):
+        midi_id=-1
+        
+        for dev in self.devs:
+                    
+            if dev.input:
+                
+                for name in midi_in_names:
+                    if name in dev.name:
+                        print "OPENING MIDI IN", dev.id,dev.name
+                        midi_in_id=dev.id
+                        o=pgmidi.Input(midi_in_id, 0)
+                        self.in_dev.append(o)
+                        return o
+                        break
+                    
+              
+        print "Device not found :",midi_in_names
+        
+        
         
     def device_info(self):
         devs=[]
-        for i in range( midi.get_count()):
-            r = midi.get_device_info(i)
+        for i in range( pgmidi.get_count()):
+            r = pgmidi.get_device_info(i)
             (interf, name, input, output, opened) = r
             devs.append(Device(i,interf, name, input, output, opened))
             in_out = ""
@@ -47,12 +96,12 @@ class Engine(threading.Thread):
             
         return devs
             
-    def set_midi_in(self,midi_in):    
-        self.midi_in = midi.Input(midi_in)
-    
-    
-    def set_midi_out(self,midi_out):    
-        self.midi_out = midi.Output(midi_out, 0)
+#    def set_midi_in(self,midi_in):    
+#        self.midi_in = pgmidi.Input(midi_in)
+#    
+#    
+#    def set_midi_out(self,midi_out):    
+#        self.midi_out = pgmidi.Output(midi_out, 0)
     
 
     def default_handler(self,evts):
@@ -66,17 +115,19 @@ class Engine(threading.Thread):
         
     def run(self):         
         self.running=True
+        midi_in=self.in_dev[0]
         
-        while self.running:       
-            if self.midi_in.poll():
-                midi_events = self.midi_in.read(10)
+        while self.running: 
+                  
+            if midi_in.poll():
+                midi_events = midi_in.read(10)
                 self.handler(midi_events)
             else:
                 time.sleep(0.001)
                  
         print " quitting pgmidi deamon"
             
-    def halt(self):
+    def _halt(self):
         
         print  "Halting"
         if not self.running:     # make sure we don't do this twice
@@ -84,24 +135,32 @@ class Engine(threading.Thread):
         
         self.running=False      # flag deamon to halt.
         self.join()             # wait for thread to halt
-        print  "Halting 2"
-        self.cleanup()
+#        print  "Halting 2"
+#        self.cleanup()
         
-    def cleanup(self):
+    def quit(self):
+        
+        if self.running:
+            self._halt()
+            
+            
+            
         # send all note off event to avoid hanging.
+#        
+#        evts=[[[0b10110000,120,0],0]]
+#        self.midi_out.write(evts)
+#     
+      #  TODO device silence
         
-        evts=[[[0b10110000,120,0],0]]
-        self.midi_out.write(evts)
-     
-        # clean up
-        if self.midi_in != None:
-            del self.midi_in
-        if self.midi_out != None:
-            del self.midi_out
-     
-        print  "Halting 3"
-     
-        midi.quit()
+#        # clean up
+#        if self.midi_in != None:
+#            del self.midi_in
+#        if self.midi_out != None:
+#            del self.midi_out
+#     
+#        print  "Halting 3"
+#     
+        pgmidi.quit()
            
         print  "Halting 4"
      
@@ -123,7 +182,9 @@ class Instrument:
         Turn a note on in the output stream.  The note must already
         be off for this to work correctly.
         """
-      
+        if DEBUGGING:
+            print self.channel,note,velocity
+            
         self.midi_out.write_short(0x90+self.channel, note, velocity)
 
     def note_off(self, note, velocity=None):
@@ -149,6 +210,11 @@ class Instrument:
 
         self.midi_out.write_short(0xc0+self.channel, instrument_id)
         
+        
+    def all_note_off(self):
+        
+        #evts=[[[0b1011 0000,120,0],0]]
+        self.midi_out.write_short(0xb0+self.channel,120)
         
         
                             

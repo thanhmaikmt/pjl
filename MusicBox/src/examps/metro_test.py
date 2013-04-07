@@ -1,13 +1,13 @@
 
 from music import *
-from midi import *
-  
+from pjlmidi import *
+from players import *
 
-  
 if __name__ == "__main__":    
     
-    mid=Engine()
 
+    mid= MidiEngine()
+    
     # print devicess
     devs=mid.device_info()
     
@@ -23,31 +23,20 @@ if __name__ == "__main__":
             
             if  "MusicBox" in dev.name:
                 midi_out_id=dev.id
-          
-            
+                    
     print "using id:",devs[midi_out_id].name
-    
+  
+    seq=Sequencer(ticks_per_beat=1000,bpm=520)
     mid.set_midi_out(midi_out_id)
-    inst=Instrument(mid.midi_out,1)
     
-
-    phrase=Phrase()
-    phrase.add(0,NoteOn(60,90))
-    phrase.add(1,NoteOff(60))
-    phrase.add(3,NoteOn(61,90))
-    phrase.add(4,NoteOff(61))    
-    phrase.add(3,NoteOn(66,90))
-    phrase.add(4,NoteOff(66))
-    phrase.add(2,NoteOn(60,90))
-    phrase.add(5,NoteOff(60))
-   
+#  MetroNome
+    inst=Instrument(mid.midi_out,9)
+    accent=NoteOn(61,100)
+    weak=NoteOn(60,80)
+    mess=Metro(0,seq,inst,accent,weak)
     
-   
-         
-    ticks_per_beat=2*2*3*5
-    seq=Sequencer(ticks_per_beat=ticks_per_beat,bpm=120)
-    seq.schedule_at(0,phrase,Player(inst))
     
+ 
     seq.start()
     
 
