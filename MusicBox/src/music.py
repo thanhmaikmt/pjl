@@ -203,10 +203,10 @@ class NoteOff:
         
         
     
-class Groove:
+class Scheduler:
     
     """
-    Parameters: delats= a list of times (delta times).
+    Parameters: deltas= a list of times (delta times).
                 player  a player that is called for each time(with a count)
     
     To repeat a Groove use a Repeater.

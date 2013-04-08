@@ -14,7 +14,7 @@ class Metro:
                 
     def fire(self):
         
-        print " Metro.fire"
+#        print " Metro.fire"
     
         if self.count %self.beats_per_bar == 0:
             self.accent.send(self.inst)
@@ -40,8 +40,8 @@ class Conductor:
   
     
         def beat_in_bar(self):
-   	 	      return self.seq.beat() % self.beats_per_bar
-   		
+            return self.seq.beat() % self.beats_per_bar
+
 class BassPlayer:
       
     def __init__(self,start,seq,inst,score,conductor):

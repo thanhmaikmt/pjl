@@ -53,8 +53,8 @@ class MidiEngine(threading.Thread):
                         return o
                         break
                     
-              
-        print "Device not found :",midi_out_names
+        
+        raise MidiError("Device not found :","None of the list of devices was found")
         
     
         
@@ -75,7 +75,7 @@ class MidiEngine(threading.Thread):
                         break
                     
               
-        print "Device not found :",midi_in_names
+        raise MidiError("Device not found :","None of the list of devices was found")
         
         
         
@@ -113,12 +113,18 @@ class MidiEngine(threading.Thread):
     def set_callback(self,handler):
         self.handler=handler
         
-    def run(self):         
+    def run(self):
+        """ Called from the Thread start()
+        """
+                 
+        if self.handler == None:
+            raise MidiError("No callback function"," Use set_callback(some_handler)")
+            
         self.running=True
         midi_in=self.in_dev[0]
         
         while self.running: 
-                  
+            # TODO look at all input devices          
             if midi_in.poll():
                 midi_events = midi_in.read(10)
                 self.handler(midi_events)
@@ -139,6 +145,8 @@ class MidiEngine(threading.Thread):
 #        self.cleanup()
         
     def quit(self):
+        """ Quits the midi system releasing the midi devices.
+        """
         
         if self.running:
             self._halt()
@@ -169,6 +177,10 @@ class Instrument:
     
     
     def __init__(self,midi_out,channel):
+        """Create an instument,
+        
+        A midi out device and a channel number
+        """
         
         self.midi_out=midi_out
         self.channel=channel
@@ -216,6 +228,17 @@ class Instrument:
         #evts=[[[0b1011 0000,120,0],0]]
         self.midi_out.write_short(0xb0+self.channel,120)
         
-        
+
+class MidiError(Exception):
+    """Exception raised for errors in the midi systen
+
+    Attributes:
+        expr -- input expression in which the error occurred
+        msg  -- explanation of the error
+    """
+
+    def __init__(self, expr, msg):
+        self.expr = expr
+        self.msg = msg       
                             
     
