@@ -1,4 +1,6 @@
 eclipse.preferences.version=1
+encoding//midi/MidiInFile.py=ISO-8859-1
+encoding//midi/MidiToText.py=ISO-8859-1
 encoding//srcold/autometro1.py=utf-8
 encoding//srcold/beatanalysis.py=utf-8
 encoding//srcold/beatserver.py=utf-8

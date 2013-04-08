@@ -1,219 +1,85 @@
 
-from music import *
+import music
 from pjlmidi import *
-from players import *
-import priority
 from setup import  *
 
 
+try:
+    mid = MidiEngine()
+    
+    midi_out_dev = mid.open_midi_out(MIDI_OUT_NAMES)
+    
+    
+    seq = music.Sequencer(ticks_per_beat=2 * 2 * 3 * 5, bpm=100)
+    
+    # Score
+    beats_per_bar=4
+    bars_per_section=4
+    key=music.G
+    start=0
+    
+    score = music.Score(start, seq, bars_per_section,beats_per_bar,key)
+    score.set_tonality(music.I, 0)
+    score.set_tonality(music.vi, 1) 
+    score.set_tonality(music.ii, 2)
+    score.set_tonality(music.V , 3)
+    
+
+    # MetroNome
+    accent = music.NoteOn(61, 100)
+    weak = music.NoteOn(60, 80)
+    metro_inst = midi_out_dev.allocate_channel(9)
+    
+    #metro = music.Metro(0, 4,seq, metro_inst, accent, weak) 
+    
+    # bass line
+
+    
+    class BassData:
+        
+        def __init__(self):
+            self.times =   [0.0,  1.0, 2.0, 3.0]
+            self.vels =    [100,  70,  90,  70]                 
+            self.durs =    [0.6, 0.4, 0.4 , 0.4]
+            self.pattern=  [0,   4,  5,  6]
 
 
-class Tonality:
+    bass_inst = midi_out_dev.allocate_channel(1)  
+    bass_player = music.BassPlayer(seq, bass_inst, score,43,58)
+    bass_data=BassData()
+    bass_factory=music.GrooverFactory(seq,bass_data,bass_player)
+    music.Repeater(0, 4, seq, bass_factory) 
     
-    """
-    Key is a refence midi note number defines relative pitch
-    (lowest note of this tonality)
-    scale is the set of notes to be used.
-    chord is indices of note in scale that make up the chord off set by root.
-    
-    e.g.
-    
-    key+scale[i]                  plays to scale
-    key+scale[root+chord[i]]      plays arpegio 
-    """
-     
-    def __init__(self, key, scale, chord, root):
-        self.key = key
-        self.chord = chord
-        self.root = root
-        self.scale = scale
-        
-        
-    def get_note_of_chord(self, i):
-        
-        assert i < len(self.chord)
-        ii = self.root + self.chord[i]
-        assert ii < len(self.scale)
-        return self.key + self.scale[ii]
+    # Vamp
+       
+    vamp_inst = midi_out_dev.allocate_channel(0)
+    vamp = music.ChordPlayer(seq, vamp_inst, score, 60,[0,1,2,3])
 
-     
-     
-class Score:
- 
-    def __init__(self, start, seq):
-        self.beat = start - 1
-        self.beats_per_bar = 4 
-        self.bars_per_section = 4
-        self.beat_one_time = -4
+    class VampData:
         
-        scale = [0, 2, 4, 5, 7, 9, 11]    
-        
-        for oct in range(2):
-            for n in range(7):
-                scale.append(scale[n] + (oct + 1) * 12)
-    
-    #            print scale
-        
-        key = 36  
-        triad = [0, 2, 4, 2 ]  
-        
-        self.tonalities = []
-        self.tonalities.append(Tonality(key, scale, triad, 1))
-        self.tonalities.append(Tonality(key, scale, triad, 4))
-        self.tonalities.append(Tonality(key, scale, triad, 0))
-        self.tonalities.append(Tonality(key, scale, triad, 0))    
-    
-        seq.add(start, self)
-        self.seq = seq
-        
-    def get_tonality(self):
-        bar = int(self.beat / self.beats_per_bar)
-        return self.tonalities[bar % self.bars_per_section]
-    
-    def fire(self):
-        # print "Score fire "
-        self.beat += 1
-        self.seq.add(self.beat + 1, self, priority.score)
-        if self.beat % self.beats_per_bar == 0: 
-            self.beat_one_time = self.beat
-        
-    def get_count(self):
-        return self.beat % self.beats_per_bar      
-    
-    def get_time(self):
-        return seq.beat
-         
-class BassLine:
-     
-    def __init__(self, start, seq, inst, score):
-        seq.add(start, self)
-        self.seq = seq
-        self.score = score
-        self.pattern = [0, 1, 2, 3]
-        self.pulse = [120, 90, 100, 85]
-        self.times = [1, 1, 1, 1]
-        self.n = 4
-        self.inst = inst
-        self.pending = None
+        def __init__(self):
+            self.times = [0.5, 1.5, 2.0]
+            self.vels =  [80,  70,  70]                 
+            self.durs =  [0.6, 0.4, 0.4]
+       
             
-    def fire(self):
-        # print " Bass.fire"
+   
+    vamp_data=VampData()
+    factory=music.GrooverFactory(seq,vamp_data,vamp)   
+    music.Repeater(0, 4, seq, factory) 
     
-        
-        if self.pending != None:
-            self.inst.note_off(self.pending)
-        
-        tonality = self.score.get_tonality()
-        count = self.score.get_count()
-        pitch = tonality.get_note_of_chord(self.pattern[count])
-        self.pending = pitch
-        velocity = self.pulse[count]
-        
-        # print count,pitch,velocity
-        self.inst.note_on(pitch, velocity)
-        
-        seq.add(self.score.seq.beat + self.times[count], self)
-        
-        self.pending = pitch
-
- 
-class VampLine:
- 
-    def __init__(self, start, seq, inst, score, lowest):
-        self.seq = seq
-        self.score = score
-        # self.pattern=[0,1,2,3]
-        self.pulse = [80, 70, 70]
-                         
-        period = 4
-        self.deltas = [0.5, 1.0, 0.5]
-        self.durs = [0.6, 0.4, 0.4]
-        self.notes_in_chord = 3
-        self.inst = inst
-        self.lowest = lowest
-        self.player = Player(inst)
     
-        """Create a repeater that will create Schedulers every period
-            Each scheduler will call play_count with an appropriate count at intervals defined by deltas
-        """
-        Repeater(start, period, seq, Scheduler, deltas=self.deltas, player=self)
-
-        
-        
-        
-    def play_count(self, count):
-        """ Used by the Scheduler to play a event associated with the given count
-        """
-        
-        # print " Vamp.fire"
-        
-        tonality = self.score.get_tonality()
+    # ready to go
     
-        
-        dur = self.durs[count]
-        velocity = self.pulse[count]
-            
-        pitch = []
-        for p in range(self.notes_in_chord):
-            pitch.append(tonality.get_note_of_chord(p))
+    seq.start()
     
-        # TODO Voicings
-        
-        # print count,pitch,velocity
-        
-        for p in pitch:
-            while p < self.lowest:
-                p += 12
-                
-            self.inst.note_on(p, velocity)
-            playable = Playable(NoteOff(p), self.player)
-            seq.add_after(dur, playable)
-             
-                 
+    xx = raw_input(" Hit CR TO QUIT")
+    
+    seq.quit()
  
- 
-
-mid = MidiEngine()
-
-midi_out = mid.open_midi_out(MIDI_OUT_NAMES)
-
-
-seq = Sequencer(ticks_per_beat=2 * 2 * 3 * 5, bpm=100)
-
-# Context
-
-score = Score(0, seq)
-
-
-# MetroNome
-accent = NoteOn(61, 100)
-weak = NoteOn(60, 80)
-inst = Instrument(midi_out, 9)
-
-metro = Metro(0, seq, inst, accent, weak) 
-
-# bass line
-bass_inst = Instrument(midi_out, 1)
-
-bass = BassLine(0, seq, bass_inst, score)
-
-
-
-# Vamp
-vamp_inst = Instrument(midi_out, 0)
-
-vamp = VampLine(0, seq, vamp_inst, score, 60)
-
-
-seq.start()
-
-xx = raw_input(" Hit CR TO QUIT")
-
-seq.quit()    
-bass_inst.all_note_off()
-
-
-mid.quit()
-
+    
+    mid.quit()
+except MidiError as e:
+    print e.get_message()
 
  

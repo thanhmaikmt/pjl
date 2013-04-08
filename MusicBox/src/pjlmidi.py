@@ -15,6 +15,14 @@ class Device:
         self.input=input
         self.output=output
         self.opened=opened
+        self.channels=16*[None]
+        
+    def allocate_channel(self,id):
+        if self.channels[id] != None:
+            raise MidiError("MidiChannel already allocated",self.name+str(id))
+        
+        inst=Instrument(self.out,id)
+        return inst
         
     
 class MidiEngine(threading.Thread):
@@ -49,12 +57,13 @@ class MidiEngine(threading.Thread):
 
                         midi_out_id=dev.id
                         o=pgmidi.Output(midi_out_id, 0)
-                        self.out_dev.append(o)
-                        return o
+                        dev.out=o
+                        self.out_dev.append(dev)
+                        return dev
                         break
                     
-        
-        raise MidiError("Device not found :","None of the list of devices was found")
+        mess="None of the list of devices was found: ["+",".join(midi_out_names)+"]"
+        raise MidiError("Device not found :",mess)
         
     
         
@@ -71,7 +80,8 @@ class MidiEngine(threading.Thread):
                         midi_in_id=dev.id
                         o=pgmidi.Input(midi_in_id, 0)
                         self.in_dev.append(o)
-                        return o
+                        dev.o=o
+                        return dev
                         break
                     
               
@@ -118,7 +128,7 @@ class MidiEngine(threading.Thread):
         """
                  
         if self.handler == None:
-            raise MidiError("No callback function"," Use set_callback(some_handler)")
+            raise MidiError("No callback function:"," Use set_callback(some_handler)")
             
         self.running=True
         midi_in=self.in_dev[0]
@@ -168,6 +178,11 @@ class MidiEngine(threading.Thread):
 #     
 #        print  "Halting 3"
 #     
+        for dev in self.out_dev:
+            for i in range(len(dev.channels)):
+                if dev.channels[i]!= None:
+                    dev.channels[i].all_note_off()
+                    
         pgmidi.quit()
            
         print  "Halting 4"
@@ -239,6 +254,8 @@ class MidiError(Exception):
 
     def __init__(self, expr, msg):
         self.expr = expr
-        self.msg = msg       
-                            
+        self.msg = msg
+            
+    def get_message(self):
+        return self.expr+self.msg                    
     
