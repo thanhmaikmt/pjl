@@ -51,7 +51,7 @@ try:
     # Vamp
        
     vamp_inst = midi_out_dev.allocate_channel(0)
-    vamp = music.ChordPlayer(seq, vamp_inst, score, 50,[0,1,2,3])
+    vamp = music.ChordPlayer(seq, vamp_inst, score, 60,[0,1,2,3])
 
     class VampData:
         
@@ -67,7 +67,7 @@ try:
     music.Repeater(0, 4, seq, factory) 
     
     solo_inst=midi_out_dev.allocate_channel(2)
-    
+    solo_player=music.Player(solo_inst)
     # ready to go
     
     seq.start()
@@ -77,19 +77,26 @@ try:
         def set_push1(self,i,val):
             print "set tonality",i,val
             if val > 0:
-                score.set_tonality(music.tonalities[(i-1)%7])
+                score.set_tonality(music.tonalities[((i-1)*5)%7])
 
         def set_xy(self,x,y):
             print "set xy",x,y
+            
+        def set_accel(self,x,y,z):
+            print "accel ",x,y,z
+            
             
         def set_push2(self,i,val):
             vel=int(val*100)       
             pitch=score.get_tonality().get_note_of_scale(i,score.key)+36
             #print "play",i,vel
+            
             if vel != 0:
                 solo_inst.note_on(pitch,vel)
             else:
-                solo_inst.note_off(pitch)
+                # schedule the note off
+                playable = music.Playable(music.NoteOff(pitch), solo_player)
+                seq.add_after(.1, playable)
             
     wrapper=Wrapper()
     

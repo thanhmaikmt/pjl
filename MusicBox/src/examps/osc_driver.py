@@ -2,11 +2,6 @@
 """ receiving OSC with pyOSC
 https://trac.v2.nl/wiki/pyOSC
 example by www.ixi-audio.net based on pyOSC documentation
-
-this is a very basic example, for detailed info on pyOSC functionality check the OSC.py file 
-or run pydoc pyOSC.py. you can also get the docs by opening a python shell and doing
->>> import OSC
->>> help(OSC)
 """
 
 
@@ -18,6 +13,8 @@ def run(wrapper):
     # tupple with ip, port. i dont use the () but maybe you want -> send_address = ('127.0.0.1', 9000)
     receive_address = '127.0.0.1', 7110
     receive_address = '192.168.0.8', 7110
+    receive_address = '192.168.43.96', 7110
+    
     
     
     # OSC Server. there are three different types of server. 
@@ -42,6 +39,10 @@ def run(wrapper):
         print "typetags %s" % tags
         print "data %s" % stuff
         print "---"
+    
+     # define a message-handler function for the server to call.
+    def accel_handler(addr, tags, stuff, source):
+        wrapper.set_accel(stuff[0],stuff[1],stuff[2])
     
     # define a message-handler function for the server to call.
     def xy_handler(addr, tags, stuff, source):
@@ -99,7 +100,7 @@ def run(wrapper):
     
     
     s.addMsgHandler("/print", printing_handler) # adding our function
-    s.addMsgHandler("/accxyz", null_handler) # adding our function
+    s.addMsgHandler("/accxyz", accel_handler) # adding our function
     s.addMsgHandler("/ping", null_handler) # adding our function
     
     add_push_handlers("/1/multipush2/", push2_handler,12) # adding our function
