@@ -2,7 +2,7 @@ import pygame.midi as pgmidi
 import threading
 import time
 import atexit
-from setup import *
+from mbconstants import *
 
 
 

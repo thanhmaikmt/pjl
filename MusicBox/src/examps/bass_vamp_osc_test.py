@@ -2,7 +2,8 @@
 import music
 from pjlmidi import *
 from mbconstants import  *
-
+import osc_driver
+import math
 
 try:
     mid = MidiEngine()
@@ -14,15 +15,12 @@ try:
     
     # Score
     beats_per_bar=4
-    bars_per_section=4
+    bars_per_section=1
     key=music.G
     start=0
     
     score = music.Score(start, seq, bars_per_section,beats_per_bar,key)
     score.set_tonality(music.I, 0)
-    score.set_tonality(music.vi, 1) 
-    score.set_tonality(music.ii, 2)
-    score.set_tonality(music.V , 3)
     
 
     # MetroNome
@@ -41,11 +39,11 @@ try:
             self.times =   [0.0,  1.0, 2.0, 3.0]
             self.vels =    [100,  70,  90,  70]                 
             self.durs =    [0.6, 0.4, 0.4 , 0.4]
-            self.pattern=  [0,   4,  5,  6]
+            self.pattern=  [0,   2,  4,  2]
 
 
     bass_inst = midi_out_dev.allocate_channel(1)  
-    bass_player = music.BassPlayer(seq, bass_inst, score,43,58)
+    bass_player = music.BassPlayer(seq, bass_inst, score,30,48)
     bass_data=BassData()
     bass_factory=music.GrooverFactory(seq,bass_data,bass_player)
     music.Repeater(0, 4, seq, bass_factory) 
@@ -53,7 +51,7 @@ try:
     # Vamp
        
     vamp_inst = midi_out_dev.allocate_channel(0)
-    vamp = music.ChordPlayer(seq, vamp_inst, score, 60,[0,1,2,3])
+    vamp = music.ChordPlayer(seq, vamp_inst, score, 50,[0,1,2,3])
 
     class VampData:
         
@@ -68,19 +66,42 @@ try:
     factory=music.GrooverFactory(seq,vamp_data,vamp)   
     music.Repeater(0, 4, seq, factory) 
     
-    
+    solo_inst=midi_out_dev.allocate_channel(2)
     
     # ready to go
     
     seq.start()
     
-    xx = raw_input(" Hit CR TO QUIT")
+    class Wrapper:
+        
+        def set_push1(self,i,val):
+            print "set tonality",i,val
+            if val > 0:
+                score.set_tonality(music.tonalities[(i-1)%7])
+
+        def set_xy(self,x,y):
+            print "set xy",x,y
+            
+        def set_push2(self,i,val):
+            vel=int(val*100)       
+            pitch=score.get_tonality().get_note_of_scale(i,score.key)+36
+            #print "play",i,vel
+            if vel != 0:
+                solo_inst.note_on(pitch,vel)
+            else:
+                solo_inst.note_off(pitch)
+            
+    wrapper=Wrapper()
+    
+    osc_driver.run(wrapper)
     
     seq.quit()
  
-    
     mid.quit()
+    
+    
 except MidiError as e:
+    
     print e.get_message()
 
  

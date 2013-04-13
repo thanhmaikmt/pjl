@@ -2,7 +2,7 @@ import linkedlist
 import sys
 import time
 from threading import Thread
-from  setup import *
+from  mbconstants import *
 
 
 
@@ -283,6 +283,52 @@ class Repeater:
         
         
 
+
+     
+     
+class Score:
+ 
+ 
+    def __init__(self, start, seq, nbars,beats_per_bar,key):
+        self.beat = start - 1
+        self.beats_per_bar = beats_per_bar 
+        self.bars_per_section = nbars
+        self.beats_per_section=nbars*beats_per_bar
+        self.key=key
+ 
+        self.tonalities = []
+
+        for i in range(self.beats_per_section):
+            self.tonalities.append(None)
+           
+        seq.add(start, self)
+        self.seq = seq
+ 
+    def set_tonality(self,tonality,bar=0,beat=None):
+        
+        if beat != None:
+            self.tonalities[bar*self.beats_per_bar+beat]=tonality
+        else:
+            for i in range(self.beats_per_bar):
+                self.tonalities[bar*self.beats_per_bar+i]=tonality
+                
+    def get_tonality(self):
+        beat = int(self.beat)
+        return self.tonalities[beat % self.beats_per_section]
+    
+    def fire(self):
+        # print "Score fire "
+        self.beat += 1
+        self.seq.add_after(1, self, priority.score)
+#        if self.beat % self.beats_per_bar == 0: 
+#            self.beat_one_time = self.beat
+        
+    def get_count(self):
+        return self.beat % self.beats_per_bar      
+    
+    def get_time(self):
+        return self.seq.beat
+ 
 class Tonality:
     
     """ Tonality is a scale + chord pattern. It needs a key to be concrete
@@ -309,57 +355,17 @@ class Tonality:
         assert ii < len(self.scale)
         return key + self.scale[ii]
     
-    def get_note_of_scale(self, i, key):
+    def get_note_of_chordscale(self, i, key):
         
         ii = self.root + i
         assert ii < len(self.scale)
         return key + self.scale[ii]
-
-     
-     
-class Score:
- 
- 
-    def __init__(self, start, seq, nbars,beats_per_bar,key):
-        self.beat = start - 1
-        self.beats_per_bar = beats_per_bar 
-        self.bars_per_section = nbars
-        self.beats_per_section=nbars*beats_per_bar
-        self.key=key
- 
-        self.tonalities = []
-
-        for i in range(self.beats_per_section):
-            self.tonalities.append(None)
-           
-        seq.add(start, self)
-        self.seq = seq
- 
-    def set_tonality(self,tonality,bar,beat=None):
-        
-        if beat != None:
-            self.tonalities[bar*self.beats_per_bar+beat]=tonality
-        else:
-            for i in range(self.beats_per_bar):
-                self.tonalities[bar*self.beats_per_bar+i]=tonality
-                
-    def get_tonality(self):
-        beat = int(self.beat)
-        return self.tonalities[beat % self.beats_per_section]
     
-    def fire(self):
-        # print "Score fire "
-        self.beat += 1
-        self.seq.add_after(1, self, priority.score)
-#        if self.beat % self.beats_per_bar == 0: 
-#            self.beat_one_time = self.beat
+    def get_note_of_scale(self, i, key):
         
-    def get_count(self):
-        return self.beat % self.beats_per_bar      
-    
-    def get_time(self):
-        return self.seq.beat
- 
+        ii = i
+        assert ii < len(self.scale)
+        return key + self.scale[ii]
 
 class Metro:
     """ Simple Metronome with an accent and weak beat.
@@ -420,9 +426,9 @@ class BassPlayer:
         velocity = data.vels[count]
     
             
-        pitch=tonality.get_note_of_scale(data.pattern[count],self.score.key)
+        pitch=tonality.get_note_of_chordscale(data.pattern[count],self.score.key)
     
-        print pitch,self.score.key
+        #print pitch,self.score.key
     
         # TODO Voicings
         #  Play notes (shift up +12 if pitch is too low)     
@@ -522,3 +528,4 @@ V=Tonality(major_scale, stack3, 4)
 vi=Tonality(major_scale, stack3, 5)
 viio=Tonality(major_scale, stack3, 6)
 
+tonalities=[I,ii,iii,IV,V,vi,viio]
