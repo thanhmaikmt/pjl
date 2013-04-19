@@ -125,7 +125,7 @@ class Sequencer:
     def add(self,time,event,prio=0):
         
         """
-        event must have a int tick field
+        event must have a int tick field 
         event must have a mess must implement send()
         """
         
@@ -289,7 +289,7 @@ class Repeater:
 class Score:
  
  
-    def __init__(self, start, seq, nbars,beats_per_bar,key):
+    def __init__(self, start, seq, nbars,beats_per_bar,key,priority=5):
         self.beat = start - 1
         self.beats_per_bar = beats_per_bar 
         self.bars_per_section = nbars
@@ -301,7 +301,7 @@ class Score:
         for i in range(self.beats_per_section):
             self.tonalities.append(None)
            
-        seq.add(start, self)
+        seq.add(start, self,priority)
         self.seq = seq
  
     def set_tonality(self,tonality,bar=0,beat=None):
@@ -319,7 +319,7 @@ class Score:
     def fire(self):
         # print "Score fire "
         self.beat += 1
-        self.seq.add_after(1, self, priority.score)
+        self.seq.add_after(1, self)
 #        if self.beat % self.beats_per_bar == 0: 
 #            self.beat_one_time = self.beat
         
@@ -489,8 +489,8 @@ class ChordPlayer:
                 p += 12
             
             # play the note on
-            self.inst.note_on(p, velocity)
-            
+            self.inst.note_on(p, velocity)  
+    
             # schedule the note off
             playable = Playable(NoteOff(p), self.player)
             self.seq.add_after(dur, playable)

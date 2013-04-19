@@ -47,11 +47,11 @@ class MidiEngine(threading.Thread):
         
     def open_midi_out(self,midi_out_names):
         midi_out_id=-1
-        
-        for dev in self.devs:
-                    
-            if dev.output:
-                for name in midi_out_names:
+        for name in midi_out_names:
+            for dev in self.devs:
+                        
+                if dev.output:
+                
                     if name in dev.name:
                         print "OPENING MIDI OUT", dev.id,dev.name
 
@@ -69,12 +69,12 @@ class MidiEngine(threading.Thread):
         
     def open_midi_in(self,midi_in_names):
         midi_id=-1
-        
-        for dev in self.devs:
-                    
-            if dev.input:
                 
-                for name in midi_in_names:
+        for name in midi_in_names:
+            for dev in self.devs:
+                        
+                if dev.input:
+        
                     if name in dev.name:
                         print "OPENING MIDI IN", dev.id,dev.name
                         midi_in_id=dev.id
@@ -242,6 +242,9 @@ class Instrument:
         
         #evts=[[[0b1011 0000,120,0],0]]
         self.midi_out.write_short(0xb0+self.channel,120)
+        
+    def write(self,evts):
+        self.midi_out.write(evts)
         
 
 class MidiError(Exception):

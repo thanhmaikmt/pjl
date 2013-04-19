@@ -1,6 +1,6 @@
     
 from pjlmidi import  *  
-from setup import *    
+from mbconstants import *    
  
 #  create PyMidi to initialize misi system.
 
@@ -34,7 +34,7 @@ def myhandler(evts):
 #        for e in evts:
 #            e[0][0]+=1
            
-    midi_out.write(evts)
+    midi_out.out.write(evts)
     print (evts)
  
 # register the handler
