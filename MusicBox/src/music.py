@@ -135,7 +135,7 @@ class Sequencer:
         
         """
         event must have a int tick field
-        event must have a mess must implement send()
+        event must implement fire()
         """
         
         self.sequence.insert(self._beat_to_tick(self.beat+delay)-prio,event)

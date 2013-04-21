@@ -237,6 +237,12 @@ class Instrument:
 
         self.midi_out.write_short(0xc0+self.channel, instrument_id)
         
+    def set_volume(self,val):
+        
+        #  7 vol 11 expression
+        print " Set volume",val
+        self.midi_out.write_short(0xb0+self.channel,7,val)
+        
         
     def all_note_off(self):
         
