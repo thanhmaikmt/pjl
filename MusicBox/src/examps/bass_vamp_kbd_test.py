@@ -2,7 +2,7 @@
 import music
 from pjlmidi import *
 from mbconstants import  *
-import osc_driver
+import mbosc
 import math
 
 try:

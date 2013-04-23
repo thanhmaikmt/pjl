@@ -145,13 +145,13 @@ class MidiEngine(threading.Thread):
             
     def _halt(self):
         
-        print  "Halting"
+        print  "MidiEngine  Halting Sequener"
         if not self.running:     # make sure we don't do this twice
             return
         
         self.running=False      # flag deamon to halt.
         self.join()             # wait for thread to halt
-#        print  "Halting 2"
+        print  "Midi Engine Threads joined OK"
 #        self.cleanup()
         
     def quit(self):
@@ -161,23 +161,7 @@ class MidiEngine(threading.Thread):
         if self.running:
             self._halt()
             
-            
-            
-        # send all note off event to avoid hanging.
-#        
-#        evts=[[[0b10110000,120,0],0]]
-#        self.midi_out.write(evts)
-#     
-      #  TODO device silence
-        
-#        # clean up
-#        if self.midi_in != None:
-#            del self.midi_in
-#        if self.midi_out != None:
-#            del self.midi_out
-#     
-#        print  "Halting 3"
-#     
+
         for dev in self.out_dev:
             for i in range(len(dev.channels)):
                 if dev.channels[i]!= None:
@@ -185,7 +169,7 @@ class MidiEngine(threading.Thread):
                     
         pgmidi.quit()
            
-        print  "Halting 4"
+        print  "MidiEngine Halted"
      
 
 class Instrument:

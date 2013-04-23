@@ -77,9 +77,8 @@ try:
     xx = raw_input(" Hit CR TO QUIT")
     
     seq.quit()
- 
-    
     mid.quit()
+    
 except MidiError as e:
     print e.get_message()
 

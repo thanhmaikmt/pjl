@@ -53,6 +53,7 @@ class Engine(Thread):
         
         self.running=False      # flag deamon to halt.
         self.join()            
+        print  "Engine stopped (threads joined)"
         
          
 class Playable:
@@ -355,7 +356,20 @@ class Tonality:
         assert ii < len(self.scale)
         return key + self.scale[ii]
     
+           
+        
+    def get_note_of_vamp(self, i, key):
+        
+        assert i < len(self.chord)
+        ii = self.root + self.chord[i]
+        assert ii < len(self.scale)
+        return  48+key + self.scale[ii]
+    
+    
     def get_note_of_chordscale(self, i, key):
+        """
+        Same as get note of scale but offset so i=0 returns the root
+        """
         
         ii = self.root + i
         assert ii < len(self.scale)

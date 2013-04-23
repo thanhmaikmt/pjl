@@ -2,8 +2,10 @@
 import music
 from pjlmidi import *
 from mbconstants import  *
-import mbosc
+import oscdriver
 import math
+import sys
+import traceback
 
 try:
     mid = MidiEngine()
@@ -28,7 +30,7 @@ try:
     weak = music.NoteOn(60, 80)
     metro_inst = midi_out_dev.allocate_channel(9)
     
-    #metro = music.Metro(0, 4,seq, metro_inst, accent, weak) 
+    metro = music.Metro(0, 4,seq, metro_inst, accent, weak) 
     
     # bass line
 
@@ -49,22 +51,23 @@ try:
     music.Repeater(0, 4, seq, bass_factory) 
     
     # Vamp
-       
     vamp_inst = midi_out_dev.allocate_channel(0)
-    vamp = music.ChordPlayer(seq, vamp_inst, score, 60,[0,1,2,1])
-
-    class VampData:
-        
-        def __init__(self):
-            self.times = [0.5, 1.5, 2.0]
-            self.vels =  [80,  70,  70]                 
-            self.durs =  [0.6, 0.4, 0.4]
-       
+  
+    
+    vamp = music.ChordPlayer(seq, vamp_inst, score, 60,[0,1,2])
+    
+    if False:
+        class VampData:
             
-   
-    vamp_data=VampData()
-    factory=music.GrooverFactory(seq,vamp_data,vamp)   
-    music.Repeater(0, 4, seq, factory) 
+            def __init__(self):
+                self.times = [0.5, 1.5, 2.0]
+                self.vels =  [80,  70,  70]                 
+                self.durs =  [0.6, 0.4, 0.4]
+           
+                
+        vamp_data=VampData()
+        factory=music.GrooverFactory(seq,vamp_data,vamp)   
+        music.Repeater(0, 4, seq, factory) 
     
     solo_inst=midi_out_dev.allocate_channel(2)
     solo_player=music.Player(solo_inst)
@@ -120,7 +123,50 @@ try:
                 data.append(float(x))
             
             return time,addr,data
+        
+    class ChordPlayer:
+        
+        def __init__(self):
+            self.pitches=[]
+            self.template=[0,2,4,6]
+        
+        def play(self,toks,data):
+#           print "chord",toks,data
             
+            if toks == "xy":
+                y=int(float(data[0])*127)
+                x=int(float(data[1])*127)
+                vamp_inst.set_volume(y)
+                return
+            
+
+            for pitch in self.pitches:
+                vamp_inst.note_off(pitch)
+                
+            self.pitches=[]
+                                        
+            inversion=int(toks[1])     #   TODO
+            
+            vel=int(float(data[0])*127)
+            if vel == 0:
+                return
+            
+        
+            tonality=score.get_tonality()
+            
+            
+            for p in range(len(self.template)):
+                self.pitches.append(tonality.get_note_of_chord(self.template[p],score.key))
+                vamp_inst.note_on(p,vel)
+                self.pitches.append(p)
+
+        #  Play notes (shift up +12 if pitch is too low)     
+#            for p in self.pitches:
+#                while p < self.lowest:
+#                    p += 12
+#                
+
+       
     class Client:
         
         def __init__(self):
@@ -128,8 +174,7 @@ try:
                       "tonality":self.tonality,
                       "chordNote":self.chordNote,
                       "chord":self.chord}
-            
-            
+            self.chord_player=ChordPlayer()
             
         def handle(self,addr,data):
             
@@ -144,30 +189,27 @@ try:
             func=self.map.get(toks[2])
             
             if func != None:
-                func(toks[3],data)
+                func(toks[3:],data)
             else:
                 print " No musicbox handler for:", addr
             
         def tonality(self,toks,data):
             
-        
-            val1=int(data[0])
-            val2=int(data[1])
-            
+            val1=int(toks[0])
+            val2=int(toks[1])
+            trig=float(data[0])
             print "set tonality",val1,val2
             if val2 > 0:
-                score.set_tonality(music.tonalities[((val2-1)*5)%7])
-                
+                score.set_tonality(music.tonalities[((val1-1)*5+(val2-1))%7])
+         
+            print toks
+            
+            
         def chord(self,toks,data):
             
+            self.chord_player.play(toks,data)
             
-#            print "chord",toks,data
-            if toks == "xy":
-                y=int(float(data[0])*127)
-                x=int(float(data[1])*127)
-                vamp_inst.set_volume(y)
-                
-            
+                            
             
 
         def chordNote(self,toks,data):
@@ -175,9 +217,9 @@ try:
             print "chordNote",toks,data
            
         def melody(self,toks,data):
-            
- 
-            
+            """
+            Plays a note of the scale in the current tonality
+            """
             
             if toks == 'xy':
                 x=int(float(data[1])*127)
@@ -205,18 +247,46 @@ try:
             
     client=Client()
     
-    osc_driver=mbosc.OSCserver(client)
-    osc_driver.run()
     
-    xxx=raw_input("CR TO QUIT")
+    drivers=[]
+    if False:
+        osc_driver=oscdriver.OSCDriver(client)
+        osc_driver.run()
+        drivers.append(osc_driver)
     
-    seq.quit()
- 
-    mid.quit()
-    
+    # respond to a key without the need to press enter
+
+
+    if True:
+        import pgdriver
+        pg_driver=pgdriver.PGDriver(client)
+        pg_driver.start()
+        drivers.append(pg_driver)
+        
+    xxx=raw_input(" HIT CR ")
+      
     
 except MidiError as e:
     
     print e.get_message()
+    traceback.print_exc()
+    
 
+finally:
+    
+    print 'Stopping drivers: '  
+    
+    for drv in drivers:
+        print drv
+        drv.stop()
+        
+        
+        
+    seq.quit()
+    print ' Stopping midi engine '  
+    mid.quit()
+    
+    print 'Thats it ! '  
+    
+    sys.exit(0)
  

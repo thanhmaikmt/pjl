@@ -11,7 +11,7 @@ import socket
 import sys
 import traceback
 
-class OSCserver:
+class OSCDriver:
     def __init__(self,client):
         
         
@@ -79,6 +79,7 @@ class OSCserver:
     
 
     def stop(self):  
+        
         self.s.close()
         print "Waiting for Server-thread to finish"
         
