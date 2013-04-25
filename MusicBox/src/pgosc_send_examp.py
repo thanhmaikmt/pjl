@@ -33,7 +33,7 @@ print addr
 if __name__ == "__main__":
     
     # define a message-handler function for the server to call.
-    def default_handler(self,addr, tags, stuff, source):
+    def default_handler(addr, tags, stuff, source):
             print "---"
             print "received new osc msg from %s" % OSC.getUrlStr(source)
             print "with addr : %s" % addr

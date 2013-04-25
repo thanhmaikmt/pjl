@@ -228,6 +228,11 @@ class Instrument:
         self.midi_out.write_short(0xb0+self.channel,7,val)
         
         
+    def set_cc(self,cc,val):
+        self.midi_out.write_short(0xb0+self.channel,cc,val)
+        
+            
+    
     def all_note_off(self):
         
         #evts=[[[0b1011 0000,120,0],0]]

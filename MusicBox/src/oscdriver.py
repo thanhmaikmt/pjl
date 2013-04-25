@@ -1,7 +1,7 @@
+"""
+Setup an OSC server
+use the supplied cliet to pipe messages to the main application.
 
-""" receiving OSC with pyOSC
-https://trac.v2.nl/wiki/pyOSC
-example by www.ixi-audio.net based on pyOSC documentation
 """
 
 
@@ -10,27 +10,16 @@ import time, threading
 import socket
 import sys
 import traceback
+import MB
 
 class OSCDriver:
-    def __init__(self,client):
+    def __init__(self,client,addr):
         
         
-        
-        for ip in socket.gethostbyname_ex(socket.gethostname())[2]:
-             if not ip.startswith("127."):
-                 break
-             
-             
-        print ip
-             
-             
-    
+                 
         # tupple with ip, port. i dont use the () but maybe you want -> send_address = ('127.0.0.1', 9000)
-#        receive_address = '127.0.0.1', 7110
-#        receive_address = '192.168.0.8', 7110
-#        receive_address = '192.168.43.96', 7110
-#        receive_address = '169.254.250.186', 7110
-        receive_address = ip, 7110
+
+        receive_address = addr
         
         
         
@@ -94,7 +83,8 @@ if __name__ == "__main__":
             
             
             
-    server=OSCserver(Client())        
+    addr=MB.get_osc_ip()
+    server=OSCDriver(Client(),addr)        
     server.run()
 
     xx = raw_input(" Hit CR TO QUIT")

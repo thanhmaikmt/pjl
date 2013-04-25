@@ -1,18 +1,18 @@
 
 import music
 from pjlmidi import *
-from mbconstants import  *
+import mbconstants as mb
 import oscdriver
 import math
 import sys
 import traceback
+import players
 
 try:
     mid = MidiEngine()
     
     midi_out_dev = mid.open_midi_out(MIDI_OUT_NAMES)
-    
-    
+        
     seq = music.Sequencer(ticks_per_beat=2 * 2 * 3 * 5, bpm=100)
     
     # Score
@@ -76,96 +76,7 @@ try:
     seq.start()
     
     
-    class Session:
-        
-        def __init__(self,name):
-            self.out=open(name,"w")
-            
-        def record(self,addr,data):
-            stamp=time.time()
-            str=str(time)+addr+str(data)+"\n"
-            self.out.write(str)
-        
-        def close(self):
-            self.out.close()
-                
-        
-    class SessionPlayer:
-        
-        def __init__(self,name,seq,client):
-            self.fin=open(name,"r")
-            self.seq=seq
-            self.client=client
-            
-        def start(self):
-            self.start=time.time()
-            self.toff=self.start-time
-            time,self.addr,self.data=self.next()
-            tnext=time+self.toff
-            seq.add(tnext,self)
-            
-        def fire(self):
-            self.client.handle(self.addr,self.data)
-            self.next()
-            time,self.addr,self.data=self.next()
-            #  time+toff=start
-            tnext=time+self.toff
-            seq.add(tnext,self)
-            
-             
-        def next(self):
-            line=self.fin.readline()
-            toks=line.split()
-            tnext=float(toks[0])
-            addr=toks[1]
-            data=[]
-            for x in toks[2:]:
-                data.append(float(x))
-            
-            return time,addr,data
-        
-    class ChordPlayer:
-        
-        def __init__(self):
-            self.pitches=[]
-            self.template=[0,2,4,6]
-        
-        def play(self,toks,data):
-#           print "chord",toks,data
-            
-            if toks == "xy":
-                y=int(float(data[0])*127)
-                x=int(float(data[1])*127)
-                vamp_inst.set_volume(y)
-                return
-            
-
-            for pitch in self.pitches:
-                vamp_inst.note_off(pitch)
-                
-            self.pitches=[]
-                                        
-            inversion=int(toks[1])     #   TODO
-            
-            vel=int(float(data[0])*127)
-            if vel == 0:
-                return
-            
-        
-            tonality=score.get_tonality()
-            
-            
-            for p in range(len(self.template)):
-                self.pitches.append(tonality.get_note_of_chord(self.template[p],score.key))
-                vamp_inst.note_on(p,vel)
-                self.pitches.append(p)
-
-        #  Play notes (shift up +12 if pitch is too low)     
-#            for p in self.pitches:
-#                while p < self.lowest:
-#                    p += 12
-#                
-
+   
        
     class Client:
         
@@ -174,7 +85,8 @@ try:
                       "tonality":self.tonality,
                       "chordNote":self.chordNote,
                       "chord":self.chord}
-            self.chord_player=ChordPlayer()
+            self.chord_player=players.ChordPlayer(vamp_inst,score)
+            self.melody_player=players.MelodyPlayer(solo_player,score,seq)
             
         def handle(self,addr,data):
             
@@ -221,54 +133,28 @@ try:
             Plays a note of the scale in the current tonality
             """
             
-            if toks == 'xy':
-                x=int(float(data[1])*127)
-                y=int(float(data[0])*127)
-                print " melody xy",x,y
-                return
+            self.melody_player.play(toks,data)
             
-            val=float(data[0])
             
-#            assert len(toks) >1
-             
-            i=int(toks)
-            
-            print val,i
-            vel=int(val*127)       
-            pitch=score.get_tonality().get_note_of_scale(i,score.key)+36
-            #print "play",i,vel
-            
-            if vel != 0:
-                solo_inst.note_on(pitch,vel)
-            else:
-                # schedule the note off
-                playable = music.Playable(music.NoteOff(pitch), solo_player)
-                seq.add_after(.1, playable)
-            
+                    
     client=Client()
     
     
     drivers=[]
-    if False:
-        osc_driver=oscdriver.OSCDriver(client)
-        osc_driver.run()
-        drivers.append(osc_driver)
     
-    # respond to a key without the need to press enter
-
-
-    if True:
-        import pgdriver
-        pg_driver=pgdriver.PGDriver(client)
-        pg_driver.start()
-        drivers.append(pg_driver)
-        
+    
+    addr=mb.get_osc_ip()
+    osc_driver=oscdriver.OSCDriver(client,addr)
+    osc_driver.run()
+    drivers.append(osc_driver)
+    
+            
     xxx=raw_input(" HIT CR ")
       
     
-except MidiError as e:
+except:
     
-    print e.get_message()
+    #print e.get_message()
     traceback.print_exc()
     
 

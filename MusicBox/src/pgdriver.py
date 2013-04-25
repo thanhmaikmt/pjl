@@ -3,10 +3,10 @@ import threading
 from pygame.locals import * 
 
 
-class PGDriver(threading.Thread):
+class PGDriver:
     
     def __init__(self,client):      
-        threading.Thread.__init__(self)   
+       # threading.Thread.__init__(self)   
         pygame.init() 
          
         window = pygame.display.set_mode((468, 60)) 
@@ -35,19 +35,21 @@ class PGDriver(threading.Thread):
             
     def stop(self):  
         
-        print "pgdriver Waiting for Server-thread to finish"
-        self.running=False
-        self.join() ##!!!
-        print "pgdriver joined Done"
         pygame.quit()     #   TODO check that midi subsystem is notconfused by this
         
     
 if __name__ == "__main__":
     
-    pe=PGDriver(None) 
-    pe.start()
-    
-    xxx=raw_input("CRto QUIT:")
+    class Client:
+        
+        def handle(self,event):
+            print event
+            
+            
+            
+            
+    pe=PGDriver(Client()) 
+    pe.run()
     
     pe.stop()
        
