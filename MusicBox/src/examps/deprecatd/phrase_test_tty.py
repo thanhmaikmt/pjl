@@ -19,7 +19,7 @@ if __name__ == "__main__":
      
         
     seq=Sequencer()
-    seq.schedule_at(0,phrase,Player())
+    seq.schedule_phrase(0,phrase,Player())
     
     seq.start()
     

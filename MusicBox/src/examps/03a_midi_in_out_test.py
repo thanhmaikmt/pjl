@@ -1,15 +1,15 @@
     
-from pjlmidi import  *  
-from mbconstants import *    
+import MBmidi   
+import MB   
  
 #  create PyMidi to initialize misi system.
 
 
 
-mid=MidiEngine()
+mid=MBmidi.MidiEngine()
 
-midi_out=mid.open_midi_out(MIDI_OUT_NAMES)
-midi_in=mid.open_midi_in(MIDI_IN_NAMES)   
+midi_out=mid.open_midi_out(MB.MIDI_OUT_NAMES)
+midi_in=mid.open_midi_in(MB.MIDI_IN_NAMES)   
             
      
         

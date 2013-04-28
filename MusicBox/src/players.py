@@ -1,5 +1,5 @@
-import music
-
+import MBmusic
+ 
 class ChordPlayer:
         
         def __init__(self,inst,score):

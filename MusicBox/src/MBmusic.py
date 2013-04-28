@@ -2,7 +2,7 @@ import linkedlist
 import sys
 import time
 from threading import Thread
-from  mbconstants import *
+import MB
 
 
 
@@ -14,24 +14,27 @@ SLEEP_TIME=0.001    # tick to yield in engine event loop
 class Engine(Thread):
 
 
-    """
-    Engine calls a call_back every tick
-      yields using sleep to allow multithreading
+    """Engine calls a call_back every tick
+       The Engine will attempt to keep the tick synchrounized with
+       real time using  a sleep (which will yield. to allow multithreading)
+       For usage see Sequencer.
+      
     """
 
 
-    def __init__(self,bpm,ticks_per_beat,call_back=None,idle=None):
+    def __init__(self,dt,call_back=None):
         
-        self.dt=60.0/bpm/ticks_per_beat
+        self.dt=dt
         self.call_back=call_back
-        self.idle=idle
+        self.tclock=0.0
         Thread.__init__(self)
+      
         
     def run(self):
         self.running=True
+        
         tnext=tnow=time.time()
-        tick=0
-    
+        
         while self.running:
             
             # spin until next tick
@@ -40,9 +43,11 @@ class Engine(Thread):
                 time.sleep(SLEEP_TIME) 
                 tnow=time.time()       
             
-            self.call_back(tick)
+            self.call_back()
+            
+            
+            self.tclock+=self.dt
             tnext+=self.dt
-            tick+=1
             
             
     def stop(self):
@@ -54,6 +59,77 @@ class Engine(Thread):
         self.running=False      # flag deamon to halt.
         self.join()            
         print  "Engine stopped (threads joined)"
+
+
+
+
+class Sequencer(Engine):
+    
+    """
+    Plays a sequence of messages
+    Delegates the timing to an engine which
+    must call play_events_at(at) with at incrementing each call
+    """
+    
+    def __init__(self,beats_per_sec=1.0,dt=0.005):
+                
+        self.sequence=linkedlist.OrderedLinkedList()        
+        self.sequence.insert(-sys.float_info.max,None,None)
+        self.sequence.insert(sys.float_info.max,None,None)
+        
+        Engine.__init__(self,dt,self._play_next_dt)
+        
+        # self.prev is last event to be played
+        self.prev=self.sequence.head
+        self.beats_per_sec=beats_per_sec        
+        self.beat=0.0
+     
+     
+    def schedule(self,beat,event):
+        # time=self.beat_to_time(beat)  
+        self.sequence.insert(beat,event,self.prev)
+
+
+#        
+#    def beat_to_time(self,beat):
+#        
+#        #  how many beats from the last count
+#        ttt=beat-self.beat    
+#        
+#        tt_time=self.tclock+self.beats_per_sec*ttt
+#        return tt_time
+#  
+      
+      
+      
+    def quit(self):
+        """
+        Stop the engines. 
+        """
+        
+        self.stop()
+        
+                    
+    def _play_next_dt(self):
+        
+        """
+        advanve beat by dt and 
+        play any pending events
+        """
+        
+        #print "SEEQ PLAY NEXT"
+
+        self.beat+=self.beats_per_sec*self.dt
+        # if next event is after at just return
+        if self.prev.next.time > self.beat:
+            return
+        
+        # play pending events   
+        while self.prev.next.time <= self.beat:
+            self.prev=self.prev.next
+            self.prev.data.fire(self.prev.time)
+
+
         
          
 class Playable:
@@ -66,7 +142,7 @@ class Playable:
         self.mess=mess
         self.player=player
         
-    def fire(self):
+    def fire(self,beat):
         self.player.play(self.mess)
 
 
@@ -87,94 +163,6 @@ class Phrase:
         return self.list.__iter__()
 
         
-
-class Sequencer:
-    
-    """
-    Plays a sequence of messages
-    Delegates the timing to an engine which
-    must call play_events_at(at) with at incrementing each call
-    """
-    
-    def __init__(self,ticks_per_beat=2*2*3*4,bpm=120):
-        
-        
-        self.sequence=linkedlist.OrderedLinkedList()        
-        self.sequence.insert(-sys.maxint,None)
-        self.sequence.insert(sys.maxint,None)
-        
-        self.engine=Engine(bpm,ticks_per_beat,self._play_events_at)
-
-        self.beat=0
-        self.ticks_per_beat=ticks_per_beat
-        
-        # self.prev is last event to be played
-        self.prev=self.sequence.head
-
-        
-        # next should be OK providing we have an end event in the sequence
-
-    def _beat_to_tick(self,beat):
-        return int(beat*self.ticks_per_beat)
-   
-   
-    def schedule_at(self,start,phrase,player):    
-        for node in phrase:
-            self.add(node.tick+start,Playable(node.data,player))
-            
-   
-    def add(self,time,event,prio=0):
-        
-        """
-        event must have a int tick field 
-        event must have a mess must implement send()
-        """
-        
-        self.sequence.insert(self._beat_to_tick(time)-prio,event)
-      
-    def add_after(self,delay,event,prio=0):
-        
-        """
-        event must have a int tick field
-        event must implement fire()
-        """
-        
-        self.sequence.insert(self._beat_to_tick(self.beat+delay)-prio,event)
-        
-          
-    def start(self):
-        """
-        start the engine which should call play_events_at(at)
-        """
-        self.engine.start()
-      
-    def quit(self):
-        self.engine.stop()
-        
-                    
-    def _play_events_at(self,at):
-        
-        """
-        Play messages and advance the tick.
-        """
-        
-        self.beat=float(at)/self.ticks_per_beat
-         
-        # if next event is after at just return
-        if self.prev.next.tick > at:
-            return
-        
-        # catch up by skipping missed events
-        while self.prev.next.tick < at:
-            self.prev=self.prev.next
-        
-        while self.prev.next.tick  == at:
-            self.prev=self.prev.next
-            self.prev.data.fire()
-
-
-
-
 class Player:
         
     def __init__(self,inst):
@@ -208,16 +196,25 @@ class NoteOff:
         
     
 class Groover:
-    """ Used to call player.play_count(count,data)
-        the data.deltas are used to time the calls
+    """ Calls player.play_count(count,data)
+        the data.deltas are used to time the calls.
+        
+        count is incremented each call.
     """
 
-    def __init__(self,seq,data,player):
+    def __init__(self,start,seq,data,player):
+        
+        """
+        start --  time of groove start (may not be first event)
+        seq --    sequencer
+        data --   info passed to player
+        player -- plays the event using play_count(count,data)
+        """ 
         
         self.times=data.times 
-        self.time_ref=0.0
         self.data=data       
         self.seq=seq
+        self.beat_ref=start
         self.iter=self.times.__iter__()
         self._schedule()
        
@@ -226,21 +223,22 @@ class Groover:
         self.player=player
         
     def _schedule(self):
-        delta=self.iter.next()-self.time_ref
-        self.seq.add_after(delta,self)
-        self.time_ref+=delta
+        beat=self.iter.next()+self.beat_ref
+        self.seq.schedule(beat,self)
+         
         
-        
-    def fire(self):
+    def fire(self,beat):
         
         #print self.count," Groove fire",seq.beat
         
-        self.player.play_count(self.count,self.data)
+        self.player.play_count(self.count,self.data,beat)
         self.count+=1
         if self.count >= self.n:
             return
              
         self._schedule()       
+        
+        
         #self.seq.add_after(self.iter.next(),self)          
     
     
@@ -259,8 +257,8 @@ class GrooverFactory:
         self.player=player
         self.seq=seq
         
-    def create(self):
-        return Groover(self.seq,self.data,self.player)
+    def create(self,when):
+        return Groover(when,self.seq,self.data,self.player)
         
         
 
@@ -271,17 +269,22 @@ class Repeater:
     """
     
     def __init__(self,start,period,seq,factory):
+        
+        """
+        start -- time of first call to factory.create
+        period -- interval between calls
+        factory -- must implement create(when)
+        """
+        
         self.start=start
         self.period=period
         self.factory=factory
-        seq.add(start,self)
+        seq.schedule(start,self)
         self.seq=seq
-                
-    def fire(self):
             
-        self.factory.create()
-        self.seq.add_after(self.period,self)
-        
+    def fire(self,beat):
+        self.factory.create(beat)
+        self.seq.schedule(beat+self.period,self)
         
 
 
@@ -290,8 +293,7 @@ class Repeater:
 class Score:
  
  
-    def __init__(self, start, seq, nbars,beats_per_bar,key,priority=5):
-        self.beat = start - 1
+    def __init__(self, nbars,beats_per_bar,key):
         self.beats_per_bar = beats_per_bar 
         self.bars_per_section = nbars
         self.beats_per_section=nbars*beats_per_bar
@@ -301,10 +303,12 @@ class Score:
 
         for i in range(self.beats_per_section):
             self.tonalities.append(None)
-           
-        seq.add(start, self,priority)
-        self.seq = seq
- 
+  
+        self.look_ahead=0.5  #  look ahead 1/2 a beat when reporting tonality
+        
+#        seq.schedule(start -priority, self)
+#        self.seq = seq
+# 
     def set_tonality(self,tonality,bar=0,beat=None):
         
         if beat != None:
@@ -313,22 +317,22 @@ class Score:
             for i in range(self.beats_per_bar):
                 self.tonalities[bar*self.beats_per_bar+i]=tonality
                 
-    def get_tonality(self):
-        beat = int(self.beat)
-        return self.tonalities[beat % self.beats_per_section]
+    def get_tonality(self,beat):
+        beati = int(beat+self.look_ahead)
+        return self.tonalities[beati % self.beats_per_section]
     
-    def fire(self):
-        # print "Score fire "
-        self.beat += 1
-        self.seq.add_after(1, self)
-#        if self.beat % self.beats_per_bar == 0: 
-#            self.beat_one_time = self.beat
-        
-    def get_count(self):
-        return self.beat % self.beats_per_bar      
-    
-    def get_time(self):
-        return self.seq.beat
+#    
+#    def fire(self,beat):
+#        # print "Score fire "
+#        self.seq.schedule(self.beat, self)
+##        if self.beat % self.beats_per_bar == 0: 
+##            self.beat_one_time = self.beat
+#        
+#    def get_count(self):
+#        return self.beat % self.beats_per_bar      
+#    
+#    def get_time(self):
+#        return self.seq.beat
  
 class Tonality:
     
@@ -385,9 +389,10 @@ class Metro:
     """ Simple Metronome with an accent and weak beat.
     """
          
-    def __init__(self,start,beats_per_bar,seq,inst,note_accent,note_weak):
-        self._time=start
-        seq.add(start,self)
+    def __init__(self,start_beat,beats_per_bar,seq,inst,note_accent,note_weak):
+        seq.schedule(start_beat,self)
+        
+        
         self.seq=seq
         self.accent=note_accent
         self.weak=note_weak
@@ -395,9 +400,11 @@ class Metro:
         self.beats_per_bar=beats_per_bar
         self.inst=inst
                 
-    def fire(self):
+                
+    
+    def fire(self,beat):
         
-#        print " Metro.fire"
+        print " Metro.fire",self.seq.beat
     
         if self.count %self.beats_per_bar == 0:
             self.accent.send(self.inst)
@@ -405,21 +412,25 @@ class Metro:
             self.weak.send(self.inst)
         
         self.count+=1
-        self._time+=1
-        self.seq.add(self._time,self)
+        self.seq.schedule(self.count,self)
         #TODO delete etc.....
 
-
+    def schedule(self,beat,firer):
+        t=self.beat_to_time(beat)
+        self.seq.schedule(t,firer)
 
 class BassPlayer:
  
     """ plays chords based on the tonality returned by the score.
-        play_count(count,data) is called to initiate each chord.
-        the Chorder expects the data to have a dur and velocity members to set the length and velocity
+        play_count(count,data,anchor) is called to initiate each chord.
+        the Chorder expects the data to have a dur and velocity members to set the length and velocity.
+        A BassPlayer is used by a Groover.
+        The Groover is responisible for call play_count at the start of each count event.
+        The Player is responsible for scheduling any  NoteOff events
     """
+    
     def __init__(self, seq, inst, score, lowest,highest):
-        
-        
+           
         self.seq = seq
         self.score = score        
         self.inst = inst
@@ -428,18 +439,20 @@ class BassPlayer:
         self.player  = Player(inst)
         
         
-    def play_count(self, count, data):
+    def play_count(self, count, data, beat):
         """ Used to play a event associated with the given count
+        count -- increments each call
+        beat  --  time of the event
+        data  --  data for playing 
         """
         
         # print " Vamp.fire"
         
-        tonality = self.score.get_tonality()
+        tonality = self.score.get_tonality(beat)
         
         dur = data.durs[count]
         velocity = data.vels[count]
-    
-            
+     
         pitch=tonality.get_note_of_chordscale(data.pattern[count],self.score.key)
     
         #print pitch,self.score.key
@@ -460,7 +473,9 @@ class BassPlayer:
         
         # schedule the note off
         playable = Playable(NoteOff(pitch), self.player)
-        self.seq.add_after(dur, playable)
+        
+        
+        self.seq.schedule(beat+dur, playable)
 
  
 class ChordPlayer:
@@ -479,13 +494,13 @@ class ChordPlayer:
         self.player = Player(inst)
         self.template=template
         
-    def play_count(self, count, data):
+    def play_count(self, count, data,beat):
         """ Used to play a event associated with the given count
         """
         
         # print " Vamp.fire"
         
-        tonality = self.score.get_tonality()
+        tonality = self.score.get_tonality(beat)
         
         dur = data.durs[count]
         velocity = data.vels[count]
@@ -507,22 +522,22 @@ class ChordPlayer:
     
             # schedule the note off
             playable = Playable(NoteOff(p), self.player)
-            self.seq.add_after(dur, playable)
+            self.seq.schedule(beat+dur, playable)
 
 
 
 def extend_by(noct,scale):
     n=len(scale)
-    for oct in range(noct):
+    for octi in range(noct):
         for i in range(n):
-            scale.append(scale[i] + (oct + 1) * 12)
+            scale.append(scale[i] + (octi + 1) * 12)
 
 major_scale = [0, 2, 4, 5, 7, 9, 11]    
 
 
 extend_by(11,major_scale) 
 
-print (major_scale)
+#print (major_scale)
 
 stack3 = [0, 2, 4, 6, 8, 10 ,12 ]
 

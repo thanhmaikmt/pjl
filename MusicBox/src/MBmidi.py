@@ -2,7 +2,8 @@ import pygame.midi as pgmidi
 import threading
 import time
 import atexit
-from mbconstants import *
+import MB
+
 
 
 
@@ -193,7 +194,7 @@ class Instrument:
         Turn a note on in the output stream.  The note must already
         be off for this to work correctly.
         """
-        if DEBUGGING:
+        if MB.DEBUGGING:
             print self.channel,note,velocity
             
         self.midi_out.write_short(0x90+self.channel, note, velocity)

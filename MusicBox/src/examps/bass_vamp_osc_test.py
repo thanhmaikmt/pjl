@@ -1,12 +1,12 @@
 
-import music
-from pjlmidi import *
-from mbconstants import  *
+import MBmusic
+import MBmidi 
+import MB
 import osc_driver
 import math
 
 try:
-    mid = MidiEngine()
+    mid = MBmidi.MidiEngine()
     
     midi_out_dev = mid.open_midi_out(MIDI_OUT_NAMES)
     

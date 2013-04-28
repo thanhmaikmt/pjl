@@ -1,4 +1,4 @@
-import pygame.midi as pymidi
+import MBmidi
 import time
 from music import  *
 

@@ -1,16 +1,16 @@
 
-import music
-from pjlmidi import *
-from mbconstants import  *
+import MBmusic as music
+import MBmidi 
+import MB
 
 
 try:
-    mid = MidiEngine()
+    mid = MBmidi.MidiEngine()
     
-    midi_out_dev = mid.open_midi_out(MIDI_OUT_NAMES)
+    midi_out_dev = mid.open_midi_out(MB.MIDI_OUT_NAMES)
     
     
-    seq = music.Sequencer(ticks_per_beat=2 * 2 * 3 * 5, bpm=100)
+    seq = music.Sequencer()
     
     # Score
     beats_per_bar=4
@@ -18,7 +18,7 @@ try:
     key=music.G
     start=0
     
-    score = music.Score(start, seq, bars_per_section,beats_per_bar,key)
+    score = music.Score(bars_per_section,beats_per_bar,key)
     score.set_tonality(music.I, 0)
     score.set_tonality(music.vi, 1) 
     score.set_tonality(music.ii, 2)
@@ -79,7 +79,7 @@ try:
     seq.quit()
     mid.quit()
     
-except MidiError as e:
+except MBmidi.MidiError as e:
     print e.get_message()
 
  

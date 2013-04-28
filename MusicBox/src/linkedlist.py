@@ -4,13 +4,12 @@ class Node:
     
     def __init__(self,time,data,next=None):
         self.data = data  # contains the data
-        self.tick = time
+        self.time = time
         self.next = next # contains the reference to the next node
-        #self.tick = data.tick
         
     def _insert_after(self,time,data):
-        assert time >= self.tick
-        assert not self.next or self.next.tick >= time
+        assert time >= self.time
+        assert not self.next or self.next.time >= time
         
         new_node = Node(time,data,self.next) # create a new node
         self.next=new_node
@@ -30,20 +29,24 @@ class OrderedLinkedList:
         
     
 
-    def insert(self,time,data):
+    def insert(self,time,data,after):
         """
         create a new Node with data 
         insert into list so it is assending order
         """
         
-        if self.head == None:
-            self.head=Node(time,data,None)
-            return
-        
-        ptrPrev=None
-        ptrNext=self.head
-        
-        while ptrNext != None and  ptrNext.tick <= time:
+        if after == None:
+            if  self.head == None:
+                self.head=Node(time,data,None)
+                return
+            else:
+                ptrPrev=None
+                ptrNext=self.head
+        else:
+            ptrPrev=None
+            ptrNext=after
+                
+        while ptrNext != None and  ptrNext.time <= time:
             ptrPrev=ptrNext
             ptrNext=ptrNext.next
            
@@ -60,7 +63,7 @@ class OrderedLinkedList:
     
     def debug(self):
           for x in self:
-              print (x.data)
+              print x.time,x.data
 
 
 class LinkedListIterator:
@@ -82,8 +85,7 @@ class LinkedListIterator:
         if self.current == None:
             self.current=self.list.head
             return self.current
-        
-        
+                
         mynext=self.current.next
         
         if mynext == None:
@@ -103,17 +105,8 @@ if __name__ == "__main__":
     mylist.insert(5,5)
     mylist.insert(0,0)
     mylist.insert(2,2)
-    mylist.insert(3,"32")            
- 
+    mylist.insert(3,"32")   
+    mylist.insert(4.5,"float")         
+
     mylist.debug()
     
-    
-##    mylist.insert(5)
-#    
-
-#    
-#    print "---------------------"
-#    for x in mylist:
-#        print x.data.mess
-#        if x.data.tick == 3:
-#            mylist.insert(Data(4,4))

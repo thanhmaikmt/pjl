@@ -5,6 +5,11 @@ from pygame.locals import *
 
 class PGDriver:
     
+    """
+    pygame frontend for events.
+    delegates the interpretation of events to a user supplied cleint.
+    """
+    
     def __init__(self,client):      
        # threading.Thread.__init__(self)   
         pygame.init() 

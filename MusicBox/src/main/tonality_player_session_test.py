@@ -1,7 +1,7 @@
 
 import music
 from pjlmidi import *
-import mbconstants as mb
+import MB
 import oscdriver
 import math
 import sys
@@ -11,7 +11,7 @@ import players
 try:
     mid = MidiEngine()
     
-    midi_out_dev = mid.open_midi_out(MIDI_OUT_NAMES)
+    midi_out_dev = mid.open_midi_out(MB.MIDI_OUT_NAMES)
         
     seq = music.Sequencer(ticks_per_beat=2 * 2 * 3 * 5, bpm=100)
     
@@ -143,10 +143,13 @@ try:
     drivers=[]
     
     
-    addr=mb.get_osc_ip()
+    addr=MB.get_osc_ip()
     osc_driver=oscdriver.OSCDriver(client,addr)
     osc_driver.run()
     drivers.append(osc_driver)
+    
+    import os
+    os.system("/usr/local/bin/python pg_musicbox.py")
     
             
     xxx=raw_input(" HIT CR ")
