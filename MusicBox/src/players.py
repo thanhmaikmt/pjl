@@ -2,12 +2,12 @@ import MBmusic
  
 class ChordPlayer:
         
-        def __init__(self,inst,score):
+        def __init__(self,inst,score,seq):
             self.pitches=[]
             self.template=[0,2,4,6]
             self.inst=inst
             self.score=score
-            
+            self.seq=seq
             
         def play(self,toks,data):
 #           print "chord",toks,data
@@ -30,8 +30,8 @@ class ChordPlayer:
             if vel == 0:
                 return
             
-        
-            tonality=self.score.get_tonality()
+            beat=self.seq.get_beat()
+            tonality=self.score.get_tonality(beat)
             
             
             for p in range(len(self.template)):
@@ -49,11 +49,12 @@ class ChordPlayer:
 class MelodyPlayer:
     
     
-        def __init__(self,player,score,seq):
+        def __init__(self,inst,score,seq):
 
             self.score=score
-            self.player=player
+            self.inst=inst
             self.seq=seq
+            self.player=MBmusic.Player(inst)
         
         def play(self,toks,data):     
             if toks[0] == 'xy':
@@ -73,13 +74,15 @@ class MelodyPlayer:
             
             print val,i
             vel=int(val*127)       
-            pitch=self.score.get_tonality().get_note_of_scale(i,self.score.key)+36
+            beat=self.seq.get_beat()
+            pitch=self.score.get_tonality(beat).get_note_of_scale(i,self.score.key)+36
             #print "play",i,vel
             
             if vel != 0:
                 self.player.inst.note_on(pitch,vel)
             else:
+                self.player.inst.note_off(pitch)
                 # schedule the note off
-                playable = music.Playable(music.NoteOff(pitch), self.player)
-                self.seq.add_after(.1, playable)
+                #playable = MBmusic.Playable(MBmusic.NoteOff(pitch), self.player)
+                #self.seq.schedule(beat+0.05, playable)
        

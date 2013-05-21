@@ -10,19 +10,17 @@ import time, threading
 import socket
 import sys
 import traceback
-import MB
+import MBsetup as MB
 
-class OSCDriver:
-    def __init__(self,client,addr):
+class Server:
+    def __init__(self,addr,map,recorder=None):
         
         
                  
         # tupple with ip, port. i dont use the () but maybe you want -> send_address = ('127.0.0.1', 9000)
 
         receive_address = addr
-        
-        
-        
+         
         
         # OSC Server. there are three different types of server. 
         self.s = OSC.OSCServer(receive_address) # basic
@@ -30,19 +28,18 @@ class OSCDriver:
         ##s = OSC.ForkingOSCServer(receive_address) # forking
         
         
-        
         # this registers a 'default' handler (for unmatched messages), 
         # an /'error' handler, an '/info' handler.
         # And, if the client supports it, a '/subscribe' & '/unsubscribe' handler
         self.s.addDefaultHandlers()
-        self.client=client
         self.s.addMsgHandler("default", self.default_handler) # adding our function
-         
-    
+        self.map=map
+        self.recorder=recorder
+        
     # define a message-handler function for the server to call.
     def default_handler(self,addr, tags, stuff, source):
         try:
-            self.client.handle(addr,stuff)
+            self.handle(addr,stuff,self.recorder)
         except: 
             print "Client error handling "
             print "---"
@@ -75,16 +72,38 @@ class OSCDriver:
         self.st.join() ##!!!
         print "Done"
 
+
+            
+    def handle(self,addr,data,recorder):
+            
+            #print addr,data
+            
+            if recorder != None:
+                recorder.record(addr,data)
+      
+            if self.map==None:
+                print addr,data
+                return
+            
+            toks=addr.split('/')
+            
+            if len(toks) < 3:
+                return
+            
+            func=self.map.get(toks[2])
+            
+            if func != None:
+                func(toks[3:],data)
+            else:
+                print " No musicbox handler for:", addr
+  
+    
 if __name__ == "__main__":
-    class Client:
-        
-        def handle(self,addr,data):
-            print addr,data
+   
             
-            
-            
+             
     addr=MB.get_osc_ip()
-    server=OSCDriver(Client(),addr)        
+    server=Server(addr,None)        
     server.run()
 
     xx = raw_input(" Hit CR TO QUIT")

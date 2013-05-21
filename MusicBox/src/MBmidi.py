@@ -1,11 +1,12 @@
-import pygame.midi as pgmidi
+import pygame.midi
 import threading
 import time
 import atexit
-import MB
+import MBsetup
 
 
-
+NOTEON=9
+NOTEOFF=8
 
 class Device:
     
@@ -18,18 +19,18 @@ class Device:
         self.opened=opened
         self.channels=16*[None]
         
-    def allocate_channel(self,id):
-        if self.channels[id] != None:
-            raise MidiError("MidiChannel already allocated",self.name+str(id))
+    def allocate_channel(self,idd):
+        if self.channels[idd] != None:
+            raise MidiError("MidiChannel already allocated",self.name+str(idd))
         
-        inst=Instrument(self.out,id)
+        inst=Instrument(self.out,idd)
         return inst
         
     
 class MidiEngine(threading.Thread):
         
     def __init__(self):
-        pgmidi.init()
+        pygame.midi.init()
         # register tidy up function to be called at exit.
     
         threading.Thread.__init__(self);
@@ -57,7 +58,7 @@ class MidiEngine(threading.Thread):
                         print "OPENING MIDI OUT", dev.id,dev.name
 
                         midi_out_id=dev.id
-                        o=pgmidi.Output(midi_out_id, 0)
+                        o=pygame.midi.Output(midi_out_id, 0)
                         dev.out=o
                         self.out_dev.append(dev)
                         return dev
@@ -69,7 +70,6 @@ class MidiEngine(threading.Thread):
     
         
     def open_midi_in(self,midi_in_names):
-        midi_id=-1
                 
         for name in midi_in_names:
             for dev in self.devs:
@@ -79,25 +79,24 @@ class MidiEngine(threading.Thread):
                     if name in dev.name:
                         print "OPENING MIDI IN", dev.id,dev.name
                         midi_in_id=dev.id
-                        o=pgmidi.Input(midi_in_id, 0)
+                        o=pygame.midi.Input(midi_in_id, 0)
                         self.in_dev.append(o)
                         dev.o=o
                         return dev
                         break
                     
-              
         raise MidiError("Device not found :","None of the list of devices was found")
         
         
         
     def device_info(self):
         devs=[]
-        for i in range( pgmidi.get_count()):
-            r = pgmidi.get_device_info(i)
-            (interf, name, input, output, opened) = r
-            devs.append(Device(i,interf, name, input, output, opened))
+        for i in range( pygame.midi.get_count()):
+            r = pygame.midi.get_device_info(i)
+            (interf, name, input1, output, opened) = r
+            devs.append(Device(i,interf, name, input1, output, opened))
             in_out = ""
-            if input:
+            if input1:
                 in_out = "(input)"
             if output:
                 in_out = "(output)"
@@ -108,11 +107,11 @@ class MidiEngine(threading.Thread):
         return devs
             
 #    def set_midi_in(self,midi_in):    
-#        self.midi_in = pgmidi.Input(midi_in)
+#        self.midi_in = pygame.midi.Input(midi_in)
 #    
 #    
 #    def set_midi_out(self,midi_out):    
-#        self.midi_out = pgmidi.Output(midi_out, 0)
+#        self.midi_out = pygame.midi.Output(midi_out, 0)
     
 
     def default_handler(self,evts):
@@ -142,7 +141,7 @@ class MidiEngine(threading.Thread):
             else:
                 time.sleep(0.001)
                  
-        print " quitting pgmidi deamon"
+        print " quitting pygame.midi deamon"
             
     def _halt(self):
         
@@ -168,7 +167,7 @@ class MidiEngine(threading.Thread):
                 if dev.channels[i]!= None:
                     dev.channels[i].all_note_off()
                     
-        pgmidi.quit()
+        pygame.midi.quit()
            
         print  "MidiEngine Halted"
      
@@ -194,7 +193,7 @@ class Instrument:
         Turn a note on in the output stream.  The note must already
         be off for this to work correctly.
         """
-        if MB.DEBUGGING:
+        if MBsetup.DEBUGGING:
             print self.channel,note,velocity
             
         self.midi_out.write_short(0x90+self.channel, note, velocity)

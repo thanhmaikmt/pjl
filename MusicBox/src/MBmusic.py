@@ -2,11 +2,7 @@ import linkedlist
 import sys
 import time
 from threading import Thread
-import MB
-
-
-
-
+import MBsetup as MB
 
 
 SLEEP_TIME=0.001    # tick to yield in engine event loop
@@ -28,7 +24,7 @@ class Engine(Thread):
         self.call_back=call_back
         self.tclock=0.0
         Thread.__init__(self)
-      
+        self.running=False
         
     def run(self):
         self.running=True
@@ -130,7 +126,8 @@ class Sequencer(Engine):
             self.prev.data.fire(self.prev.time)
 
 
-        
+    def get_beat(self):
+        return self.beat
          
 class Playable:
     
@@ -404,8 +401,8 @@ class Metro:
     
     def fire(self,beat):
         
-        print " Metro.fire",self.seq.beat
-    
+#        print " Metro.fire",self.seq.beat
+#    
         if self.count %self.beats_per_bar == 0:
             self.accent.send(self.inst)
         else:

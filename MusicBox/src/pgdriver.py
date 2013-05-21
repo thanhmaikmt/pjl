@@ -10,11 +10,11 @@ class PGDriver:
     delegates the interpretation of events to a user supplied cleint.
     """
     
-    def __init__(self,client):      
+    def __init__(self,client,dim=(256, 256)):      
        # threading.Thread.__init__(self)   
         pygame.init() 
          
-        window = pygame.display.set_mode((468, 60)) 
+        window = pygame.display.set_mode(dim) 
         pygame.display.set_caption('Music Box') 
         self.running=False
         self.client=client
@@ -55,7 +55,6 @@ if __name__ == "__main__":
             
     pe=PGDriver(Client()) 
     pe.run()
-    
     pe.stop()
        
                       
