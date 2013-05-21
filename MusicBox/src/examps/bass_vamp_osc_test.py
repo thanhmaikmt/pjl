@@ -1,34 +1,34 @@
 
 import MBmusic
 import MBmidi 
-import MB
-import osc_driver
+import MBsetup
+import oscdriver
 import math
 
 try:
     mid = MBmidi.MidiEngine()
     
-    midi_out_dev = mid.open_midi_out(MIDI_OUT_NAMES)
+    midi_out_dev = mid.open_midi_out(MBsetup.MIDI_OUT_NAMES)
     
     
-    seq = music.Sequencer(ticks_per_beat=2 * 2 * 3 * 5, bpm=100)
+    seq = MBmusic.Sequencer(beats_per_sec=.5)
     
     # Score
     beats_per_bar=4
     bars_per_section=1
-    key=music.G
+    key=MBmusic.G
     start=0
     
-    score = music.Score(start, seq, bars_per_section,beats_per_bar,key)
-    score.set_tonality(music.I, 0)
+    score = MBmusic.Score(bars_per_section,beats_per_bar,key)
+    score.set_tonality(MBmusic.I, 0)
     
 
     # MetroNome
-    accent = music.NoteOn(61, 100)
-    weak = music.NoteOn(60, 80)
+    accent = MBmusic.NoteOn(61, 100)
+    weak = MBmusic.NoteOn(60, 80)
     metro_inst = midi_out_dev.allocate_channel(9)
     
-    #metro = music.Metro(0, 4,seq, metro_inst, accent, weak) 
+    #metro = MBmusic.Metro(0, 4,seq, metro_inst, accent, weak) 
     
     # bass line
 
@@ -43,15 +43,15 @@ try:
 
 
     bass_inst = midi_out_dev.allocate_channel(1)  
-    bass_player = music.BassPlayer(seq, bass_inst, score,30,48)
+    bass_player = MBmusic.BassPlayer(seq, bass_inst, score,30,48)
     bass_data=BassData()
-    bass_factory=music.GrooverFactory(seq,bass_data,bass_player)
-    music.Repeater(0, 4, seq, bass_factory) 
+    bass_factory=MBmusic.GrooverFactory(seq,bass_data,bass_player)
+    MBmusic.Repeater(0, 4, seq, bass_factory) 
     
     # Vamp
        
     vamp_inst = midi_out_dev.allocate_channel(0)
-    vamp = music.ChordPlayer(seq, vamp_inst, score, 50,[0,1,2,3])
+    vamp = MBmusic.ChordPlayer(seq, vamp_inst, score, 50,[0,1,2,3])
 
     class VampData:
         
@@ -63,49 +63,29 @@ try:
             
    
     vamp_data=VampData()
-    factory=music.GrooverFactory(seq,vamp_data,vamp)   
-    music.Repeater(0, 4, seq, factory) 
+    factory=MBmusic.GrooverFactory(seq,vamp_data,vamp)   
+    MBmusic.Repeater(0, 4, seq, factory) 
     
     solo_inst=midi_out_dev.allocate_channel(2)
     
     # ready to go
     
     seq.start()
-    
-    class Wrapper:
-        
-        def set_push1(self,i,val):
-            print "set tonality",i,val
-            if val > 0:
-                score.set_tonality(music.tonalities[(i-1)%7])
 
-        def set_xy(self,x,y):
-            print "set xy",x,y
-            
-        def set_accel(self,x,y,z):
-            print "accel ",x,y,z
-            
-            
-        def set_push2(self,i,val):
-            vel=int(val*100)       
-            pitch=score.get_tonality().get_note_of_scale(i,score.key)+36
-            #print "play",i,vel
-            if vel != 0:
-                solo_inst.note_on(pitch,vel)
-            else:
-                solo_inst.note_off(pitch)
-            
-    wrapper=Wrapper()
+    import MBmapper      
+    mapper=MBmapper.Mapper(seq,score,vamp_inst,bass_inst)
     
-    osc_driver.run(wrapper)
+    addr=MBsetup.get_osc_ip()
+    drv=oscdriver.OSCDriver(addr,mapper.map)
+    drv.run()
+    
+    xx=raw_input(" enter to quit ")
     
     seq.quit()
- 
     mid.quit()
     
     
-except MidiError as e:
-    
-    print e.get_message()
-
+except:
+    import traceback
+    traceback.print_exc()  
  
