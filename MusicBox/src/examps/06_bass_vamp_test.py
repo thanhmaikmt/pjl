@@ -1,13 +1,13 @@
 
 import MBmusic as music
 import MBmidi 
-import MB
+import MBsetup
 
 
 try:
     mid = MBmidi.MidiEngine()
     
-    midi_out_dev = mid.open_midi_out(MB.MIDI_OUT_NAMES)
+    midi_out_dev = mid.open_midi_out(MBsetup.MIDI_OUT_NAMES)
     
     
     seq = music.Sequencer()
