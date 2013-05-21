@@ -1,6 +1,6 @@
     
 import MBmidi   
-import MB   
+import MBsetup 
  
 #  create PyMidi to initialize misi system.
 
@@ -8,8 +8,8 @@ import MB
 
 mid=MBmidi.MidiEngine()
 
-midi_out=mid.open_midi_out(MB.MIDI_OUT_NAMES)
-midi_in=mid.open_midi_in(MB.MIDI_IN_NAMES)   
+midi_out=mid.open_midi_out(MBsetup.MIDI_OUT_NAMES)
+midi_in=mid.open_midi_in(MBsetup.MIDI_IN_NAMES)   
             
      
         
@@ -35,7 +35,7 @@ def myhandler(evts):
 #            e[0][0]+=1
            
     midi_out.out.write(evts)
-    print (evts)
+   # print (evts)
  
 # register the handler
 mid.set_callback(myhandler) 
@@ -47,5 +47,5 @@ mid.start()
 
 tt=raw_input("Hit cr to quit:")
 #wait a few secs then halt
-mid.halt()
+mid.quit()
 
