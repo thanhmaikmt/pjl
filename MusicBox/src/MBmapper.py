@@ -47,3 +47,34 @@ class Mapper:
         print "MAP: melody ",toks,data
         
         self.melody_player.play(toks,data)
+
+
+
+class SoloMapper:
+    
+    def __init__(self,seq,score,melody):
+        self.map={"melody":melody.handler}
+        
+        
+    def xy(self,toks,data):
+        pass
+    
+    def tonality(self,toks,data):
+        pass
+      
+        
+    def chord(self,toks,data):
+        self.chord_player.play(toks,data)
+                  
+    def chordNote(self,toks,data):
+        
+        print "MAP: chordNote",toks,data
+       
+    def melody(self,toks,data):
+        """
+        Plays a note of the scale in the current tonality
+        """
+          
+        print "MAP: melody ",toks,data
+        
+        self.melody_player.play(toks,data)
