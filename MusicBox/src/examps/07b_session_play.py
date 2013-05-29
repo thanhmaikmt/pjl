@@ -47,7 +47,7 @@ class SessionPlayer:
         self.fin=open(name,"r")
         self.seq=seq
         self.mapper=mapper
-        self.name
+        self.name=name
         
     def start(self):
         self.start=self.seq.beat

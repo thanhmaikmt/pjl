@@ -10,7 +10,7 @@ try:
     midi_out_dev = mid.open_midi_out(MBsetup.MIDI_OUT_NAMES)
     
     
-    seq = music.Sequencer()
+    seq = music.Sequencer(beats_per_sec=4)
     
     # Score
     beats_per_bar=4

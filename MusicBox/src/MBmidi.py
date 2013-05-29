@@ -84,8 +84,8 @@ class MidiEngine(threading.Thread):
                         dev.o=o
                         return dev
                         break
-                    
-        raise MidiError("Device not found :","None of the list of devices was found")
+        mess="None of the list of devices was found: ["+",".join(midi_in_names)+"]"           
+        raise MidiError("Device not found :",mess)
         
         
         
@@ -255,5 +255,8 @@ class MidiError(Exception):
         self.msg = msg
             
     def get_message(self):
-        return self.expr+self.msg                    
+        return self.expr+self.msg   
+    
+    def __str__(self):
+        return self.get_message()                 
     
