@@ -27,6 +27,7 @@ class Client:
            
             self.q=Queue.Queue()
             self.err_t.start()
+            self.tempo=-1
                
 
     def send(self,cmd):
@@ -46,7 +47,7 @@ class Client:
                 return 
             
             print ">",text,"<"
-          
+            self.tempo=float(text)
          
     def quit(self):
         print "quitting  .... "
