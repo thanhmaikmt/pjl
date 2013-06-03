@@ -67,7 +67,7 @@ try:
     MBmusic.Repeater(0, 4, seq, factory) 
     
     solo_inst=midi_out_dev.allocate_channel(2)
-    solo_player=MBmusic.Player(solo_inst)
+    solo_player=MBmusic.Messenger(solo_inst)
     # ready to go
     
     seq.start()

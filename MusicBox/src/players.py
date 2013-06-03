@@ -47,14 +47,16 @@ class ChordPlayer:
 
 
 class MelodyPlayer:
-    
+        """
+        plays a melody instrument using the OSC  message
+        """
     
         def __init__(self,inst,score,seq):
 
             self.score=score
             self.inst=inst
             self.seq=seq
-            self.player=MBmusic.Player(inst)
+            self.player=MBmusic.Messenger(inst)
         
         def play(self,toks,data):     
             if toks[0] == 'xy':
@@ -75,7 +77,11 @@ class MelodyPlayer:
             print val,i
             vel=int(val*127)       
             beat=self.seq.get_beat()
-            pitch=self.score.get_tonality(beat).get_note_of_scale(i,self.score.key)+36
+            if self.score:
+                pitch=self.score.get_tonality(beat).get_note_of_scale(i,self.score.key)+36
+            else:
+                pitch=i+48    
+            
             #print "play",i,vel
             
             if vel != 0:

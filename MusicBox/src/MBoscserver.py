@@ -12,7 +12,11 @@ import sys
 import traceback
 import MBsetup as MB
 
+
 class Server:
+    
+    debug=False
+    
     def __init__(self,addr,map,recorder=None):
         
         
@@ -64,7 +68,7 @@ class Server:
         self.st.start()
     
 
-    def stop(self):  
+    def quit(self):  
         
         self.s.close()
         print "Waiting for Server-thread to finish"
@@ -95,7 +99,8 @@ class Server:
             if func != None:
                 func(toks[3:],data)
             else:
-                print " No musicbox handler for:", addr
+                if Server.debug:
+                    print " No musicbox handler for:", addr
   
     
 if __name__ == "__main__":

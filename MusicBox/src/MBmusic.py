@@ -10,11 +10,10 @@ SLEEP_TIME=0.001    # tick to yield in engine event loop
 class Engine(Thread):
 
 
-    """Engine calls a call_back every tick
+    """Engine calls a call_back every tick (dt)
        The Engine will attempt to keep the tick synchrounized with
        real time using  a sleep (which will yield. to allow multithreading)
        For usage see Sequencer.
-      
     """
 
 
@@ -160,8 +159,11 @@ class Phrase:
         return self.list.__iter__()
 
         
-class Player:
+class Messenger:
         
+    """
+    Has an instrument and ....
+    """
     def __init__(self,inst):
         self.inst=inst
         
@@ -385,7 +387,9 @@ class Tonality:
 class Metro:
     """ Simple Metronome with an accent and weak beat.
     """
-         
+    debug=True
+    
+             
     def __init__(self,start_beat,beats_per_bar,seq,inst,note_accent,note_weak):
         seq.schedule(start_beat,self)
         
@@ -396,13 +400,17 @@ class Metro:
         self.count=0
         self.beats_per_bar=beats_per_bar
         self.inst=inst
-                
+        self.tlast=0        
                 
     
     def fire(self,beat):
         
-#        print " Metro.fire",self.seq.beat
-#    
+        if self.debug:
+            tnow=time.time()
+            delta=tnow-self.tlast
+            self.tlast=tnow
+            print " Metro.fire",delta
+    
         if self.count %self.beats_per_bar == 0:
             self.accent.send(self.inst)
         else:
@@ -423,7 +431,7 @@ class BassPlayer:
         the Chorder expects the data to have a dur and velocity members to set the length and velocity.
         A BassPlayer is used by a Groover.
         The Groover is responisible for call play_count at the start of each count event.
-        The Player is responsible for scheduling any  NoteOff events
+        The Playable is responsible for scheduling any  NoteOff events
     """
     
     def __init__(self, seq, inst, score, lowest,highest):
@@ -433,7 +441,7 @@ class BassPlayer:
         self.inst = inst
         self.lowest  = lowest
         self.highest = highest
-        self.player  = Player(inst)
+        self.player  = Messenger(inst)
         
         
     def play_count(self, count, data, beat):
@@ -488,7 +496,7 @@ class ChordPlayer:
         self.score = score        
         self.inst = inst
         self.lowest = lowest
-        self.player = Player(inst)
+        self.player = Messenger(inst)
         self.template=template
         
     def play_count(self, count, data,beat):

@@ -1,6 +1,8 @@
 import players
 import MBmusic
 
+# deprecated just us a dictionary 
+
 class Mapper:
     
     def __init__(self,seq,score,chord_inst,solo_inst):
