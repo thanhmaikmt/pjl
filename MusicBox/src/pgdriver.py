@@ -1,6 +1,6 @@
-import pygame, sys,os
-import threading
-from pygame.locals import * 
+import  pygame
+import  sys,os
+#from pygame.locals import * 
 
 
 class PGDriver:
@@ -23,8 +23,11 @@ class PGDriver:
     def process(self,events):
         
         for event in events: 
-            if event.type == QUIT:
+        
+            if event.type == pygame.QUIT or  (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+                print "QUITING"
                 self.running=False 
+                
             else: 
                 self.client.handle(event) 
 
@@ -35,13 +38,13 @@ class PGDriver:
         self.running=True
         while self.running:
             self.process(pygame.event.get())
-            
-            
-            
-    def stop(self):  
+        print "PGDRIVER QUIT"
         
+            
+            
+    def stop(self):        
         pygame.quit()     #   TODO check that midi subsystem is notconfused by this
-        
+        print " STOPPED"
     
 if __name__ == "__main__":
     
@@ -55,6 +58,9 @@ if __name__ == "__main__":
             
     pe=PGDriver(Client()) 
     pe.run()
-    pe.stop()
+    print "EXITING"
+    sys.exit(-1)
+    print " EXITTED"
+#    pe.stop()
        
                       

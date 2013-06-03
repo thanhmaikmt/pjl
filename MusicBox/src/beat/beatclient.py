@@ -9,7 +9,7 @@ class Client:
         self.proc=None
         
         if  not debug:
-            self.proc=subprocess.Popen(["python -i beatserver.py -g"], shell=True,
+            self.proc=subprocess.Popen(["python -i ../beat/beatserver.py -g"], shell=True,
                                        stdin=subprocess.PIPE,
                                       stdout=subprocess.PIPE)
             
@@ -33,7 +33,13 @@ class Client:
     def send(self,cmd):
         self.pipe.write(cmd+"\n")
 
- 
+    def stomp(self,stamp):
+        """
+        Send an event (time=stamp) to the beat analysis
+        """
+        text="stomper.add_event("+str(stamp)+",1.0)"
+        c.send(text)
+        c.send("analysis.doit()")
         
     def pipe_reader(self):
         while True:
@@ -85,11 +91,13 @@ if __name__ == "__main__":
             break
     
         tt=time.time()-t1
-        text="stomper.add_event("+str(tt)+",1.0)"
-        #print text
-            
-        c.send(text)
-        c.send("analysis.doit()")
+        
+        c.stomp(tt)
+#         text="stomper.add_event("+str(tt)+",1.0)"
+#         #print text
+#             
+#         c.send(text)
+#         c.send("analysis.doit()")
         
    
         

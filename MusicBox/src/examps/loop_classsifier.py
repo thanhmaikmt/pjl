@@ -4,12 +4,14 @@ import MB
 import dlinkedlist
 import players
 import time
+import beatclient
 
 class A:
     
     def __init__(self,player):
         self.list=dlinkedlist.OrderedDLinkedList()
         self.player=player
+        self.beatclient=beatclient.Client(debug=False)
         
     def melody(self,toks,data):
         self.player.play(toks,data)
@@ -18,6 +20,8 @@ class A:
             return
         beat=band.seq.beat
         tt=time.time()
+        self.beatclient.stomp(tt)
+        
         self.list.append(tt,toks)
         print beat,toks,data
 
@@ -42,7 +46,7 @@ osc_driver.run()
 
 import os
 #os.system("/usr/local/bin/python ../FrontEnds/midi_ui.py")
-os.system("/usr/local/bin/python ../FrontEnds/pg_ui.py")
+os.system("python ../FrontEnds/pg_ui.py")
    
 xx=raw_input("HIT CR")
 
