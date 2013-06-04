@@ -1,6 +1,11 @@
 import subprocess,inspect
 import atexit,time,Queue,threading
 
+"""
+Users side of the beat detection system.
+The client sends beats to the server
+"""
+
 class Client:
  
     
@@ -38,8 +43,8 @@ class Client:
         Send an event (time=stamp) to the beat analysis
         """
         text="stomper.add_event("+str(stamp)+",1.0)"
-        c.send(text)
-        c.send("analysis.doit()")
+        self.send(text)
+        self.send("analysis.doit()")
         
     def pipe_reader(self):
         while True:

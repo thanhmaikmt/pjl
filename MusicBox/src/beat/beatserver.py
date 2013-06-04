@@ -154,7 +154,7 @@ analysis=Analysis(stomper)
 ## --- test code 
 if test_me:
     tt=0.0
-    while True:
+    for _ in range(100):
         time.sleep(1)
         stomper.add_event(tt,1.0)
         analysis.doit()

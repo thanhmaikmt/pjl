@@ -12,6 +12,7 @@ class A:
         self.list=dlinkedlist.OrderedDLinkedList()
         self.player=player
         self.beatclient=beatclient.Client(debug=False)
+        self.tref=time.time()
         
     def melody(self,toks,data):
         self.player.play(toks,data)
@@ -19,11 +20,14 @@ class A:
         if vel==0.0:
             return
         beat=band.seq.beat
-        tt=time.time()
+        tt=time.time()-self.tref
+        print "STOMP",tt
         self.beatclient.stomp(tt)
-        
         self.list.append(tt,toks)
-        print beat,toks,data
+        #print beat,toks,data
+        
+    def quit(self):
+        self.beatclient.quit()
 
 
 
@@ -52,3 +56,4 @@ xx=raw_input("HIT CR")
 
 band.quit()
 osc_driver.quit()
+a.quit()
