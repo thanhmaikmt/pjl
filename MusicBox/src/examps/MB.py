@@ -1,4 +1,4 @@
-from  MBmusic import *
+from MBmusic import *
 from MBmidi import *
 from MBsetup import *
 from MBoscserver import *
@@ -8,13 +8,13 @@ class Band:
     """
     Wrapper for instruments/players/sequencer
     """
-    def __init__(self):
+    def __init__(self,seqtype=Sequencer):
         
         mid = MidiEngine()
         
         midi_out_dev = mid.open_midi_out(MIDI_OUT_NAMES)
             
-        seq = Sequencer()
+        seq = seqtype()
         # MetroNome
         accent = NoteOn(61, 100)
         weak = NoteOn(60, 80)

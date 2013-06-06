@@ -45,8 +45,9 @@ def myhandler(evts):
         
         cmd="/"+str(chan)+"/melody/"+str(e[1])
         
-        print cmd
-        msg=OSC.OSCMessage(cmd,[vel])            
+
+        print cmd,vel
+        msg=OSC.OSCMessage(cmd,[vel/128.0])            
         osc_client.send(msg)
     
  
@@ -65,5 +66,5 @@ mid.start()
 
 tt=raw_input("Hit cr to quit:")
 #wait a few secs then halt
-mid.halt()
+mid.quit()
 

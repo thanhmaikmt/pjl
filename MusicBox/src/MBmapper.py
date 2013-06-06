@@ -52,6 +52,17 @@ class Mapper:
 
 
 
+        
+class SimpleMapper:
+    
+    def __init__(self,player):
+        self.player=player
+        
+    def map(self,toks,data):
+        self.player.play(toks,data)
+
+
+
 class SoloMapper:
     
     def __init__(self,seq,score,melody):

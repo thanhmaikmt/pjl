@@ -140,6 +140,24 @@ class DLinkedListIterator:
         
         #print "Hello"
   
+    def seek(self,tt):
+        """
+        position iterator so the pointer.time is less than tt
+        or None if not possible
+        """
+        self.current=self.list.tail    
+        while self.current != None and tt > self.current.time:
+            self.current=self.current.prev
+            
+        return self.current
+    
+    def peek(self):
+        
+        if self.current== None:
+            return None
+        
+        return self.current.next
+            
     def next(self):
         
         #print "Next"
@@ -156,6 +174,61 @@ class DLinkedListIterator:
         self.current=mynext
            
         return mynext
+
+
+class DLinkedListGrazer:
+    
+    """
+     Insertions after current position are OK
+    """
+    
+    def __init__(self,mylist):
+        self.list=mylist
+        self.ptr=None
+        
+        #print "Hello"
+  
+    def seek(self,stamp):
+        
+        """
+        position iterator so 
+             ptr.time is <= stamp  AND (ptr.next == None OR  ptr.next.time > stamp)
+        or None if not possible
+        return the first node after tt
+        """
+        
+        if self.list.tail == None:
+            return None
+        
+        if self.list.tail.time <= stamp:
+            self.ptr=self.list.tail
+            return self.ptr
+            
+        if self.ptr == None:
+            self.ptr=self.list.tail
+            
+        while self.ptr.next != None and stamp > self.ptr.next.time:
+            self.ptr=self.ptr.prev
+                    
+                      
+        return self.ptr
+    
+   
+    def advance(self,stamp):
+        """ 
+        we should have already done a seek(stamp1)
+        advance will return the next node after ptr providing ptr.next.time <= stamp
+        the ptr is advanced 
+        """
+        
+        assert self.ptr != None
+       
+        if self.ptr.next != None and self.ptr.next.time <= stamp:
+            self.ptr=self.ptr.next
+            return self.ptr
+       
+        return None
+
     
 class DLinkedListIteratorReversed:
     

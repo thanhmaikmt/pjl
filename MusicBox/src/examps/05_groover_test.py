@@ -5,7 +5,7 @@ import MBmusic
 if __name__ == "__main__":    
     
         
-    seq=MBmusic.Sequencer()
+    seq=MBmusic.SequencerBPM()
         
     
     class Player:

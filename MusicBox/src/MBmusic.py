@@ -4,6 +4,9 @@ import time
 from threading import Thread
 import MBsetup as MB
 
+CSI="\x1B["
+RED='\033[91m'
+ENDC = '\033[0m'
 
 SLEEP_TIME=0.001    # tick to yield in engine event loop
 
@@ -33,6 +36,7 @@ class Engine(Thread):
         while self.running:
             
             # spin until next tick
+        
             while tnow < tnext:
                 # yeild to other threads
                 time.sleep(SLEEP_TIME) 
@@ -64,6 +68,85 @@ class Sequencer(Engine):
     Plays a sequence of messages
     Delegates the timing to an engine which
     must call play_events_at(at) with at incrementing each call
+    
+    stamp is real time
+    """
+    
+    def __init__(self,dt=0.005):
+                
+        self.sequence=linkedlist.OrderedLinkedList()        
+        self.sequence.insert(-sys.float_info.max,None,None)
+        self.sequence.insert(sys.float_info.max,None,None)
+        
+        Engine.__init__(self,dt,self._play_next_dt)
+        
+        # self.prev is last event to be played
+        self.prev=self.sequence.head
+        self.time=0.0
+     
+     
+    def schedule(self,at,event):
+        # time=self.beat_to_time(beat)  
+        if at+self.dt < self.time:
+            print RED+"Schedule underrun "+ENDC,at,self.time
+            
+        self.sequence.insert(at,event,self.prev)
+
+
+#        
+#    def beat_to_time(self,beat):
+#        
+#        #  how many beats from the last count
+#        ttt=beat-self.beat    
+#        
+#        tt_time=self.tclock+self.beats_per_sec*ttt
+#        return tt_time
+#  
+      
+      
+      
+    def quit(self):
+        """
+        Stop the engines. 
+        """
+        
+        self.stop()
+        
+                    
+    def _play_next_dt(self):
+        
+        """
+        advanve beat by dt and 
+        play any pending events
+        """
+        
+        #print "SEEQ PLAY NEXT"
+
+        self.time+=self.dt
+        # if next event is after at just return
+        if self.prev.next.time > self.time:
+            return
+        
+        # play pending events   
+        while self.prev.next.time <= self.time:
+            self.prev=self.prev.next
+            # pass the unquantized version of the time to the player.
+            # this would allow higher resolution playback if we could be bothered.
+            self.prev.data.fire(self.prev.time)
+
+       
+
+    def get_stamp(self):
+        return self.time
+
+class SequencerBPM(Engine):
+    
+    """
+    Plays a sequence of messages
+    Delegates the timing to an engine which
+    must call play_events_at(at) with at incrementing each call
+    
+    stamp is the beat 
     """
     
     def __init__(self,beats_per_sec=1.0,dt=0.005):
@@ -78,6 +161,7 @@ class Sequencer(Engine):
         self.prev=self.sequence.head
         self.beats_per_sec=beats_per_sec        
         self.beat=0.0
+        self.time=0.0
      
      
     def schedule(self,beat,event):
@@ -113,7 +197,7 @@ class Sequencer(Engine):
         """
         
         #print "SEEQ PLAY NEXT"
-
+        self.time+=self.dt
         self.beat+=self.beats_per_sec*self.dt
         # if next event is after at just return
         if self.prev.next.time > self.beat:
@@ -124,10 +208,9 @@ class Sequencer(Engine):
             self.prev=self.prev.next
             self.prev.data.fire(self.prev.time)
 
-
-    def get_beat(self):
+    def get_stamp(self):
         return self.beat
-         
+      
 class Playable:
     
     """
@@ -387,7 +470,7 @@ class Tonality:
 class Metro:
     """ Simple Metronome with an accent and weak beat.
     """
-    debug=True
+    debug=False
     
              
     def __init__(self,start_beat,beats_per_bar,seq,inst,note_accent,note_weak):

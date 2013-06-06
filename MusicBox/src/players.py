@@ -51,7 +51,7 @@ class MelodyPlayer:
         plays a melody instrument using the OSC  message
         """
     
-        def __init__(self,inst,score,seq):
+        def __init__(self,inst,score=None,seq=None):
 
             self.score=score
             self.inst=inst
@@ -74,15 +74,17 @@ class MelodyPlayer:
              
             i=int(toks[0])
             
-            print val,i
+            print "Melody ",val,i
             vel=int(val*127)       
-            beat=self.seq.get_beat()
+           
+            
             if self.score:
+                beat=self.seq.get_stamp()
                 pitch=self.score.get_tonality(beat).get_note_of_scale(i,self.score.key)+36
             else:
                 pitch=i+48    
             
-            #print "play",i,vel
+            print "play",pitch,vel
             
             if vel != 0:
                 self.player.inst.note_on(pitch,vel)
