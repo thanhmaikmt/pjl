@@ -180,56 +180,56 @@ class DLinkedListGrazer:
     
     """
      Insertions after current position are OK
+     
+     iterator for events in the range    t1 <= time < t2
     """
     
     def __init__(self,mylist):
         self.list=mylist
         self.ptr=None
         
+    def set_range(self,t1,t2):
+        self.t2=t2
+        self.t1=t1
+        
         #print "Hello"
   
-    def seek(self,stamp):
+        #  possition ptr to be the first event at or after t1
+        if self.list.tail == None or self.list.tail.time < t1:
+            self.ptr=None
+            return
         
-        """
-        position iterator so 
-             ptr.time is <= stamp  AND (ptr.next == None OR  ptr.next.time > stamp)
-        or None if not possible
-        return the first node after tt
+        self.ptr=self.list.tail
+            
+        while self.ptr.prev != None and  self.ptr.prev.time >= t1:
+            self.ptr=self.ptr.prev
+            
+   
+    def next(self):
+        """ 
+        
+        returns next node in the range.
+    
         """
         
-        if self.list.tail == None:
+        if self.ptr == None or self.ptr.time >= self.t2:
             return None
         
-        if self.list.tail.time <= stamp:
-            self.ptr=self.list.tail
-            return self.ptr
-            
-        if self.ptr == None:
-            self.ptr=self.list.tail
-            
-        while self.ptr.next != None and stamp > self.ptr.next.time:
-            self.ptr=self.ptr.prev
-                    
-                      
-        return self.ptr
-    
-   
-    def advance(self,stamp):
-        """ 
-        we should have already done a seek(stamp1)
-        advance will return the next node after ptr providing ptr.next.time <= stamp
-        the ptr is advanced 
-        """
+        assert self.ptr.time >= self.t1
         
-        assert self.ptr != None
-       
-        if self.ptr.next != None and self.ptr.next.time <= stamp:
-            self.ptr=self.ptr.next
-            return self.ptr
-       
-        return None
-
-    
+        ret = self.ptr    
+        
+        self.ptr=self.ptr.next
+        
+        return ret
+#     
+#     def peek_ahead(self):
+#         """
+#         returns current ptr even if it is after the end of the range.
+#         The intention is that this will allow you to see the first item that will be returned by the next range
+#         """
+#         return self.ptr
+#         
 class DLinkedListIteratorReversed:
     
     """
@@ -262,15 +262,71 @@ class DLinkedListIteratorReversed:
 
 if __name__ == "__main__":
             
+
    
     mylist=OrderedDLinkedList()
+    
+    iter=DLinkedListGrazer(mylist)
+    
+    mylist.append(4,"HELLO")
+    
+    iter.set_range(0,10)
+    
+    print"Hello :",iter.next()
+    
+    
+    
+    
+    iter.set_range(0,1)
+    
+    print"None:",iter.next()
+
+    
     mylist.insert(3,"31",None)           
+   
+    iter.set_range(0,8)
+    print " THING:",iter.next()
+    
+    iter.set_range(0,3)
+    print"None:",iter.next()
+    
+
+    iter.set_range(0,5)
+    print"Thing:",iter.next()
+    print"None:",iter.next()
+    
+    iter.set_range(3,5)
+    print"Thing:",iter.next()
+    print"None:",iter.next()
+    
+        
+    
     mylist.insert(1,1,None)
     mylist.insert(5,5,None)
     mylist.insert(0,0,None)
     mylist.insert(2,2,None)
     mylist.insert(3,"32",None)   
     mylist.insert(4.5,"float",None)         
+
+
+    iter.set_range(-1,10)
+    
+
+    while True:
+        n=iter.next()
+        if n == None:
+            break
+        print n.data
+        
+        
+    print "xxxxxxxxxxxxxxxxx"
+        
+        
+        
+        
+        
+    
+
 
 
     for x in mylist:

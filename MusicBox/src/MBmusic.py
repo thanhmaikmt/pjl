@@ -28,7 +28,13 @@ class Engine(Thread):
         Thread.__init__(self)
         self.running=False
         
+        
+    
+    
     def run(self):
+        self.run2()
+        
+    def run1(self):
         self.running=True
         
         tnext=tnow=time.time()
@@ -36,7 +42,7 @@ class Engine(Thread):
         while self.running:
             
             # spin until next tick
-        
+            
             while tnow < tnext:
                 # yeild to other threads
                 time.sleep(SLEEP_TIME) 
@@ -46,6 +52,30 @@ class Engine(Thread):
             
             
             self.tclock+=self.dt
+            tnext+=self.dt
+    
+    
+    def run2(self):
+        self.running=True
+        
+        
+        self.call_back()
+            
+        tnow=time.time()
+        tnext=tnow+self.dt
+        
+        while self.running:
+            tnow=time.time()
+            sleep_time=tnext-tnow
+            
+            if sleep_time>0:
+            # spin until next tick
+            # yeild to other threads
+                time.sleep(sleep_time)
+            else:
+                print '>',
+                   
+            self.call_back()
             tnext+=self.dt
             
             
@@ -117,7 +147,8 @@ class Sequencer(Engine):
         
         """
         advanve beat by dt and 
-        play any pending events
+        play any pending events up to and including   
+        self.time
         """
         
         #print "SEEQ PLAY NEXT"
@@ -133,8 +164,6 @@ class Sequencer(Engine):
             # pass the unquantized version of the time to the player.
             # this would allow higher resolution playback if we could be bothered.
             self.prev.data.fire(self.prev.time)
-
-       
 
     def get_stamp(self):
         return self.time

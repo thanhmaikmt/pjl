@@ -20,6 +20,7 @@ class A:
     
     def __init__(self,player,seq,client):
         self.list=dlinkedlist.OrderedDLinkedList()
+        self.list.append(-10,None)
         self.player=player
         self.client=client
         self.seq=seq
@@ -27,6 +28,8 @@ class A:
     def melody(self,toks,data):
         self.player.play(toks,data)
         tt=self.seq.get_stamp()
+        
+        print "Appendeding",tt,toks,data
         self.list.append(tt,(toks,data))
      
         vel=float(data[0])
@@ -65,6 +68,7 @@ class DelayedPlayer:
         
     def start(self):
         
+        self.last=None
         self.tNow=self.seq.get_stamp()
         self.time1=self.tNow+self.delay
         self.grazer=dlinkedlist.DLinkedListGrazer(self.list)
@@ -74,44 +78,46 @@ class DelayedPlayer:
         """
         schedule to fire at next event in list OR after self.delay
         """
-        node=self.grazer.seek(self.time1)
+        
         # schedule a fire at next event or after a delay if none
+        
+        tSched=self.tNow+self.poll_dt
+        
+        if self.last != None and self.last.next != None:             
+            tNext=self.last.next.time+self.delay
+            assert tNext > self.seq.get_stamp()
+            tSched=min(tSched,tNext)
             
-        if node == None or node.next == None :             
-            #  No events in queue 
-            #  revisit after a delay
-            print " FREERUN SCHED AT ",self.tNow+self.poll_dt
-            self.seq.schedule(self.tNow+self.poll_dt,self)
-        else:
-            print " EVENTSCHED AT ",node.next.time+self.delay
-            self.seq.schedule(node.next.time+self.delay,self)
+        #print " EVENTSCHED AT ",tSched
+        
             
+        self.seq.schedule(tSched,self)
             
          
     def fire(self,tt):
+        
+        
         """ 
         tt is the time according to the sequencer
         """
         
         self.tNow=self.seq.get_stamp()
         
-        # we need to seek because a time will have elapsed since we scheduled this fire
-        # if the list has changed we need to make sure we play new events
-        node=self.grazer.seek(self.time1)
-     
         # play all events between time1 and time2
-        time2=tt-self.delay
+        time2=self.seq.get_stamp()-self.delay
+        self.grazer.set_range(self.time1,time2)
         
-        if node != None:
-            while True:
-                node=self.grazer.advance(time2)
-                if node:
-                    toks=node.data[0]
-                    data=node.data[1]
-                    self.player.play(toks,data)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                else:
-                    break   
-                
+        while True:
+            node=self.grazer.next()
+            if node:
+                toks=node.data[0]
+                data=node.data[1]
+                print "---- PLAY ",self.tNow,toks,data
+                self.player.play(toks,data) 
+                self.last=node                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+            else:
+                break   
+
         self.time1=time2
         self.sched()
             
