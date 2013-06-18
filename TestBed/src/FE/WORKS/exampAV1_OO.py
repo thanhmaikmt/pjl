@@ -5,7 +5,7 @@ Created on 4 Sep 2012
 
 
 Added some conductivity. Seems to stablize the method.
-Add V term  still need Ht on boundary :-( otherwise we get zero current.
+Add V term  still need Ht on boundary :-( otherwise we get zero current).
 
 
 '''
@@ -26,8 +26,11 @@ class Node:
         self.ieq=ieqs
         self.x=x
         
-    def equation(self,i):
-        return self.ieq[i]
+    def equation(self,ivar):
+        """
+        return the eqn for a variable number
+        """
+        return self.ieq[ivar]
 
 class ElemA:
     
@@ -35,7 +38,9 @@ class ElemA:
         self.nodes=nodes
         
     def assemble(self,K,C):
-        
+        """
+        Assemble element equations into into global matrix
+        """
         n1=self.nodes[0]
         n2=self.nodes[1]
         h=abs(n1.x-n2.x)
@@ -246,12 +251,13 @@ for i in range(n_step):
         Jmax=max(abs(dxdt_new[n_node:,]))
 
           
-        print cnt,"  Err=",err," Jmax = ", Jmax/Jc
+        print cnt,"  Err=",err," Jmax = ", Jmax/Jc,"  E*J < 0 = ",flag
         
         if err < tol :
             #if flag:
             #    print "+++++++++++++++++++++++ OOOOOOOPS E is confused ++++++++++++++++++++++++++++++"
             Jmm=max(Jmm,Jmax)
+            
             break
         
     dxdt[:]=dxdt_guess
