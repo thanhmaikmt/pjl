@@ -16,24 +16,23 @@ import numpy.linalg
 import math
 import copy
 import sys
-
-
-
-
         
 # Bc= 120 perpendicalur   250 parallel
 # Jc = 1-5 MA /cm/cm ?
 
-Jc=1.0e6
-h=.2e-3
-wid=40e-3
+
+thick=10e-6
 
 
-t_peak = 0.1
-t_end  = 0.2
+Jc=7.5e9*thick     # 1.0e6
 
-Ipeak=-Jc*wid/1.5
+h=.02e-3
+wid=4e-3
+freq=1.0
+t_end  = 1.0
+Ipeak=-250
 dt=5e-3
+
 n_step=int(t_end/dt)
 cond=1e7
 
@@ -41,10 +40,11 @@ cond=1e7
 def I_at_time(t):
     #return Ipeak
 
-    if t<=t_peak:
-        return Ipeak*t/t_peak
-    else:
-        return Ipeak*(1.0+(t_peak-t)/t_peak)
+    return Ipeak*math.sin(2.0*math.pi*freq*t)
+#     if t<=t_peak:
+#         return Ipeak*t/t_peak
+#     else:
+#         return Ipeak*(1.0+(t_peak-t)/t_peak)
 
 n_node=int(wid/h)
 n_eq=n_node*2+1
@@ -57,11 +57,7 @@ iV=n_eq-1
 
 x=0.0
 
-
-
-n_plot_x=int(n_node/3)
-
-
+n_plot_x=int(n_node)
 u0=4*math.pi*1e-7
 
 
@@ -76,8 +72,11 @@ b=numpy.zeros(n_eq)
 rhs=numpy.zeros(n_eq)
 dxdt_guess=numpy.zeros(n_eq)
 dxdt_new=numpy.zeros(n_eq)
+
 critical_flag=numpy.zeros(n_node,dtype=bool)
 critical_flag.fill(False)
+
+
 
 tmp=numpy.zeros(n_eq)
 
@@ -99,6 +98,7 @@ strip=kernel.Strip(xA,xB,0.0,0.0,n_node)
 
 
 M=strip.make_M(10)
+
 MI=numpy.linalg.inv(M)
 
 
@@ -110,12 +110,8 @@ def assemble(K,C):
     #     A-A section         
     for i in range(n_node):
         for j in range(n_node):
-            K[i][j]=MI[i][j]
-            
-
+            K[i][j]=MI[i][j]    
     
-    
-    iV=n_eq-1
     h=strip.dlen    
     termC = -h
           
@@ -143,30 +139,29 @@ def fixJ(K,C,b,dxdt,It):
     
     iV=n_eq-1
     b.fill(0.0)
-    Ht=It/2
-    b[0]=Ht
-    b[n_node-1]=Ht
+    #Ht=It/2
+    #b[0]=Ht
+    #b[n_node-1]=Ht
     b[iV]=It
     flag=False
  
     for i in range(n_node):
         iJ1 = i + n_node
-        J =dxdt[iJ1]
-        aJ   = abs(J)
-        sJ   = numpy.sign(dxdt[iJ1])
-        E = -dxdt[i]-dxdt[iV]
-        #aE  = abs(E)           # this is dA/dt  so E=-dAdt
-        sE = numpy.sign(E) 
+        J   = abs(dxdt[iJ1])
+        s   = numpy.sign(dxdt[iJ1])
         
-        if aJ >= Jc and sJ == sE:
+        if J >= Jc :
             
+            E = -dxdt[i]-dxdt[iV]
+            aE  = abs(E)           # this is dA/dt  so E=-dAdt
+            sE = numpy.sign(E) 
+            Jfix = s*Jc
             
-            if sJ == sE:
-                Jfix = sJ*Jc
+            if sE != s :
+                #print "ooops E is oposes current flow "
+                flag=True
             else:
-                Jfix = sE*Jc    #  sJ*Jc
-                
-            for jEq in range(n_eq):
+                for jEq in range(n_eq):
                     b[jEq] -= Jfix*C[jEq,iJ1]
      
                     # zero the matrix row and column for iJ1
@@ -178,9 +173,8 @@ def fixJ(K,C,b,dxdt,It):
                       
                     # fix unknown J to s*Jc
                     
-            C[iJ1,iJ1]=1.0
-            b[iJ1]=Jfix
-                
+                C[iJ1,iJ1]=1.0
+                b[iJ1]=Jfix
     return flag                      
 
 tol=1e-5
@@ -203,6 +197,8 @@ for i in range(n_step):
         
         assemble(K,C)
         flag=fixJ(K,C,b,dxdt_guess,It)
+        
+        
         #if flag:
         #    print " E is still confused"
         #if i == 1 and cnt == 0:
