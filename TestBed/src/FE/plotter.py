@@ -6,7 +6,6 @@ import numpy as np
 class Plotter:
     
     def __init__(self,xlim,ylim):
-        self.x = x
         plt.ion()
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(111)
@@ -18,7 +17,7 @@ class Plotter:
     def draw(self,x,y,label):
         
         if self.line1 == None:
-            self.line1, = self.ax.plot(self.x, y, 'r-') # Returns a tuple of line objects, thus the comma
+            self.line1, = self.ax.plot(x, y, 'r-') # Returns a tuple of line objects, thus the comma
  
         plt.title(label) 
         self.line1.set_data(x,y)

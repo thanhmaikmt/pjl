@@ -31,8 +31,6 @@ freq=1.0
 t_end  = 1.0
 Ipeak=-250
 dt=5e-3
-
-plot=plotter.Plotter()
 n_step=int(t_end/dt)
 cond=1e7
 
@@ -86,6 +84,10 @@ Ht=0.0
 
 xx=numpy.array(range(n_plot_x))
 xx = h*xx
+
+plot=plotter.Plotter((0,xx[-1]),(-1.2*Jc,1.2*Jc))
+
+
 jj=[]
 ee=[]
 
@@ -134,8 +136,23 @@ def assemble(K,C):
         # add a bit of eddy current conductivity into curl curl E
         #C[iA,iA] -= termC*cond
    
-
-def fixJ(K,C,b,dxdt,It,state,state2):
+   
+def calc_state(dxdt,state):
+    for i in range(n_node):
+        iJ1 = i + n_node
+        J   = abs(dxdt[iJ1])
+        s   = numpy.sign(dxdt[iJ1])
+           
+        if J > Jc :
+            state[i]=s
+        else:
+            state[i]=0
+            
+            
+def fixJ(K,C,b,dxdt,It,state0,state1):
+    """
+    dxdt guess for what dxdt might be at end of time step
+    """
     
     iV=n_eq-1
     b.fill(0.0)
@@ -143,8 +160,9 @@ def fixJ(K,C,b,dxdt,It,state,state2):
     #b[0]=Ht
     #b[n_node-1]=Ht
     b[iV]=It
-    flag=False
- 
+   
+#     calc_state(dxdt,state1)
+    
     for i in range(n_node):
         iJ1 = i + n_node
         J   = abs(dxdt[iJ1])
@@ -200,9 +218,6 @@ for i in range(n_step):
         
         assemble(K,C)
         flag=fixJ(K,C,b,dxdt_guess,It,state,state2)
-        tmp_state=state
-        state=state2
-        state2=tmp_state
         
         #if flag:
         #    print " E is still confused"
@@ -232,10 +247,18 @@ for i in range(n_step):
             break
         
     dxdt[:]=dxdt_guess
+    calc_state(dxdt_guess,state)
     x[:]=x+dt*dxdt
     tt=copy.deepcopy(dxdt[n_node:n_node+n_plot_x])
+    
+    
     times.append(time)
     jj.append(tt)
+    tt=tt
+    plot.draw(xx,tt,"time= {}".format(time))
+    xxx=raw_input(" Hit CR")
+    
+    
     tt= -dxdt[:n_plot_x]
     ee.append(tt)
     #print dxdt
