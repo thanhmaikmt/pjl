@@ -90,10 +90,12 @@ jj=[]
 ee=[]
 
 import kernel
-
+import plotter
 xA=0
 xB=wid
 
+
+plot=plotter.Plotter((0,xB),(-1.2*Jc,1.2*Jc))
 strip=kernel.Strip(xA,xB,0.0,0.0,n_node)
 
 
@@ -219,7 +221,7 @@ for i in range(n_step):
           
         print cnt,"  Err=",err," Jmax = ", Jmax/Jc,"  E*J < 0 = ",flag
         
-        if err < tol:
+        if err < tol :
             if flag:
                 print "+++++++++++++++++++++++ OOOOOOOPS E is confused ++++++++++++++++++++++++++++++"
             Jmm=max(Jmm,Jmax)
@@ -231,6 +233,8 @@ for i in range(n_step):
     tt=copy.deepcopy(dxdt[n_node:n_node+n_plot_x])
     times.append(time)
     jj.append(tt)
+    plot.draw(xx,tt,"Time={}".format(time))
+    
     tt= -dxdt[:n_plot_x]
     ee.append(tt)
     #print dxdt
