@@ -211,6 +211,8 @@ def fixJ(K,C,b,dxdt,It):
                     
                 C[iJ1,iJ1]=1.0
                 b[iJ1]=Jfix
+                
+                
     return flag                      
 
 tol=1e-5
