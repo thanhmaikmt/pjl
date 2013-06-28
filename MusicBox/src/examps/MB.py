@@ -88,8 +88,7 @@ def start(map):
 def quit():
     _context.quit()
      
-def deprecated():
-    
+def deprecated():   
     assert False
     
 class Band:
