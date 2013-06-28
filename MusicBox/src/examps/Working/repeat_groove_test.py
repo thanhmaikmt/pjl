@@ -1,11 +1,11 @@
 
-import music
+import MB
 
   
 if __name__ == "__main__":    
     
         
-    seq=music.Sequencer()
+    seq=MB.Sequencer()
         
     
     class P:
@@ -24,7 +24,7 @@ if __name__ == "__main__":
             
     factory=Factory()
     
-    mess=music.Repeater(0,4,seq,factory)
+    mess=MB.Repeater(0,4,seq,factory)
     
     seq.start()
     
