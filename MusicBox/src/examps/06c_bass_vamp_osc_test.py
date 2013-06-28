@@ -2,7 +2,7 @@
 import MBmusic
 import MBmidi 
 import MBsetup
-import oscdriver
+import MBoscserver
 import math
 
 try:
@@ -11,7 +11,7 @@ try:
     midi_out_dev = mid.open_midi_out(MBsetup.MIDI_OUT_NAMES)
     
     
-    seq = MBmusic.Sequencer(beats_per_sec=.5)
+    seq = MBmusic.SequencerBPM(beats_per_sec=2)
     
     # Score
     beats_per_bar=4
@@ -76,7 +76,7 @@ try:
     mapper=MBmapper.Mapper(seq,score,vamp_inst,bass_inst)
     
     addr=MBsetup.get_osc_ip()
-    drv=oscdriver.OSCDriver(addr,mapper.map)
+    drv=MBoscserver.Server(addr,mapper.map)
     drv.run()
     
     xx=raw_input(" enter to quit ")

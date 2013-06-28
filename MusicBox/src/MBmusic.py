@@ -113,7 +113,7 @@ class Sequencer(Engine):
         # self.prev is last event to be played
         self.prev=self.sequence.head
         self.time=0.0
-     
+        self.tstart=time.time()
      
     def schedule(self,at,event):
         # time=self.beat_to_time(beat)  
@@ -164,6 +164,9 @@ class Sequencer(Engine):
             # pass the unquantized version of the time to the player.
             # this would allow higher resolution playback if we could be bothered.
             self.prev.data.fire(self.prev.time)
+            
+    def get_real_stamp(self):
+        return time.time()-self.tstart
 
     def get_stamp(self):
         return self.time

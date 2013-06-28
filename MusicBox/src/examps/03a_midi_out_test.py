@@ -92,15 +92,15 @@ pitch=48
 q=960
 
 while True:
-   for q in range(0,96000,1000):  
-     print hex(q)  
-     initialFilterQ(q)
-     initialFilterFc(1500)
-     inst.note_on(pitch, 120)
-     for f in range(1500,13500,200):
-        initialFilterFc(f)     
-        time.sleep(.01)
-        inst.note_off(pitch)
+    for q in range(0,96000,1000):  
+        print hex(q)  
+        initialFilterQ(q)
+        initialFilterFc(1500)
+        inst.note_on(pitch, 120)
+        for f in range(1500,13500,200):
+            initialFilterFc(f)     
+            time.sleep(.01)
+            inst.note_off(pitch)
     
     
 #wait a few secs then halt

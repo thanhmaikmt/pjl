@@ -20,7 +20,9 @@ class A:
     
     def __init__(self,player,seq,client):
         self.list=dlinkedlist.OrderedDLinkedList()
-        self.list.append(-10,None)
+        # put a dummy head to avoid special cases.
+        self.list.append(-100.0,None)
+        
         self.player=player
         self.client=client
         self.seq=seq
@@ -29,7 +31,7 @@ class A:
         self.player.play(toks,data)
         tt=self.seq.get_stamp()
         
-        print "Appendeding",tt,toks,data
+        #print "Appending",tt,toks,data
         self.list.append(tt,(toks,data))
      
         vel=float(data[0])
@@ -72,6 +74,16 @@ class DelayedPlayer:
         self.tNow=self.seq.get_stamp()
         self.time1=self.tNow+self.delay
         self.grazer=dlinkedlist.DLinkedListGrazer(self.list)
+        
+        #  hack to avoid special case of an empty list.
+        # listmust contian an event in the past so we can have a self.last
+        assert self.list.head != None
+        assert self.list.head.time < self.time1
+        
+        self.last=self.list.head
+        while self.last.next != None  and self.last.next.time <self.time1:
+            self.last=self.last.next
+        
         self.sched()
         
     def sched(self):
@@ -88,6 +100,11 @@ class DelayedPlayer:
             assert tNext > self.seq.get_stamp()
             tSched=min(tSched,tNext)
             
+#         elif self.last==None and self.list.head != None:
+#             tNext=self.list.head.time+self.delay
+#             if tNext> self.tNow:
+#                 tSched=min(tSched,tNext)
+#             
         #print " EVENTSCHED AT ",tSched
         
             
@@ -112,7 +129,7 @@ class DelayedPlayer:
             if node:
                 toks=node.data[0]
                 data=node.data[1]
-                print "---- PLAY ",self.tNow,toks,data
+                # print "---- PLAY ",self.tNow,toks,data
                 self.player.play(toks,data) 
                 self.last=node                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
             else:
@@ -132,7 +149,7 @@ melody_player=players.MelodyPlayer(band.solo_inst,None,band.seq)
 
 beatclient=None   #beatclient.Client(debug=False)
 a=A(melody_player,band.seq,beatclient)
-b=DelayedPlayer(a.list,band.seq,melody_player,2.0,0.5)
+b=DelayedPlayer(a.list,band.seq,melody_player,2.0,1.0)
 b.start()
 
 map={"melody":a.melody}

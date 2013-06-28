@@ -70,8 +70,8 @@ class Analysis:
         self.stomper=stomper 
         dt=stomper.dt
         self.n=stomper.buf.N
+        self.t=numpy.linspace(0, (n-1)*dt,num=self.n)
         if graph:
-            self.t=numpy.linspace(0, (n-1)*dt,num=self.n)
             self.plot=plotter.Plotter(self.t)
             
         self.win=numpy.bartlett(nspread)
@@ -81,36 +81,120 @@ class Analysis:
         
         x=self.stomper.buf.get_window()
        # X=numpy.fft.rfft(x)
-        y=numpy.correlate(x, x, mode="full")
-        z1=numpy.convolve(y, self.win, mode="same")
+        z1=numpy.correlate(x, x, mode="full")
+        #z1=numpy.convolve(y, self.win, mode="same")
         z=z1[self.n-1:]
-        bet=self.findBeat(z)
+        self.find_peaks(z)
+        self.filter_peaks()
+        bet=self.find_beat(self.times2,self.peaks2)
        
         if graph:
-            max_val=numpy.max(z)
-            if max_val >1.0:
-                z *= (1./max_val)   
+#            max_val=numpy.max(z)
+#             if max_val >1.0:
+#                 z *= (1./max_val) 
+#                 if self.peaks!=None:
+#                     self.peaks *=(1./max_val)   
+            bpm="BPM="
+            for t in self.times2:
                 
+                tt=60.0/t
+                if tt < 40.0:
+                    break
+                
+                bpm+="{:4.1f} ".format(tt)
+#             
+#             if bet > 0:
+#                 bpm="BPM = " +str(round(60.0/bet))
+#             else:
+#                 bpm="BPM = ?"
+#             
+            self.plot.draw(z,bpm,self.times2,self.peaks2) 
+            #self.plot.draw(z,bpm) 
         
-            if bet > 0:
-                bpm="BPM = " +str(round(60.0/bet))
-            else:
-                bpm="BPM = ?"
+        sys.stdout.write("[")
+        sep=""
+        for t,p in zip(self.times2,self.peaks2):
+            sys.stdout.write(sep+"["+str(t)+","+str(p)+"]")
+            sep=","
             
-            self.plot.draw(z,bpm) 
-        
-        print bet    
-        
-    def findBeat(self,z):  
-        
-        mmm=0.0
-        iii=0
-        for i in range(nnMin,nnMax):
-            if z[i] > mmm:
-                iii=i
-                mmm=z[i]
+        sys.stdout.write("]\n")
+
+     
+    def add_average_peak(self,bt,bp):
+         
+        sum=0
+        sumt=0
+        for p,t in zip(bp,bt):
+            sum  += p
+            sumt += p*t
+    
+        tav=sumt/sum
+        self.peaks2.append(sum)
+        self.times2.append(tav)
+
+    #    print (bp)
+    #    print (bt)
+    #    print "TAV=",tav
+    
                 
-        return iii*dt
+    def filter_peaks(self):   
+        self.peaks2=[]
+        self.times2=[]
+        
+        t1=-100.0
+        p1=0
+        gap=.1
+        
+        bp=None
+        bt=None
+
+        for p,t in zip(self.peaks,self.peakst):
+            if t - t1 > gap:
+                if bp != None:
+                    self.add_average_peak(bt,bp)
+                
+                bp=[]
+                bt=[]
+                t1=t
+
+            bp.append(p)
+            bt.append(t)
+
+        if bp != None:
+            self.add_average_peak(bt,bp)
+
+            
+    def find_peaks(self,z,minI=None,maxI=None):
+        self.peaks=[]
+        self.peakst=[]
+        noise_level=.1
+        if minI == None:
+            minI=1
+            
+        if maxI==None:
+            maxI=len(z)-2
+            
+        for i in range(minI+1,maxI-1):
+            if z[i-1]<=z[i]>=z[i+1] and z[i] > noise_level: 
+                self.peaks.append((z[i]))
+                self.peakst.append(self.t[i])
+                
+    def find_beat(self,ts,zs):  
+        mmm=0.0
+        period=-1
+        
+        for z,t in zip(zs,ts):
+            if t < periodMin:
+                continue
+            elif t> periodMax:
+                break
+     
+            if z > mmm:
+                mmm=z
+                period=t
+    
+            
+        return period
         
 def stomp(time):
     stomper.add_event(time,1.0)
@@ -135,8 +219,8 @@ dt=.02
 nspread=int(spread/dt) 
 T=6.0
 
-bpmMax=200
-bpmMin=50
+bpmMax=180
+bpmMin=40
 
 periodMax=60.0/bpmMin
 periodMin=60.0/bpmMax
@@ -154,12 +238,20 @@ analysis=Analysis(stomper)
 ## --- test code 
 if test_me:
     tt=0.0
+    
+    scat=0.03
+    probs=[.9,.2,.6,.6]
+    
+    cnt=0
+    import random
     for _ in range(100):
         time.sleep(1)
-        stomper.add_event(tt,1.0)
+        if probs[cnt]> random.random():
+            stomper.add_event(tt+random.random()*scat,1.0)
+            
         analysis.doit()
-        tt+=0.5
-    
+        tt+=0.2
+        cnt = (cnt+1)%4
         
     
     

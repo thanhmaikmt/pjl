@@ -1,5 +1,57 @@
 import MBmusic
- 
+import array
+
+class BasicPlayer:
+    
+        """
+        plays a melody instrument using the OSC  message
+        """
+    
+        def __init__(self,inst,score=None,seq=None):
+
+            self.score=score
+            self.inst=inst
+            self.seq=seq
+            self.player=MBmusic.Messenger(inst)
+            self.notesOn={}
+        
+        def play(self,toks,data):     
+            if toks[0] == 'xy':
+                x=int(float(data[1])*127)
+                y=int(float(data[0])*127)
+                #print " melody xy",x,y
+                self.player.inst.set_cc(12,x)
+                self.player.inst.set_cc(13,y)
+                
+                return
+            
+            val=float(data[0])
+             
+            i=int(toks[0])
+            
+            vel=int(val*127)       
+           
+            if self.score:
+                beat=self.seq.get_stamp()
+                pitch=self.score.get_tonality(beat).get_note_of_scale(i,self.score.key)+36
+            else:
+                pitch=i+48    
+            
+            #print "play",pitch,vel
+            
+            if vel != 0:
+                assert not self.notesOn.get(pitch)
+                self.player.inst.note_on(pitch,vel)
+                self.notesOn[pitch]=vel
+            else:
+                assert self.notesOn.get(pitch)
+                self.player.inst.note_off(pitch)
+                del self.notesOn[pitch]
+
+        def is_playing(self):
+            return len(self.notesOn) > 0
+        
+        
 class ChordPlayer:
         
         def __init__(self,inst,score,seq):
@@ -45,8 +97,9 @@ class ChordPlayer:
 #                    p += 12
 #                
 
-
+            
 class MelodyPlayer:
+    
         """
         plays a melody instrument using the OSC  message
         """
@@ -74,7 +127,7 @@ class MelodyPlayer:
              
             i=int(toks[0])
             
-            print "Melody ",val,i
+            #print "Melody ",val,i
             vel=int(val*127)       
            
             
@@ -84,7 +137,7 @@ class MelodyPlayer:
             else:
                 pitch=i+48    
             
-            print "play",pitch,vel
+            #print "play",pitch,vel
             
             if vel != 0:
                 self.player.inst.note_on(pitch,vel)

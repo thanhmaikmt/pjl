@@ -1,41 +1,42 @@
 import subprocess,inspect
 import atexit,time,Queue,threading
 
-"""
-Users side of the beat detection system.
-The client sends beats to the server
-"""
 
 class Client:
+    """
+    Users side of the beat detection system.
+    This client sends beats to the server.
+    It reads the servers output which should send estimates of the tempo
+    e.g.
+     client.stomp(time_stamp)   #   send event to the server analysis  
+     bpm=client.get_tempo()         #   get current tempo estimate
+    
+    """
  
     
     def __init__(self,debug=False):
+        
         self.debug=debug
         self.proc=None
         
         if  not debug:
-            self.proc=subprocess.Popen(["python -i ../beat/beatserver.py -g"], shell=True,
+            self.proc=subprocess.Popen(["/usr/local/bin/python -i ../beat/beatserver.py -g"], shell=True,
                                        stdin=subprocess.PIPE,
                                       stdout=subprocess.PIPE)
-            
-            
-#            ,
-#                                       stderr=subprocess.STDOUT,
-#                                       stdout=        self.pipe.subprocess.PIPE)
             
             self.pipe   = self.proc.stdin
             self.stdout = self.proc.stdout
             #print self.proc.pid
             
     
-            self.err_t=threading.Thread(target=self.pipe_reader)
+            self.err_t=threading.Thread(target=self._pipe_reader)
            
             self.q=Queue.Queue()
             self.err_t.start()
             self.tempo=-1
                
 
-    def send(self,cmd):
+    def _send(self,cmd):
         self.pipe.write(cmd+"\n")
 
     def stomp(self,stamp):
@@ -43,10 +44,10 @@ class Client:
         Send an event (time=stamp) to the beat analysis
         """
         text="stomper.add_event("+str(stamp)+",1.0)"
-        self.send(text)
-        self.send("analysis.doit()")
+        self._send(text)
+        self._send("analysis.doit()")
         
-    def pipe_reader(self):
+    def _pipe_reader(self):
         while True:
            
             text=self.stdout.readline()
@@ -57,9 +58,18 @@ class Client:
             if self.err_t == None:
                 return 
             
-            print ">",text,"<"
-            self.tempo=float(text)
-         
+            
+            #print ">",text,"<"
+            exec("zzz="+text)
+            print zzz
+            #  self.tempo=float(text)
+        
+    def get_interval(self):
+        return self.tempo 
+  
+    def get_bpm(self):
+        return 60.0/self.tempo 
+        
     def quit(self):
         print "quitting  .... "
         if self.proc == None:
