@@ -1,6 +1,6 @@
 import subprocess,inspect
 import atexit,time,Queue,threading
-
+import MB
 
 class Client:
     """
@@ -20,7 +20,7 @@ class Client:
         self.proc=None
         
         if  not debug:
-            self.proc=subprocess.Popen(["/usr/local/bin/python -i ../beat/beatserver.py -g"], shell=True,
+            self.proc=subprocess.Popen([MB.PYTHON_CMD+" -i ../beat/beatserver.py -g"],shell=True,
                                        stdin=subprocess.PIPE,
                                       stdout=subprocess.PIPE)
             
@@ -77,7 +77,7 @@ class Client:
         self.send("time.sleep(0.5)")
         self.send("quit()")
         
-        self.pipe.close()
+        self.pipe.close()/usr/local/bin/python
         #self.stdout.close()
         print " waiting for client to die"
         self.proc.wait()

@@ -36,8 +36,8 @@ class Context:
         
     def start(self,map):
         addr=MB.get_osc_ip()
-        osc_driver=Server(addr,map,None)
-        osc_driver.run()
+        self.osc_driver=Server(addr,map,None)
+        self.osc_driver.run()
         self.seq.start()
         
     def get_sequencer(self):
@@ -48,6 +48,7 @@ class Context:
         self.seq.quit()
         print ' Stopping midi engine '  
         self.mid.quit()
+        self.osc_driver.quit()
 
 def init():
     """

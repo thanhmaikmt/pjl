@@ -1,3 +1,6 @@
+import platform
+
+machine=platform.system()
 
 
 MIDI_OUT_NAMES=["to ARGO Appli Fluidsynth v9 1","Synth input port (Qsynth1:0)","IAC Driver IAC Bus 1"]
@@ -26,5 +29,13 @@ class priority:
     
   
 priority.score=1
+
+if machine == "Linux":
+    PYTHON_CMD="/usr/bin/python"
+else:
+    print "Please set PYTHON_CMD for:",machine 
+    
+    
+    
 #def EQUALS(x,y):
 #    return abs(x-y)<1e-4 
