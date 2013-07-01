@@ -276,6 +276,7 @@ class MyFrame(wx.Frame):
    
     def OnClose(self,event):
         print "CLosing"
+        pid.terminate()
         self.err_t = None
         MB.quit()
        
@@ -283,6 +284,11 @@ class MyFrame(wx.Frame):
         time.sleep(.2)
         self.Destroy()
      
+
+import subprocess
+pid=subprocess.Popen(["/usr/local/bin/python", "../FrontEnds/pg_ui.py"])
+#pid=subprocess.Popen(["ls", "../FrontEnds"])
+pid.deamon=True
 
 app = wx.PySimpleApp()
 mainFrame = MyFrame(None, title='PYO-GA', pos=(50,50), size=(800,300))
