@@ -7,7 +7,7 @@ class Phrasifier:
     
     def __init__(self,list,parser,tbreak):
         self.list=list
-        self.notesOn=players.NotesOn()
+        self.notesOn=NotesOn()
         self.phrases=[]
         self.ptr=self.list.head
         #  pointer to the first event in the current phrase.
@@ -140,8 +140,11 @@ class NotesOn:
             else:
                 assert self.notesOn.get(pitch)
                 del self.notesOn[pitch]
+                
+    def isPlaying(self):
+        return len(self.notesOn)
     
-        
+    
 class BasicPlayer:
     
         """
@@ -196,7 +199,7 @@ class Phrasifier:
     
     def __init__(self,list,parser,tbreak):
         self.list=list
-        self.notesOn=NotesOn()
+        self.notesOn=NotesOn(parser)
         self.phrases=[]
         self.ptr=self.list.head
         #  pointer to the first event in the current phrase.
@@ -210,7 +213,7 @@ class Phrasifier:
         if  nxt == None:
             return False
         
-        pitch,vel=self.parser.parse(nxt.data)
+        pitch,vel=self.parser.parse(nxt.data[0],nxt.data[1])
         
         onPrev=self.notesOn.isPlaying()
         
@@ -253,7 +256,7 @@ class Phrasifier:
         
         
         if tNow-self.ptr.time > self.tbreak:
-            self.phrases.add((self.phrase_start,self.ptr))
+            self.phrases.append((self.phrase_start,self.ptr))
             self.phrase_start=None
             print "phrased"
             

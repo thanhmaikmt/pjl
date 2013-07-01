@@ -382,7 +382,7 @@ class Repeater:
     """  Calls the create of a factory every period from start.
     """
     
-    def __init__(self,start,period,seq,factory):
+    def __init__(self,start,period,seq,func):
         
         """
         start -- time of first call to factory.create
@@ -392,12 +392,12 @@ class Repeater:
         
         self.start=start
         self.period=period
-        self.factory=factory
+        self.func=func
         seq.schedule(start,self)
         self.seq=seq
             
     def fire(self,beat):
-        self.factory.create(beat)
+        self.func(beat)
         self.seq.schedule(beat+self.period,self)
         
 

@@ -2,7 +2,7 @@ from MBmusic import *
 from MBmidi import *
 from MBsetup import *
 from MBoscserver import *
-import players
+from players import *
 
 
 _context=None
@@ -30,7 +30,7 @@ class Context:
     def allocate_player(self,chan):
         inst=self.midi_out_dev.allocate_channel(chan)
         assert self.players[chan] == None
-        self.players[chan]=players.BasicPlayer(inst,None,None)
+        self.players[chan]=BasicPlayer(inst,None,None)
         return self.players[chan]
         
         
@@ -49,6 +49,13 @@ class Context:
         print ' Stopping midi engine '  
         self.mid.quit()
         self.osc_driver.quit()
+        
+    def callback(self,func,start,period):
+        """
+        func --- Call back called on same thread as midi so don't do too much here
+        """
+        Repeater(start,period,self.seq,func)
+        
 
 def init():
     """

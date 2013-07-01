@@ -1,7 +1,7 @@
 import MB
 
 import dlinkedlist
-import players
+
 import time
 import beatclient
 import sys
@@ -10,14 +10,13 @@ import sys
 context=MB.init()
 melody_player=MB.create_player(0)
 seq=context.get_sequencer()
-beat=beatclient.Client(debug=False)
-memory_player=players.PlayerWithMemory(melody_player,seq,beat)
-
-#user=User(melody_player,seq,beat)
+#beat=beatclient.Client(debug=False)
 
 
-#cpu=DelayedPlayer(user.list,seq,cpu_player,2.0,1.0)
-#cpu.start()
+memory_player=MB.PlayerWithMemory(melody_player,seq,None)
+
+phraser=MB.Phrasifier(memory_player.list,melody_player.parser,1.5)
+context.callback(phraser.visit,0,0.5)
 
 map={"melody":memory_player.play}
 MB.start(map)
@@ -38,11 +37,11 @@ class MyFrame(wx.Frame):
         print "TTT=",self.timer.Start(1000)
         
     def update(self,evt):
-        
+        pass
      #   str1=str(user.phrasifier.get_inactive_time())
-        str2="{:5.1f}".format(beat.get_bpm())
+       # str2="{:5.1f}".format(beat.get_bpm())
        # self.inactive_val.SetLabel(str1)
-        self.bpm_val.SetLabel(str2)
+      #  self.bpm_val.SetLabel(str2)
         
   #      self.but.after(1000,self.monit)  
     
