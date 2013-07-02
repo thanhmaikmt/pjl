@@ -9,16 +9,14 @@ import sys
   
 context=MB.init()
 melody_player=MB.create_player(0)
-seq=context.get_sequencer()
-#beat=beatclient.Client(debug=False)
 
 
-memory_player=MB.PlayerWithMemory(melody_player,seq,None)
+phraser=MB.Phrasifier(melody_player.list,melody_player.parser,1.5)
 
-phraser=MB.Phrasifier(memory_player.list,melody_player.parser,1.5)
 context.callback(phraser.visit,0,0.5)
 
-map={"melody":memory_player.play}
+map={"melody":melody_player.play}
+
 MB.start(map)
         
 import wx

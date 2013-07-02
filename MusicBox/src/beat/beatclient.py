@@ -34,7 +34,8 @@ class Client:
             self.q=Queue.Queue()
             self.err_t.start()
             self.tempo=-1
-               
+            
+        self.hist=[]      
 
     def _send(self,cmd):
         self.pipe.write(cmd+"\n")
@@ -57,11 +58,11 @@ class Client:
             #print ":",text
             if self.err_t == None:
                 return 
-            
-            
+                
             #print ">",text,"<"
             exec("zzz="+text)
             print zzz
+            self.hist.append(zzz)
             #  self.tempo=float(text)
         
     def get_interval(self):
@@ -69,6 +70,10 @@ class Client:
   
     def get_bpm(self):
         return 60.0/self.tempo 
+    
+
+    #def get_meter(self):
+        
         
     def quit(self):
         print "quitting  .... "
@@ -77,7 +82,7 @@ class Client:
         self.send("time.sleep(0.5)")
         self.send("quit()")
         
-        self.pipe.close()/usr/local/bin/python
+        self.pipe.close()
         #self.stdout.close()
         print " waiting for client to die"
         self.proc.wait()

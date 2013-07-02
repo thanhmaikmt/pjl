@@ -3,7 +3,7 @@ from MBmidi import *
 from MBsetup import *
 from MBoscserver import *
 from players import *
-
+import beatclient
 
 _context=None
 
@@ -21,16 +21,22 @@ class MBError:
    
 class Context:
         
-    def __init__(self,seqtype=Sequencer):
+    def __init__(self,seqtype=Sequencer,beat_analysis=True):
         self.mid = MidiEngine()
         self.midi_out_dev = self.mid.open_midi_out(MIDI_OUT_NAMES)
         self.seq = seqtype()
         self.players=16*[None]
-        
+        if beat_analysis:
+            self.beat_client=beatclient.Client(debug=False)
+        else:
+            self.beat_client=None
+            
+        self.default_parser=BasicParser()
+            
     def allocate_player(self,chan):
         inst=self.midi_out_dev.allocate_channel(chan)
         assert self.players[chan] == None
-        self.players[chan]=BasicPlayer(inst,None,None)
+        self.players[chan]=Player(inst,parser=self.default_parser,seq=self.seq,memory=True,beat_client=self.beat_client)
         return self.players[chan]
         
         

@@ -5,7 +5,7 @@
 
 """
 
- Fronm the client
+ From the client
 
  self.proc=subprocess.Popen(["python -i beatserver.py"], shell=True,
                                        stdin=subprocess.PIPE,
@@ -20,9 +20,8 @@
             self.stdout = self.proc.stdout
             
         
-        tt = time stamp
-        
-        self.pipe.write("stomper.add_event("+str(tt)+",1.0)")    
+# to do a beat 
+            self.pipe.write("stomper.add_event("+str(time_stamp)+",1.0)")    
 """
 
 
