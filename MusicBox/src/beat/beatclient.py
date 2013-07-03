@@ -35,8 +35,11 @@ class Client:
             self.err_t.start()
             self.tempo=-1
             
-        self.hist=[]      
-
+        self.hist=[]     
+         
+        self.beat_len=1.0
+        self.bar_len=4.0
+        
     def _send(self,cmd):
         self.pipe.write(cmd+"\n")
 
@@ -60,16 +63,50 @@ class Client:
                 return 
                 
             #print ">",text,"<"
-            exec("zzz="+text)
-            print zzz
-            self.hist.append(zzz)
+            exec("self.zzz="+text)
+            print self.zzz
+            #self.hist.append(zzz)
+            self.seek_metric()
+            
+
+    def seek_metric(self,t_min,t_max):  
             #  self.tempo=float(text)
-        
-    def get_interval(self):
-        return self.tempo 
+            x_p=0.0
+            t_p=0.0
+            for x in self.zzz:
+                if x[0] < t_min:
+                    continue
+                elif x[0]> t_max:
+                    break
+                if x[1] > x_p:
+                    t_p=x[0]
+                    
+            self.beat_len=t_p
+                
+            x_p=1e12
+            t_p=0.0
+            b_guess=4*t_p
+            
+            for x in self.zzz:
+                if x[0] < 4*t_min:
+                    continue
+                elif x[0]> 4*t_max:
+                    break
+                
+                x_tmp=abs(x[0]-b_guess)/x[1]
+                
+                if x_tmp < x_p:
+                    t_p=x[0]
+                    
+            self.bar_len=t_p
+            
+            
   
-    def get_bpm(self):
-        return 60.0/self.tempo 
+    def get_barlength(self):
+        return self.bar_len
+
+    def get_beatlength(self):
+        return self.bar_len
     
 
     #def get_meter(self):

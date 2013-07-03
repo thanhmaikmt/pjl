@@ -85,7 +85,7 @@ class Analysis:
         z=z1[self.n-1:]
         self.find_peaks(z)
         self.filter_peaks()
-        bet=self.find_beat(self.times2,self.peaks2)
+      #  bet=self.find_beat(self.times2,self.peaks2)
        
         if graph:
 #            max_val=numpy.max(z)
@@ -178,22 +178,22 @@ class Analysis:
                 self.peaks.append((z[i]))
                 self.peakst.append(self.t[i])
                 
-    def find_beat(self,ts,zs):  
-        mmm=0.0
-        period=-1
-        
-        for z,t in zip(zs,ts):
-            if t < periodMin:
-                continue
-            elif t> periodMax:
-                break
-     
-            if z > mmm:
-                mmm=z
-                period=t
-    
-            
-        return period
+#     def find_beat(self,ts,zs):  
+#         mmm=0.0
+#         period=-1
+#         
+#         for z,t in zip(zs,ts):
+#             if t < periodMin:
+#                 continue
+#             elif t> periodMax:
+#                 break
+#      
+#             if z > mmm:
+#                 mmm=z
+#                 period=t
+#     
+#             
+#         return period
         
 def stomp(time):
     stomper.add_event(time,1.0)

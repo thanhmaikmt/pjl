@@ -7,8 +7,9 @@ import beatclient
 import sys
 
   
-context=MB.init()
-melody_player=MB.create_player(0)
+context=MB.Context()
+
+melody_player=context.create_player(0)
 
 
 phraser=MB.Phrasifier(melody_player.list,melody_player.parser,1.5)
@@ -17,7 +18,7 @@ context.callback(phraser.visit,0,0.5)
 
 map={"melody":melody_player.play}
 
-MB.start(map)
+context.start(map)
         
 import wx
   
@@ -35,11 +36,11 @@ class MyFrame(wx.Frame):
         print "TTT=",self.timer.Start(1000)
         
     def update(self,evt):
-        pass
-     #   str1=str(user.phrasifier.get_inactive_time())
-       # str2="{:5.1f}".format(beat.get_bpm())
-       # self.inactive_val.SetLabel(str1)
-      #  self.bpm_val.SetLabel(str2)
+       
+       str1="{:5.1f}".format(60.0/context.get_beatlength())
+       self.bpm_val.SetLabel(str1)
+       str1="{:5.1f}".format(4*60.0/context.get_barlength())
+       self.bpm2_val.SetLabel(str1)
         
   #      self.but.after(1000,self.monit)  
     
@@ -54,19 +55,20 @@ class MyFrame(wx.Frame):
          
         self.bpm=wx.StaticText(self,-1,"BPM")
         self.bpm_val=wx.StaticText(self,-1,"???")
-        self.inactive=wx.StaticText(self,-1,"Space")
-        self.inactive_val=wx.StaticText(self,-1,"???")
+        
+        self.bpm2=wx.StaticText(self,-1,"Space")
+        self.bpm2_val=wx.StaticText(self,-1,"???")
         midi_out=wx.StaticText(self,-1,"MidiOut:"+context.midi_out_dev.name)
       
         h1=wx.BoxSizer(wx.HORIZONTAL)
         v1 = wx.BoxSizer(wx.VERTICAL)
-        v1.Add(self.inactive, 1, wx.EXPAND)
+        v1.Add(self.bpm2, 1, wx.EXPAND)
         v1.Add(self.bpm, 1, wx.EXPAND)
         v1.Add(midi_out, 1, wx.EXPAND)
         h1.Add(v1,1)
          
         v2 = wx.BoxSizer(wx.VERTICAL)
-        v2.Add(self.inactive_val, 1, wx.EXPAND)
+        v2.Add(self.bpm2_val, 1, wx.EXPAND)
         v2.Add(self.bpm_val, 1, wx.EXPAND)
         h1.Add(v2,1)
 #         
@@ -97,7 +99,7 @@ class MyFrame(wx.Frame):
         print "CLosing"
         pid.terminate()
         self.err_t = None
-        MB.quit()
+        context.quit()
        
         # wait for the pipes to flush
         time.sleep(.2)
