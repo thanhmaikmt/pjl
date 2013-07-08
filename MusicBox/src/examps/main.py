@@ -1,6 +1,5 @@
 import MB
 
-import dlinkedlist
 
 import time
 import beatclient
@@ -10,11 +9,33 @@ import sys
 context=MB.Context()
 
 melody_player=context.create_player(0)
+echo_player=context.create_player(2)
 
 
-phraser=MB.Phrasifier(melody_player.list,melody_player.parser,1.5)
+class PhrasePlayerFirer:
+    
 
-context.callback(phraser.visit,0,0.5)
+    def __init__(self,player):
+        self.player=player
+        
+    def notify(self,phraser):
+        
+        seq=context.get_sequencer()
+        tNow=seq.get_stamp()
+        self.phrase=phraser.phrases[-1]
+        tHead=self.phrase.head.time
+        tDelay=tNow-tHead
+        self.pPlayer=MB.PhrasePlayer(self.phrase,seq,self.player)
+        self.pPlayer.start(tDelay)
+      
+      
+client=PhrasePlayerFirer(echo_player)
+
+              
+phraser=MB.Phrasifier(melody_player.list,melody_player.parser,1.0,client)
+
+context.callback(phraser.visit,0,0.2)
+
 
 map={"melody":melody_player.play}
 
@@ -37,11 +58,13 @@ class MyFrame(wx.Frame):
         
     def update(self,evt):
        
-       str1="{:5.1f}".format(60.0/context.get_beatlength())
-       self.bpm_val.SetLabel(str1)
-       str1="{:5.1f}".format(4*60.0/context.get_barlength())
-       self.bpm2_val.SetLabel(str1)
-        
+        beatlen=context.get_beatlength()
+        str1="{:5.1f}".format(60.0/beatlen)
+        self.bpm_val.SetLabel(str1)
+        barlen=context.get_barlength()
+        str1="{:5.1f}".format(4*60.0/barlen)
+        self.bpm2_val.SetLabel(str1)
+ 
   #      self.but.after(1000,self.monit)  
     
     def make_panels(self):
@@ -53,10 +76,10 @@ class MyFrame(wx.Frame):
         box.Add(quit,1,wx.EXPAND)   
         quit.Bind(wx.EVT_BUTTON, self.OnClose)
          
-        self.bpm=wx.StaticText(self,-1,"BPM")
+        self.bpm=wx.StaticText(self,-1,"Beats Per Min")
         self.bpm_val=wx.StaticText(self,-1,"???")
         
-        self.bpm2=wx.StaticText(self,-1,"Space")
+        self.bpm2=wx.StaticText(self,-1,"Bars Per Min * 4")
         self.bpm2_val=wx.StaticText(self,-1,"???")
         midi_out=wx.StaticText(self,-1,"MidiOut:"+context.midi_out_dev.name)
       
@@ -80,15 +103,11 @@ class MyFrame(wx.Frame):
         self.Layout()
         
         
-        
-             
     def  make_button_panel(self,parent):
         
         
         panel=wx.Panel(parent,-1, style=wx.SUNKEN_BORDER)
         box = wx.BoxSizer(wx.HORIZONTAL)
-        
-      
         
         panel.SetSizer(box)
         return panel

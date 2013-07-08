@@ -70,6 +70,7 @@ class Context:
         print ' Stopping midi engine '  
         self.mid.quit()
         self.osc_driver.quit()
+        self.beat_client.quit()
         
     def callback(self,func,start,period):
         """
@@ -94,8 +95,6 @@ class Context:
      
     
   
-
-     
 def deprecated():   
     assert False
     

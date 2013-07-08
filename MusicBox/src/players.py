@@ -3,10 +3,18 @@ import array
 import dlinkedlist
 
 
+
+class Phrase:
+    
+    def __init__(self,head,tail):
+        self.head=head
+        self.tail=tail
+        
+        
  
 class Phrasifier:
     
-    def __init__(self,list,parser,tbreak):
+    def __init__(self,list,parser,tbreak,client):
         self.list=list
         self.notesOn=NotesOn(parser)
         self.phrases=[]
@@ -15,6 +23,7 @@ class Phrasifier:
         self.phrase_start=None 
         self.parser=parser
         self.tbreak=tbreak
+        self.client=client
         
         
     def visit_next_event(self):
@@ -37,9 +46,9 @@ class Phrasifier:
             self.phrase_start=nxt 
         elif not onPrev and onNow:
             if (nxt.time-self.ptr.time)> self.tbreak:
-                self.phrases.add((self.phrase_start,self.ptr))
+                self.phrases.aappend(Phrase(self.phrase_start,self.ptr))
                 self.phrase_start=nxt
-                print "phrased"
+                self.client.notify(self)
                 
         self.ptr=nxt
         
@@ -65,10 +74,10 @@ class Phrasifier:
         
         
         if tNow-self.ptr.time > self.tbreak:
-            self.phrases.append((self.phrase_start,self.ptr))
+            self.phrases.append(Phrase(self.phrase_start,self.ptr))
             self.phrase_start=None
             print "phrased"
-
+            self.client.notify(self)
   
 
 class BasicParser:
@@ -399,5 +408,73 @@ class DelayedPlayer:
 
         self.time1=time2
         self.sched()
+        
+        
+
+class PhrasePlayer:
+    
+    """
+      sched()
+      fire()
+    """
+    
+    def __init__(self,phrase,seq,player):
+        self.phrase=phrase
+        self.seq=seq
+        self.player=player
+        
+        
+    def start(self,t_shift):
+        """
+        start playing the phrase shifted by t_shift
+        that is as if the timeplay=event.time+t_shift  
+        """
+        
+        tNow=self.seq.get_stamp()
+        self.t_shift=t_shift
+        self.ptr=self.phrase.head
+        tNext=self.ptr.time+t_shift
+        
+        if tNext<tNow:
+            print "ooops PhrasePlayer:start: too late"
+        
+        self.sched()
+        
+    def sched(self):
+   
+        
+        """
+        schedule to fire at next event in list OR after self.delay
+        """
+        
+        tEvent=self.ptr.time+self.t_shift    
+             
+        self.seq.schedule(tEvent,self)
+            
+         
+    def fire(self,tt):
+        
+        
+        """ 
+        tt is the time according to the sequencer
+        """
+        
+        self.tNow=self.seq.get_stamp()
+        
+        
+        while True:
+                toks=self.ptr.data[0]
+                data=self.ptr.data[1]
+                # print "---- PLAY ",self.tNow,toks,data
+                self.player.play(toks,data) 
+                if self.ptr == self.phrase.tail:
+                    return
+                
+                self.ptr=self.ptr.next
+                if self.ptr.time+self.t_shift > tt:
+                    break
+                
+        self.sched()
+                
  
    

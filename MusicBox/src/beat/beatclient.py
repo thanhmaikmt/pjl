@@ -14,31 +14,32 @@ class Client:
     """
  
     
-    def __init__(self,debug=False):
+    def __init__(self,debug=False,t_min=0.5,t_max=1.5):
         
         self.debug=debug
         self.proc=None
+      
+        self.proc=subprocess.Popen([MB.PYTHON_CMD+" -i ../beat/beatserver.py -g"],shell=True,
+                                   stdin=subprocess.PIPE,
+                                  stdout=subprocess.PIPE)
         
-        if  not debug:
-            self.proc=subprocess.Popen([MB.PYTHON_CMD+" -i ../beat/beatserver.py -g"],shell=True,
-                                       stdin=subprocess.PIPE,
-                                      stdout=subprocess.PIPE)
-            
-            self.pipe   = self.proc.stdin
-            self.stdout = self.proc.stdout
-            #print self.proc.pid
-            
-    
-            self.err_t=threading.Thread(target=self._pipe_reader)
-           
-            self.q=Queue.Queue()
-            self.err_t.start()
-            self.tempo=-1
+        self.pipe   = self.proc.stdin
+        self.stdout = self.proc.stdout
+        #print self.proc.pid
+        
+
+        self.err_t=threading.Thread(target=self._pipe_reader)
+       
+        self.q=Queue.Queue()
+        self.err_t.start()
+        self.tempo=-1
             
         self.hist=[]     
          
         self.beat_len=1.0
         self.bar_len=4.0
+        self.t_max=t_max
+        self.t_min=t_min
         
     def _send(self,cmd):
         self.pipe.write(cmd+"\n")
@@ -64,40 +65,44 @@ class Client:
                 
             #print ">",text,"<"
             exec("self.zzz="+text)
-            print self.zzz
+            #print self.zzz
             #self.hist.append(zzz)
             self.seek_metric()
             
 
-    def seek_metric(self,t_min,t_max):  
+    def seek_metric(self):  
             #  self.tempo=float(text)
             x_p=0.0
             t_p=0.0
             for x in self.zzz:
-                if x[0] < t_min:
+                if x[0] < self.t_min:
                     continue
-                elif x[0]> t_max:
+                elif x[0]> self.t_max:
                     break
                 if x[1] > x_p:
                     t_p=x[0]
+            if t_p <= 0.0:
+                return
                     
             self.beat_len=t_p
                 
-            x_p=1e12
+            x_p=0.0
             t_p=0.0
-            b_guess=4*t_p
             
             for x in self.zzz:
-                if x[0] < 4*t_min:
+                if x[0] < self.beat_len*2.5:
                     continue
-                elif x[0]> 4*t_max:
+                elif x[0]> self.beat_len*5.0:
                     break
                 
-                x_tmp=abs(x[0]-b_guess)/x[1]
+                x_tmp=x[1]
                 
-                if x_tmp < x_p:
+                if x_tmp > x_p:
                     t_p=x[0]
                     
+            if t_p <=0:
+                return
+                  
             self.bar_len=t_p
             
             
@@ -106,18 +111,18 @@ class Client:
         return self.bar_len
 
     def get_beatlength(self):
-        return self.bar_len
+        return self.beat_len
     
 
     #def get_meter(self):
         
         
     def quit(self):
-        print "quitting  .... "
+        print "BEAT CLIENT quitting  .... "
         if self.proc == None:
             return
-        self.send("time.sleep(0.5)")
-        self.send("quit()")
+        self._send("time.sleep(0.5)")
+        self._send("quit()")
         
         self.pipe.close()
         #self.stdout.close()

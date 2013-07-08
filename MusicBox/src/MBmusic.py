@@ -103,7 +103,9 @@ class Sequencer(Engine):
     """
     
     def __init__(self,dt=0.005):
-                
+        """
+        Create a Sequencer that services events at a rate of dt
+        """     
         self.sequence=linkedlist.OrderedLinkedList()        
         self.sequence.insert(-sys.float_info.max,None,None)
         self.sequence.insert(sys.float_info.max,None,None)
@@ -116,25 +118,18 @@ class Sequencer(Engine):
         self.tstart=time.time()
      
     def schedule(self,at,event):
+        """
+        add an event to the queue at time = at
+        
+        """
+        
         # time=self.beat_to_time(beat)  
         if at+self.dt < self.time:
             print RED+"Schedule underrun "+ENDC,at,self.time
             
         self.sequence.insert(at,event,self.prev)
-
-
-#        
-#    def beat_to_time(self,beat):
-#        
-#        #  how many beats from the last count
-#        ttt=beat-self.beat    
-#        
-#        tt_time=self.tclock+self.beats_per_sec*ttt
-#        return tt_time
-#  
       
-      
-      
+          
     def quit(self):
         """
         Stop the engines. 
@@ -146,7 +141,7 @@ class Sequencer(Engine):
     def _play_next_dt(self):
         
         """
-        advanve beat by dt and 
+        advance self.time by self.dt 
         play any pending events up to and including   
         self.time
         """
@@ -166,9 +161,15 @@ class Sequencer(Engine):
             self.prev.data.fire(self.prev.time)
             
     def get_real_stamp(self):
+        """
+        Get the time using the clock
+        """
         return time.time()-self.tstart
 
     def get_stamp(self):
+        """
+        Get the stamp according to the schedulers last schedule
+        """
         return self.time
 
 class SequencerBPM(Engine):
