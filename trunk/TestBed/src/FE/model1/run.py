@@ -49,6 +49,11 @@ n_step=int(t_end/dt)
 
 Ipeak=-model.Jc*model.wid/4.5
 
+state_guess=model.make_state_vec()
+
+state_2=model.make_state_vec()
+
+
 def I_at_time(t):
     #return Ipeak
 
@@ -58,36 +63,61 @@ def I_at_time(t):
         return Ipeak*(1.0+(t_peak-t)/t_peak)
 
 #try:
-dxdt_guess=zeros(model.n_eq)
-dxdt=zeros(model.n_eq)
-x=zeros(model.n_eq)
+
 
 for i in range(n_step):
    
     It=I_at_time(time+dt)
     
     flag=True
-    cnt=0
+    cnt=1
+
+    state_cnt_neg=model.make_state_vec()
+    state_cnt_zero=model.make_state_vec()
+    state_cnt_pos=model.make_state_vec()
     
     while True :
         
-        err=model.evaluate(dxdt,x,dxdt_guess,It,dt)
+        model.evaluate_guess(state_guess,It,dt)
+        model.guess_to_state(model.dxdt_guess,state_2,state_guess)
         
-        print cnt,"  Err=",err
-        
-        if err < tol :
+        cnt=0  
+        for i in range(model.n_node):
+            s2=state_2[i]
+            if s2 == 0:
+                state_cnt_zero[i]+=1
+            elif s2 <0:
+                state_cnt_neg[i]+=1
+            elif s2 >0:
+                state_cnt_pos[i]+=1
+            
+            if s2 != state_guess[i]:
+                cnt += 1
+            
+        if cnt == 0:
             break
-  
-  
         
-    dxdt[:]=dxdt_guess
-    x[:]=x+dt*dxdt
-    tt=copy.deepcopy(dxdt[model.n_node:model.n_node+n_plot_x])
+        for i in range(model.n_node):
+            cp=state_cnt_pos[i]
+            cz=state_cnt_zero[i]
+            cn=state_cnt_neg[i]
+            if cp >= cz and cp > cn:
+                state_guess[i]=1
+            elif cn >= cz and cn > cp:
+                state_guess[i]=-1
+            else:
+                state_guess[i]=0
+                  
+        print cnt
+        
+    model.advance_to_guess()
+        
+    tt=copy.deepcopy(model.dxdt[model.n_node:model.n_node+n_plot_x])
     plot.drawX(0,xx,tt)
     
     times.append(time)
     jj.append(tt)
-    tt= -dxdt[:n_plot_x]
+    tt= -model.dxdt[:n_plot_x]
     ee.append(tt)
     plot.drawX(1,xx,tt)
     plot.redraw(" Time={} ".format(time))

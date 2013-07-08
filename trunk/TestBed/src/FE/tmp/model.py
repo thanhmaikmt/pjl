@@ -18,25 +18,6 @@ from math import  *
 import copy
 import sys
 
-# Bc= 120 perpendicalur   250 parallel
-# Jc = 1-5 MA /cm/cm ?
-
-Jc=1.0e6
-h=.2e-3
-wid=40e-3
-cond=10e7
-
-
-
-n_node=int(wid/h)
-n_eq=n_node*2+1
-n_elem=n_node-1
-
-nodes=[]
-
-iV=n_eq-1
-
-
 
 
 class Node:
@@ -106,12 +87,35 @@ class ElemA:
 
 
         
+# Bc= 120 perpendicalur   250 parallel
+# Jc = 1-5 MA /cm/cm ?
 
-xx=0.0
+Jc=1.0e6
+h=.2e-3
+wid=40e-3
+
+
+
+
+cond=10e7
+
+
+
+
+n_node=int(wid/h)
+n_eq=n_node*2+1
+n_elem=n_node-1
+
+
+nodes=[]
+
+iV=n_eq-1
+x=0.0
+
 for i in range(n_node):
     ieq={'Az':i,'Qz':i+n_node,'V':iV}
-    nodes.append(Node(ieq,xx))
-    xx+=h
+    nodes.append(Node(ieq,x))
+    x+=h
 
 
 
@@ -127,22 +131,21 @@ K=zeros((n_eq,n_eq))
 C=zeros((n_eq,n_eq))
 A=zeros((n_eq,n_eq))
 
+x_tmp=zeros(n_eq)
 b=zeros(n_eq)
 rhs=zeros(n_eq)
+dxdt_new=zeros(n_eq)
+#critical_flag=zeros(n_node,dtype=bool)
+#critical_flag.fill(False)
 
-dxdt_guess=zeros(n_eq)
-dxdt=zeros(n_eq)
-
-x=zeros(n_eq)
-x_guess=zeros(n_eq)
-
+tmp=zeros(n_eq)
 
 theta=1.0
 mass_lumping=True
+Ht=0.0
 
-def make_state_vec():
-    return zeros(n_node)
-
+jj=[]
+ee=[]
 
 def assemble(K,C):
     K.fill(0.0)
@@ -153,7 +156,7 @@ def assemble(K,C):
                      
 
 
-def fixJ(K,C,b,state_guess,It):
+def fixJ(K,C,b,dxdt,It):
     
     iV=n_eq-1
     b.fill(0.0)
@@ -161,12 +164,24 @@ def fixJ(K,C,b,state_guess,It):
     b[0]=Ht
     b[n_node-1]=Ht
     b[iV]=It
+    flag=False
  
     for i in range(n_node):
         iJ1 = i + n_node
-        s=state_guess[i]
-        if s != 0 :
-                Jfix = s*Jc
+        J   = abs(dxdt[iJ1])
+        sJ   = sign(dxdt[iJ1])
+        
+        if J >= 1.1*Jc :
+            
+            E = -dxdt[i]-dxdt[iV]
+            aE  = abs(E)           # this is dA/dt  so E=-dAdt
+            sE = sign(E) 
+            Jfix = sJ*Jc
+            
+            if False and sE != sJ :
+                #print "ooops E is oposes current flow "
+                flag=True
+            else:
                 for jEq in range(n_eq):
                     b[jEq] -= Jfix*C[jEq,iJ1]
      
@@ -182,50 +197,28 @@ def fixJ(K,C,b,state_guess,It):
                 C[iJ1,iJ1]=1.0
                 b[iJ1]=Jfix
                 
-    
+                
+    return flag                      
 
 
-def evaluate_guess(state_guess,It,dt):
-    
-        """
-        Evaluate the next state assuming the given state_guess 
-        """
+
+def evaluate(dxdt,x,dxdt_guess,It,dt):
         assemble(K,C)
-        fixJ(K,C,b,state_guess,It)
-                        
+        flag=fixJ(K,C,b,dxdt_guess,It)
+        #if flag:
+        #    print " E is still confused"
+        #if i == 1 and cnt == 0:
+        #    for i in range(n_eq):
+        #        print C[i],b[i]
+                
         A[:]=C+theta*dt*K
         rhs[:]=b-dot(K,x)
-        
-        dxdt_guess[:]=solve(A,rhs)
-        x_guess[:]=x+dxdt_guess*dt
-        
-def guess_to_state(dxdt,state,statePrev):
-    """
-    dxdt is a guess
-    fill in state for this guess
-    """
-    iV=n_eq-1
-  
-    for i in range(n_node):
+        dxdt_new[:]=solve(A,rhs)
         
         
-        iJ1 = i + n_node
-        J   = abs(dxdt[iJ1])
-        if J <= Jc:
-            state[i]=0
-            continue
-            
-        sJ   = sign(dxdt[iJ1])
-        E = -dxdt[i]-dxdt[iV]
-        aE=abs(E)
-        sE = sign(E) 
-        state[i]=sE
- 
-        
-        
-def advance_to_guess():
-    x[:]=x_guess
-    dxdt[:]=dxdt_guess
-            
-        
+        tmp[:]=dxdt_guess-dxdt_new
+        dxdt_guess[:]=dxdt_new
+        err=dot(tmp,tmp)
+        return err
+
 
