@@ -1,5 +1,6 @@
 import sys
-sys.path.append('../..')
+sys.path.append('../MB')
+
 import MB
 import time
 

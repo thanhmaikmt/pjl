@@ -19,7 +19,7 @@ class Client:
         self.debug=debug
         self.proc=None
       
-        self.proc=subprocess.Popen([MB.PYTHON_CMD+" -i ../beat/beatserver.py -g"],shell=True,
+        self.proc=subprocess.Popen([MB.PYTHON_CMD+" -i ../MB/beatserver.py -g"],shell=True,
                                    stdin=subprocess.PIPE,
                                   stdout=subprocess.PIPE)
         
