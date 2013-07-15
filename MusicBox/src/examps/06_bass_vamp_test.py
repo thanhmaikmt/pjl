@@ -1,3 +1,8 @@
+import sys
+sys.path.append('../MB')
+
+
+print "BROKEN PLEASE FIX ME "
 
 import MBmusic as music
 import MBmidi 

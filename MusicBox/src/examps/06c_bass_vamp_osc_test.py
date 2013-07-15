@@ -1,4 +1,7 @@
 
+import sys
+sys.path.append('../MB')
+
 import MBmusic
 import MBmidi 
 import MBsetup

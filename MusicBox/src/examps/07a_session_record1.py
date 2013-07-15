@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../MB')
+
 import time
 import MBmidi
 import MBsetup
