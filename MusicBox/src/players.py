@@ -46,7 +46,7 @@ class Phrasifier:
             self.phrase_start=nxt 
         elif not onPrev and onNow:
             if (nxt.time-self.ptr.time)> self.tbreak:
-                self.phrases.aappend(Phrase(self.phrase_start,self.ptr))
+                self.phrases.append(Phrase(self.phrase_start,self.ptr))
                 self.phrase_start=nxt
                 self.client.notify(self)
                 
@@ -156,6 +156,10 @@ class Player:
             
         def play(self,toks,data):
                  
+            """
+            Interpret the OSC message and play it
+            """
+             
             if toks[0] == 'xy':
                 x=int(float(data[1])*127)
                 y=int(float(data[0])*127)
@@ -188,7 +192,9 @@ class Player:
             if self.beat_client:
                 self.beat_client.stomp(stamp)
         
-
+        def set_instrument(self,name):
+            pass
+            
   
         def quit(self):
             if self.beat_client:
@@ -424,17 +430,20 @@ class PhrasePlayer:
         self.player=player
         
         
-    def start(self,t_shift):
+    def start(self,t_shift,tloop=None):
         """
         start playing the phrase shifted by t_shift
         that is as if the timeplay=event.time+t_shift  
         """
         
+        if tloop:
+            assert tloop >= self.phrase.tail.time-self.phrase.head.time
+            
         tNow=self.seq.get_stamp()
         self.t_shift=t_shift
         self.ptr=self.phrase.head
         tNext=self.ptr.time+t_shift
-        
+        self.tloop=tloop
         if tNext<tNow:
             print "ooops PhrasePlayer:start: too late"
         
@@ -468,6 +477,10 @@ class PhrasePlayer:
                 # print "---- PLAY ",self.tNow,toks,data
                 self.player.play(toks,data) 
                 if self.ptr == self.phrase.tail:
+                    if self.tloop:
+                        self.t_shift=self.t_shift+self.tloop
+                        self.ptr=self.phrase.head
+                        break
                     return
                 
                 self.ptr=self.ptr.next

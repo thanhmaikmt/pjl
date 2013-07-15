@@ -1,4 +1,6 @@
-import MBmusic
+import sys
+sys.path.append('../..')
+import MB
 import time
 
 def callback():

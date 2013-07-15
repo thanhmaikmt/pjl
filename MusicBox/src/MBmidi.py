@@ -213,12 +213,11 @@ class Instrument:
 
     def set_instrument(self, instrument_id):
         """select an instrument, with a value between 0 and 127
-        Output.set_instrument(instrument_id, channel = 0)
-
+           midi program change
         """
         if not (0 <= instrument_id <= 127):
             raise ValueError("Undefined instrument id: %d" % instrument_id)
-
+        
         self.midi_out.write_short(0xc0+self.channel, instrument_id)
         
     def set_volume(self,val):

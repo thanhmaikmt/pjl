@@ -1,3 +1,6 @@
+import sys
+sys.path.append('beat')
+
 import MBmusic
 import beatclient
 
@@ -38,10 +41,15 @@ class Context:
         self.default_parser=BasicParser()
         _context=self
         
-    def allocate_player(self,chan):
+    def create_player(self,chan,pipe_to_beat):
         inst=self.midi_out_dev.allocate_channel(chan)
         assert self.players[chan] == None
-        self.players[chan]=Player(inst,parser=self.default_parser,seq=self.seq,memory=True,beat_client=self.beat_client)
+        if pipe_to_beat:
+            bc=self.beat_client
+        else:
+            bc=None
+            
+        self.players[chan]=Player(inst,parser=self.default_parser,seq=self.seq,memory=True,beat_client=bc)
         return self.players[chan]
         
         
@@ -86,54 +94,4 @@ class Context:
         return self.beat_client.get_beatlength()
 
     
-    def create_player(self,chan):
-        """
-        Create a Player
-        """ 
-        p=_context.allocate_player(chan)
-        return p
-     
-    
-  
-def deprecated():   
-    assert False
-    
-class Band:
-    """
-    Wrapper for instruments/players/sequencer
-    """
-    def __init__(self,seqtype=MBmusic.Sequencer):
-        
-        
-        deprecated()    
-        mid = MidiEngine()
-        
-        midi_out_dev = mid.open_midi_out(MIDI_OUT_NAMES)
-            
-        seq = seqtype()
-        # MetroNome
-        accent = MBmusic.NoteOn(61, 100)
-        weak = MBmusic.NoteOn(60, 80)
-        metro_inst = midi_out_dev.allocate_channel(9)
-        
-        self.metro = MBmusic.Metro(0, 4,seq, metro_inst, accent, weak) 
-    
-        self.bass_inst = midi_out_dev.allocate_channel(1)  
-        # Vamp
-        self.vamp_inst = midi_out_dev.allocate_channel(0)
-        self.solo_inst = midi_out_dev.allocate_channel(2)
-        self.solo_mesenger=MBmusic.Messenger(self.solo_inst)
- 
-        self.seq=seq
-        self.mid=mid
-        
-    def start(self):
-        self.seq.start()
-        
-    def quit(self):
-        
-        self.seq.quit()
-        print ' Stopping midi engine '  
-        self.mid.quit()
-
-
+   

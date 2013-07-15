@@ -40,6 +40,7 @@ class Client:
         self.bar_len=4.0
         self.t_max=t_max
         self.t_min=t_min
+        self.obsevers=[]
         
     def _send(self,cmd):
         self.pipe.write(cmd+"\n")
@@ -68,7 +69,10 @@ class Client:
             #print self.zzz
             #self.hist.append(zzz)
             self.seek_metric()
-            
+            for o in self.obsevers:
+                o.notify()
+
+
 
     def seek_metric(self):  
             #  self.tempo=float(text)

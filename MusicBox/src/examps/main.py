@@ -8,30 +8,60 @@ import sys
   
 context=MB.Context()
 
-melody_player=context.create_player(0)
-echo_player=context.create_player(2)
+melody_player=context.create_player(chan=0,pipe_to_beat=True)
+melody_player.set_instrument('Piano')
 
+echo_player=context.create_player(2,pipe_to_beat=False)
+echo_player.set_instrument('Vibes')
+
+drum_player=context.create_player(9,pipe_to_beat=False)
+
+
+class BeatObserver:
+    
+    def __init__(self,drum_player):
+        self.player=drum_player
+        
+        
+    def notify(self):
+        pass
+        
+        
+#context.beat_client.obsevers.add()
 
 class PhrasePlayerFirer:
     
 
     def __init__(self,player):
         self.player=player
+        self.delay=None
         
     def notify(self,phraser):
-        
+        """ This gets called when we finish a phrase
+        """
         seq=context.get_sequencer()
         tNow=seq.get_stamp()
         self.phrase=phraser.phrases[-1]
         tHead=self.phrase.head.time
-        tDelay=tNow-tHead
+        if self.delay == None:
+            self.delay=context.get_barlength()
+            
+            
+        phraseLen=tNow-tHead
+        
+        if phraseLen < self.delay:
+            tloop=self.delay
+        else:
+            ii=int(phraseLen/self.delay)
+            tloop=self.delay*ii
+        
         self.pPlayer=MB.PhrasePlayer(self.phrase,seq,self.player)
-        self.pPlayer.start(tDelay)
+
+        self.pPlayer.start(tloop,tloop)
       
       
 client=PhrasePlayerFirer(echo_player)
-
-              
+           
 phraser=MB.Phrasifier(melody_player.list,melody_player.parser,1.0,client)
 
 context.callback(phraser.visit,0,0.2)
@@ -54,7 +84,7 @@ class MyFrame(wx.Frame):
         self.timer=wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
      
-        print "TTT=",self.timer.Start(1000)
+        print "TTT=",self.timer.Start(500)
         
     def update(self,evt):
        

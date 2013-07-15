@@ -4,6 +4,7 @@ import MBsetup
  
 #  create PyMidi to initialize misi system.
 
+# Note since midi input runs on 
 
 mid=MBmidi.MidiEngine()
 

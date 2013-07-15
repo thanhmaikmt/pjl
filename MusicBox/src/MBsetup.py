@@ -32,6 +32,9 @@ priority.score=1
 
 if machine == "Linux":
     PYTHON_CMD="/usr/bin/python"
+elif machine =="Darwin":
+    PYTHON_CMD="/usr/local/bin/python"
+    
 else:
     print "Please set PYTHON_CMD for:",machine 
     
