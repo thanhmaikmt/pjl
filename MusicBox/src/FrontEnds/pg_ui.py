@@ -3,6 +3,8 @@
     Note the example tonality player starts this automaticlly
 """
 
+import sys
+sys.path.append('../MB')
 
 import pgdriver
 from pygame import * 
