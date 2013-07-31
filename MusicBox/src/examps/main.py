@@ -99,10 +99,10 @@ class MyFrame(wx.Frame):
         wx.Frame.__init__(self, parent, -1, title, pos, size)
 
 
-        context=MB.Context()
+        context=MB.Context(beat_analysis=True)
         self.context=context
         self.player_panels=[]
-        melody_player=context.create_player(chan=0,pipe_to_beat=True)
+        melody_player=context.create_player(chan=9,pipe_to_beat=True)
         melody_player.set_instrument('Piano')
         pp=PlayerPanel(self,melody_player)
         self.player_panels.append(pp)
@@ -112,7 +112,7 @@ class MyFrame(wx.Frame):
         pp=PlayerPanel(self,vibe_player)
         self.player_panels.append(pp)
         
-        drum_player=context.create_player(9,pipe_to_beat=False)
+        drum_player=context.create_player(10,pipe_to_beat=False)
         drum_player.set_instrument("Drum")
         pp=PlayerPanel(self,drum_player)
         self.player_panels.append(pp)

@@ -243,7 +243,18 @@ class SequencerBPM(Engine):
 
     def get_stamp(self):
         return self.beat
-      
+     
+     
+    def get_real_stamp(self):
+        """
+        Get the time using the clock (TODO MAKE THIS ACCURATE).
+        """
+        return self.beat
+    
+    def set_bpm(self,bpm):
+            self.beats_per_sec=bpm/60.0
+    
+ 
 class Playable:
     
     """

@@ -6,6 +6,14 @@ import dlinkedlist
 
 class Phrase:
     
+    """
+    Defines the head and tail within a list of events.
+    
+    events in the list should have a 
+    
+    ev.time   --- time of event
+    ev.data   --- (toks,data) 
+    """
     def __init__(self,head,tail):
         self.head=head
         self.tail=tail
@@ -84,8 +92,8 @@ class BasicParser:
     
     def parse(self,toks,data):
         val=float(data[0])          
-        pitch=int(toks[0])+48
-
+        pitch=int(toks[0])+32
+        print val,pitch
         vel=int(val*127)
         return pitch,vel
     
@@ -202,7 +210,14 @@ class Player:
         def quit(self):
             if self.beat_client:
                 self.beatclient.quit()
+                
+                
+        def play_phrase(self,phrase,start,period):
+            self.phrasePlayer=PhrasePlayer(phrase,self.seq,self)
+            self.phrasePlayer.start(start,period)
+            
 
+#pPlayer.start(2,4)
             
                 
 class PlayerWithMemory:

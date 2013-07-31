@@ -1,7 +1,7 @@
 import sys
 sys.path.append('beat')
 
-import MBmusic
+from MBmusic import *
 import beatclient
 
 from MBmidi import *
@@ -26,7 +26,7 @@ class MBError:
    
 class Context:
         
-    def __init__(self,seqtype=MBmusic.Sequencer,beat_analysis=True):
+    def __init__(self,seqtype=Sequencer,beat_analysis=False):
         global _context
         assert _context == None
         self.mid = MidiEngine()
@@ -56,6 +56,9 @@ class Context:
     def start(self,map):
         """
         Start the context. Sequencer will start running
+        
+        if map is not None a OSC server is started to recieve messages.
+        
         map is a dictionary of OSC keywords to a routine that processes it
         e.g.
         def melody_func(toks,data):
@@ -63,10 +66,12 @@ class Context:
              
         map={melody:melody_fuc}
         """
-  
-        addr=MB.get_osc_ip()
-        self.osc_driver=Server(addr,map,None)
-        self.osc_driver.run()
+        
+        if map:
+            addr=MB.get_osc_ip()
+            self.osc_driver=Server(addr,map,None)
+            self.osc_driver.run()
+            
         self.seq.start()
         
     def get_sequencer(self):
