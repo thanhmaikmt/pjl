@@ -2,22 +2,14 @@ import sys
 sys.path.append('../MB')
 
 import MB
-
+import subprocess
+ 
 
 import time
 import beatclient
 import sys
 
   
-context=MB.Context()
-
-melody_player=context.create_player(chan=0,pipe_to_beat=True)
-melody_player.set_instrument('Piano')
-
-echo_player=context.create_player(2,pipe_to_beat=False)
-echo_player.set_instrument('Vibes')
-
-drum_player=context.create_player(9,pipe_to_beat=False)
 
 
 class BeatObserver:
@@ -35,14 +27,16 @@ class BeatObserver:
 class PhrasePlayerFirer:
     
 
-    def __init__(self,player):
+    def __init__(self,player,context):
         self.player=player
         self.delay=None
+        self.context=context
         
     def notify(self,phraser):
         """ This gets called when we finish a phrase
         """
-        seq=context.get_sequencer()
+        context=self.context
+        seq=self.player.seq
         tNow=seq.get_stamp()
         self.phrase=phraser.phrases[-1]
         tHead=self.phrase.head.time
@@ -62,35 +56,89 @@ class PhrasePlayerFirer:
 
         self.pPlayer.start(tloop,tloop)
       
-      
-client=PhrasePlayerFirer(echo_player)
-           
-phraser=MB.Phrasifier(melody_player.list,melody_player.parser,1.0,client)
-
-context.callback(phraser.visit,0,0.2)
-
-
-map={"melody":melody_player.play}
-
-context.start(map)
+ 
         
 import wx
   
+  
+class PlayerPanel(wx.Panel):
+    
+    def __init__(self,parent,player):
+        wx.Panel.__init__(self, parent)
+        self.player=player
+        self.make_panels()
+        
+    def make_panels(self):
+        box=wx.BoxSizer(wx.HORIZONTAL)
+        
+        name=wx.StaticText(self,-1,self.player.get_name())
+        
+        
+        playBut=wx.Button(self,1,'PLAY')
+
+        learnBut=wx.Button(self,1,'LEARN')
+        
+        box.Add(name,1)
+        box.Add(playBut,1)
+        box.Add(learnBut,1)
+        
+        self.SetAutoLayout(True)
+        self.SetSizer(box)
+        self.Layout()
+            
+
+
+    def play(self):
+        pass
+        
+    
 class MyFrame(wx.Frame):
  
         
     def __init__(self,parent, title, pos, size=(300, 250)):
         wx.Frame.__init__(self, parent, -1, title, pos, size)
 
+
+        context=MB.Context()
+        self.context=context
+        self.player_panels=[]
+        melody_player=context.create_player(chan=0,pipe_to_beat=True)
+        melody_player.set_instrument('Piano')
+        pp=PlayerPanel(self,melody_player)
+        self.player_panels.append(pp)
+        
+        vibe_player=context.create_player(2,pipe_to_beat=False)
+        vibe_player.set_instrument('Vibes')
+        pp=PlayerPanel(self,vibe_player)
+        self.player_panels.append(pp)
+        
+        drum_player=context.create_player(9,pipe_to_beat=False)
+        drum_player.set_instrument("Drum")
+        pp=PlayerPanel(self,drum_player)
+        self.player_panels.append(pp)
+        
       #  self.Bind(wx.EVT_IDLE,self.monit)
         self.make_panels()
         self.timer=wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
      
         print "TTT=",self.timer.Start(500)
+   
+              
+        client=PhrasePlayerFirer(vibe_player,context)
+                   
+        phraser=MB.Phrasifier(melody_player.list,melody_player.parser,1.0,client)
+        
+        context.callback(phraser.visit,0,0.2)
+        
+        
+        map={"melody":melody_player.play}
+        
+        context.start(map)  
+   
         
     def update(self,evt):
-       
+        context=self.context
         beatlen=context.get_beatlength()
         str1="{:5.1f}".format(60.0/beatlen)
         self.bpm_val.SetLabel(str1)
@@ -102,9 +150,15 @@ class MyFrame(wx.Frame):
     
     def make_panels(self):
         
-    
+        context=self.context
         box = wx.BoxSizer(wx.VERTICAL)
-    
+        for pp in  self.player_panels:
+            box.Add(pp,1,wx.EXPAND)
+
+        pg=wx.Button(self, 1, 'PyGame FrontEnd')
+        box.Add(pg,1,wx.EXPAND)   
+        pg.Bind(wx.EVT_BUTTON, self.pygame_frontend)
+            
         quit=wx.Button(self, 1, 'Quit')    
         box.Add(quit,1,wx.EXPAND)   
         quit.Bind(wx.EVT_BUTTON, self.OnClose)
@@ -144,14 +198,20 @@ class MyFrame(wx.Frame):
         
         panel.SetSizer(box)
         return panel
-   
+
+    def pygame_frontend(self,event):
+        self.pid=subprocess.Popen([MB.PYTHON_CMD, "../FrontEnds/pg_ui.py"])
+#pid=subprocess.Popen(["ls", "../FrontEnds"])
+
         
    
     def OnClose(self,event):
         print "CLosing"
-        pid.terminate()
+        if self.pid != None:
+            self.pid.terminate()
+        
         self.err_t = None
-        context.quit()
+        self.context.quit()
        
         # wait for the pipes to flush
         time.sleep(.2)
@@ -159,9 +219,6 @@ class MyFrame(wx.Frame):
         print "OnClose End"
      
 
-import subprocess
-pid=subprocess.Popen([MB.PYTHON_CMD, "../FrontEnds/pg_ui.py"])
-#pid=subprocess.Popen(["ls", "../FrontEnds"])
 
 
 app = wx.PySimpleApp()

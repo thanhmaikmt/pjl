@@ -48,7 +48,7 @@ try:
     bass_player = MBmusic.BassPlayer(seq, bass_inst, score,30,48)
     bass_data=BassData()
     bass_factory=MBmusic.GrooverFactory(seq,bass_data,bass_player)
-    MBmusic.Repeater(0, 4, seq, bass_factory) 
+    MBmusic.Repeater(0, 4, seq, bass_factory.create) 
     
     # Vamp
        
@@ -66,7 +66,7 @@ try:
    
     vamp_data=VampData()
     factory=MBmusic.GrooverFactory(seq,vamp_data,vamp)   
-    MBmusic.Repeater(0, 4, seq, factory) 
+    MBmusic.Repeater(0, 4, seq, factory.create) 
     
     solo_inst=midi_out_dev.allocate_channel(2)
     solo_player=MBmusic.Messenger(solo_inst)

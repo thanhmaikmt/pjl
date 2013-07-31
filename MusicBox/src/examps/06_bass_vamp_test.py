@@ -2,8 +2,6 @@ import sys
 sys.path.append('../MB')
 
 
-print "BROKEN PLEASE FIX ME "
-
 import MBmusic as music
 import MBmidi 
 import MBsetup
@@ -53,7 +51,7 @@ try:
     bass_player = music.BassPlayer(seq, bass_inst, score,43,58)
     bass_data=BassData()
     bass_factory=music.GrooverFactory(seq,bass_data,bass_player)
-    music.Repeater(0, 4, seq, bass_factory) 
+    music.Repeater(0, 4, seq, bass_factory.create) 
     
     # Vamp
        
@@ -70,8 +68,13 @@ try:
             
    
     vamp_data=VampData()
+    
+    
     factory=music.GrooverFactory(seq,vamp_data,vamp)   
-    music.Repeater(0, 4, seq, factory) 
+    
+    
+    
+    music.Repeater(0, 4, seq, factory.create) 
     
     
     
@@ -85,6 +88,8 @@ try:
     mid.quit()
     
 except MBmidi.MidiError as e:
+    import traceback
+    traceback.print_stack()
     print e.get_message()
 
  

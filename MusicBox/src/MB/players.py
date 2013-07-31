@@ -193,9 +193,12 @@ class Player:
                 self.beat_client.stomp(stamp)
         
         def set_instrument(self,name):
-            pass
+            self.name=name
             
   
+        def get_name(self):
+            return self.name
+        
         def quit(self):
             if self.beat_client:
                 self.beatclient.quit()

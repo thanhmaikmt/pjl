@@ -386,9 +386,9 @@ class Repeater:
     def __init__(self,start,period,seq,func):
         
         """
-        start -- time of first call to factory.create
+        start -- time of first call to func
         period -- interval between calls
-        factory -- must implement create(when)
+        func --- function to be called with beat as an argument
         """
         
         self.start=start
