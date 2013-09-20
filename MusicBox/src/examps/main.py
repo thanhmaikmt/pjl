@@ -21,19 +21,26 @@ class BeatObserver:
     def notify(self):
         pass
         
-        
-#context.beat_client.obsevers.add()
-
+    
 class PhrasePlayerFirer:
+    
+    """
+    This is used to start playing the last phrase stored in a phraser
+    """
     
 
     def __init__(self,player,context):
+        """
+        player is responsible for playing the phrase.
+        """
         self.player=player
         self.delay=None
         self.context=context
         
     def notify(self,phraser):
-        """ This gets called when we finish a phrase
+        """ 
+        Start playing the last phrase in the phraser.
+        Attempts to sync the start so it is on a bar boundary. 
         """
         context=self.context
         seq=self.player.seq
@@ -123,11 +130,10 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
      
         print "TTT=",self.timer.Start(500)
-   
               
-        client=PhrasePlayerFirer(vibe_player,context)
+        echoPlayerFirer=PhrasePlayerFirer(vibe_player,context)
                    
-        phraser=MB.Phrasifier(melody_player.list,melody_player.parser,1.0,client)
+        phraser=MB.Phrasifier(melody_player.list,melody_player.parser,1.0,echoPlayerFirer)
         
         context.callback(phraser.visit,0,0.2)
         

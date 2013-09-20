@@ -21,9 +21,19 @@ class Phrase:
         
  
 class Phrasifier:
+    """
+    Observers list of events and creates
+    a list of phrases.  
+    the parser is responsible for interpretting the list of events inti note events.
+    tbreak is the time of silence between 2 phrases.
     
-    def __init__(self,list,parser,tbreak,client):
-        self.list=list
+    A client is notified when a phrase is detected.
+    
+    To run in real time visit must be called periodical.
+    
+    """
+    def __init__(self,eventlist,parser,tbreak,client):
+        self.list=eventlist
         self.notesOn=NotesOn(parser)
         self.phrases=[]
         self.ptr=self.list.head
@@ -35,6 +45,10 @@ class Phrasifier:
         
         
     def visit_next_event(self):
+        """
+        Advance the self.ptr through the event list.
+        If a phrase is detected the client is notified.
+        """
         nxt=self.ptr.next
         if  nxt == None:
             return False
