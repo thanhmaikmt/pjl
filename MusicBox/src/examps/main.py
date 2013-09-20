@@ -130,9 +130,12 @@ class MyFrame(wx.Frame):
         self.Bind(wx.EVT_TIMER, self.update, self.timer)
      
         print "TTT=",self.timer.Start(500)
-              
+          
+        # responsible for starting to play a loop phrase
+            
         echoPlayerFirer=PhrasePlayerFirer(vibe_player,context)
                    
+        # detects a phrase then 
         phraser=MB.Phrasifier(melody_player.list,melody_player.parser,1.0,echoPlayerFirer)
         
         context.callback(phraser.visit,0,0.2)

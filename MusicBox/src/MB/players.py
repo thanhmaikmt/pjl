@@ -2,7 +2,7 @@ import MBmusic
 import array
 import dlinkedlist
 
-
+debug=True
 
 class Phrase:
     
@@ -49,6 +49,10 @@ class Phrasifier:
         Advance the self.ptr through the event list.
         If a phrase is detected the client is notified.
         """
+        
+        if debug:
+            print "visit_next"
+            
         nxt=self.ptr.next
         if  nxt == None:
             return False
@@ -70,6 +74,8 @@ class Phrasifier:
             if (nxt.time-self.ptr.time)> self.tbreak:
                 self.phrases.append(Phrase(self.phrase_start,self.ptr))
                 self.phrase_start=nxt
+                if debug:
+                    print "Notify "
                 self.client.notify(self)
                 
         self.ptr=nxt
