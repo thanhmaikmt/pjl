@@ -62,7 +62,6 @@ class PlayerPanel(wx.Panel):
     def play(self,toks,data): 
         self.player.play(toks,data)
         
-        
     
 class MyFrame(wx.Frame):
  
@@ -75,7 +74,6 @@ class MyFrame(wx.Frame):
         self.context=context
         self.player_panels=[]
         melody_player=context.create_player(chan=0,pipe_to_beat=True)
-        
         melody_player.set_instrument('Piano')
         pp=PlayerPanel(self,melody_player)
         self.player_panels.append(pp)
@@ -97,11 +95,17 @@ class MyFrame(wx.Frame):
      
         print "TTT=",self.timer.Start(500)
           
-          
-        melody_player.set_ghost()  
-        drum_player.set_ghost()
-        vibe_player.set_ghost()
-      
+        # responsible for starting to play a loop phrase
+            
+        echoPlayerFirer=MB.PhrasePlayerFirer(vibe_player,context)
+                   
+        # detects a phrase then 
+        phraser=MB.Phrasifier(melody_player.list,melody_player.parser,1.0,echoPlayerFirer)
+        
+        context.callback(phraser.visit,0,0.2)
+        
+        
+        # default no focus
         self.focus=None
         
         # take responsibility for mapping melody event

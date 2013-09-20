@@ -41,6 +41,8 @@ class Context:
         self.default_parser=BasicParser()
         _context=self
         
+        self.bar_length=None
+        
     def create_player(self,chan,pipe_to_beat):
         inst=self.midi_out_dev.allocate_channel(chan)
         assert self.players[chan] == None
@@ -49,7 +51,7 @@ class Context:
         else:
             bc=None
             
-        self.players[chan]=Player(inst,parser=self.default_parser,seq=self.seq,memory=True,beat_client=bc)
+        self.players[chan]=Player(inst,self,parser=self.default_parser,seq=self.seq,memory=True,beat_client=bc)
         return self.players[chan]
         
         
@@ -93,9 +95,13 @@ class Context:
         
     
     def get_barlength(self):
-        return self.beat_client.get_barlength()
+        if not self.bar_length:
+            self.bar_length=self.beat_client.get_barlength()
+            
+        return self.bar_length 
     
     def get_beatlength(self):
+        print "get_beatlength()   caution    .. . .  . "
         return self.beat_client.get_beatlength()
 
     

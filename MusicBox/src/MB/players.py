@@ -160,9 +160,10 @@ class Player:
         plays a melody instrument using the OSC  message
         """
     
-        def __init__(self,inst,parser=None,seq=None,memory=True,beat_client=None):
+        def __init__(self,inst,context,parser=None,seq=None,memory=True,beat_client=None):
 
             self.parser=parser
+            self.context=context
             
             if parser == None:
                 self.parser=BasicParser()
@@ -237,6 +238,25 @@ class Player:
             self.phrasePlayer.start(start,period)
             
 
+
+        def set_ghost(self,ghost_player=None):
+           # install a ghost to monitor events and take over if need be.
+            
+            if not ghost_player:
+                ghost_player=self.create_ghost()
+                
+            echoPlayerFirer=PhrasePlayerFirer(ghost_player,self.context)
+                       
+            # detects a phrase then 
+            phraser=Phrasifier(self.list,self.parser,1.0,echoPlayerFirer)
+            
+            self.context.callback(phraser.visit,0,0.2)
+            
+       
+        def create_ghost(self):
+            return Player(self.inst,self.context,parser=self.parser,seq=self.seq,memory=False,beat_client=None)
+            
+                
 #pPlayer.start(2,4)
             
                 
@@ -326,11 +346,12 @@ class MelodyPlayer:
         plays a melody instrument using the OSC  message
         """
     
-        def __init__(self,inst,score=None,seq=None):
+        def __init__(self,inst,context,score=None,seq=None):
 
             self.score=score
             self.inst=inst
             self.seq=seq
+            self.context=context
             self.player=MBmusic.Messenger(inst)
         
         def play(self,toks,data):     
@@ -371,6 +392,7 @@ class MelodyPlayer:
     
     
     
+        
   
 
 class DelayedPlayer:
