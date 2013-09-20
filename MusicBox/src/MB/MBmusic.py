@@ -391,7 +391,7 @@ class GrooverFactory:
         
         
 class Repeater:
-    """  Calls the create of a factory every period from start.
+    """  Calls the given func periodically
     """
     
     def __init__(self,start,period,seq,func):

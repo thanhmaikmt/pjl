@@ -528,4 +528,46 @@ class PhrasePlayer:
         self.sched()
                 
  
+ 
+     
+class PhrasePlayerFirer:
+    
+    """
+    This is used to start playing the last phrase stored in a phraser
+    """
+    
+
+    def __init__(self,player,context):
+        """
+        player is responsible for playing the phrase.
+        """
+        self.player=player
+        self.delay=None
+        self.context=context
+        
+    def notify(self,phraser):
+        """ 
+        Start playing the last phrase in the phraser.
+        Attempts to sync the start so it is on a bar boundary. 
+        """
+        context=self.context
+        seq=self.player.seq
+        tNow=seq.get_stamp()
+        self.phrase=phraser.phrases[-1]
+        tHead=self.phrase.head.time
+        if self.delay == None:
+            self.delay=context.get_barlength()
+            
+            
+        phraseLen=tNow-tHead
+        
+        if phraseLen < self.delay:
+            tloop=self.delay
+        else:
+            ii=int(phraseLen/self.delay)
+            tloop=self.delay*ii
+        
+        self.pPlayer=PhrasePlayer(self.phrase,seq,self.player)
+
+        self.pPlayer.start(tloop,tloop)
    

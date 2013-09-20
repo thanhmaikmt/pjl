@@ -80,6 +80,9 @@ class Server:
             
     def handle(self,addr,data,recorder):
             
+            # process raw OSC messages
+            # delegate next handling using toks[2] of the OSC string
+            # the handler is resolved using self.map
             #print addr,data
             
             if recorder != None:
@@ -94,9 +97,10 @@ class Server:
             if len(toks) < 3:
                 return
             
+            # toks[2] of the OSC is used to chose reciever.
             func=self.map.get(toks[2])
             
-            if func != None:
+            if func != None:   # pass end of OSC message to the func
                 func(toks[3:],data)
             else:
                 if Server.debug:
