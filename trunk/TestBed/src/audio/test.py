@@ -17,18 +17,24 @@ wav = wave.open (fname, "r")
 frames = wav.readframes (nframes * nchannels)
 
        
+       
+print (nchannels, sampwidth, Fs, nframes, comptype, compname)
 
 
 p = pyaudio.PyAudio()
 
 # open stream
-#stream1 = p.open(format =
-#                p.get_format_from_width(wav.getsampwidth()),
-#                channels = nchannels,
-#                rate = Fs ,
-#                output = True)
+stream1 = p.open(format =
+              p.get_format_from_width(wav.getsampwidth()),
+              channels = nchannels,
+              rate = Fs ,
+              output = True)
+
+print type(frames)
 
 #stream1.write(frames);
+
+
 
 # open stream
 #stream1 = p.open(format =
@@ -40,10 +46,11 @@ p = pyaudio.PyAudio()
 #stream1.write(frames);
 
 def everyOther (v, offset=0):
-   return [v[i] for i in range(offset, len(v), 2)]
+   return [print ]
 
 
 if nchannels == 2:
+    print " EO TRUE"
     eo=everyOther(frames)
     leo=list(eo)
     left=array(leo)
@@ -55,7 +62,7 @@ stream2 = p.open(format =
                 rate = Fs ,
                 output = True)
 
-stream2.write(left);
+stream2.write(frames);
 
 
 left=left/34000.0
