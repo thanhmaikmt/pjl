@@ -493,7 +493,7 @@ class PhrasePlayer:
     def start(self,t_shift,tloop=None):
         """
         start playing the phrase shifted by t_shift
-        that is as if the timeplay=event.time+t_shift  
+        that is as if the time play = event.time+t_shift  
         """
         
         if tloop:
@@ -504,9 +504,10 @@ class PhrasePlayer:
         self.ptr=self.phrase.head
         tNext=self.ptr.time+t_shift
         self.tloop=tloop
-        if tNext<tNow:
+        while tNext<tNow:
             print "ooops PhrasePlayer:start: too late"
-        
+            tNext+=tloop;
+            
         self.sched()
         
     def sched(self):
@@ -576,18 +577,22 @@ class PhrasePlayerFirer:
         seq=self.player.seq
         tNow=seq.get_stamp()
         self.phrase=phraser.phrases[-1]
-        tHead=self.phrase.head.time
+        tHead=self.phrase.head.time   # time of first event in phrase
+        tTail=self.phrase.tail.time
         if self.delay == None:
+            context.freeze()
             self.delay=context.get_barlength()
+            print "Setting delay to bar length ",self.delay
             
             
-        phraseLen=tNow-tHead
+        phraseLen=tNow-tTail  
         
         if phraseLen < self.delay:
+            print "Phrase ",phraseLen," is less than bar length estimate ",self.delay
             tloop=self.delay
         else:
             ii=int(phraseLen/self.delay)
-            tloop=self.delay*ii
+            tloop=self.delay*(ii+1)
         
         self.pPlayer=PhrasePlayer(self.phrase,seq,self.player)
 

@@ -39,6 +39,11 @@ else:
     print "Please set PYTHON_CMD for:",machine 
     
     
+import subprocess
+
+def start_midi_synth():
+    if machine == "Linux":
+        p = subprocess.Popen('qsynth', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     
 #def EQUALS(x,y):
 #    return abs(x-y)<1e-4 

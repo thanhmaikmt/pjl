@@ -8,6 +8,7 @@ from MBmidi import *
 from MBsetup import *
 from MBoscserver import *
 from players import *
+import MBsetup
 
 
 _context=None
@@ -30,7 +31,15 @@ class Context:
         global _context
         assert _context == None
         self.mid = MidiEngine()
-        self.midi_out_dev = self.mid.open_midi_out(MIDI_OUT_NAMES)
+                              
+        try:                      
+            self.midi_out_dev = self.mid.open_midi_out(MIDI_OUT_NAMES)
+        except MidiError:
+            MBsetup.start_midi_synth()
+            time.sleep(8)
+            self.midi_out_dev = self.mid.open_midi_out(MIDI_OUT_NAMES)
+            
+            
         self.seq = seqtype()
         self.players=16*[None]
         if beat_analysis:
@@ -42,6 +51,8 @@ class Context:
         _context=self
         
         self.bar_length=None
+        
+        self.frozen=False       # keep sampling bar/beats until true
         
     def create_player(self,chan,pipe_to_beat):
         inst=self.midi_out_dev.allocate_channel(chan)
@@ -94,15 +105,27 @@ class Context:
         MBmusic.Repeater(start,period,self.seq,func)
         
     
+    def freeze(self):
+        if self.frozen:
+            print "Already frozen"
+            return
+        
+        self.frozen=True
+        
+        print " Freezing: ",self.beat_length, self.bar_length
+        
     def get_barlength(self):
-        if not self.bar_length:
+        if not self.frozen:
             self.bar_length=self.beat_client.get_barlength()
             
         return self.bar_length 
     
     def get_beatlength(self):
-        print "get_beatlength()   caution    .. . .  . "
-        return self.beat_client.get_beatlength()
+       
+        if not self.frozen:
+            self.beat_length=self.beat_client.get_beatlength()
+       
+        return self.beat_length
 
     
    
