@@ -9,7 +9,6 @@ Add V term  still need Ht on boundary :-( otherwise we get zero current).
 
 
 '''
-
 import matplotlib.pyplot as P
 from numpy import  *
 from math import *
