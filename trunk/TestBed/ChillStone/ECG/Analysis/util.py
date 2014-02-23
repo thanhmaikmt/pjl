@@ -23,17 +23,14 @@ def readECG(name):
     time=0.0
     
     for line in fin:
-        x.append((float(line)-ref)/ref)
-        t.append(time)
-        time+=dt
+        x.append((float(line)-ref)/fullScale)
         
     fin.close()
         
     x=np.array(x)
-    t=np.array(t)
     
-    print " read ",len(t)," points"
-    return t,x,dt
+    print " read ",len(x)," points"
+    return x
 
 
 def halfLifeFactors(nsamp):
