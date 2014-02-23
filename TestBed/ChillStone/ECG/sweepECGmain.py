@@ -13,7 +13,9 @@ file_name="data/"+time.strftime("%b%d_%H_%M_%S")+".txt"
 
 fout=open(file_name,"w")
 
-FPS=30
+FPS=30   # frames per second.
+
+
 N=1400
 H=200
 
@@ -53,7 +55,6 @@ x_points=numpy.zeros(N,dtype='i')
 y_points=numpy.zeros(N,dtype='i')
 
 
-
 def read_ecg(arg):
     
     global cnt,x_points
@@ -86,6 +87,7 @@ for i in range(N):
     x_points[i]=i
 
 while True:
+    
     k = pygame.key.get_pressed()
     if k[pygame.K_ESCAPE] or pygame.event.peek(pygame.QUIT):
         fout.close()
