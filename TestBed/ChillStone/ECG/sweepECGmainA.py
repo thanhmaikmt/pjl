@@ -2,275 +2,304 @@ import serial
 import pygame
 import thread
 import time
-#import circbuf
 import numpy
 import sys
-#!/usr/bin/python
- 
-import time
- 
-file_name="data/"+time.strftime("%b%d_%H_%M_%S")+".txt"
+from filters import *
 
+file_name="data/"+time.strftime("%b%d_%H_%M_%S")+".txt"
 fout=open(file_name,"w")
 
-FPS=30   # frames per second.
+FPS=30   # pygame frames per second refresh rate.
 
-
-N=1400
-H=400
-
-BAUD=19200
-
-MAX_VAL=1024
-fullScale=MAX_VAL
-ref=fullScale/2.0
-maxMvAv=0.0
 ser = serial.Serial()
+
 # ser.port="/dev/tty.usbmodem1421"   #  LEFT on mac air
 ser.port="/dev/tty.usbmodem1411"     #  RIGHT on mac air
 
-#ser.port = "/dev/ttyACM0" # may be called something different
-
-ser.baudrate = BAUD  # may be different
-ser.open()
+#ser.port = "/dev/ttyACM0"           # ubuntu 
 
 
+# wait for opening the serial connection.
+while True:    
+    try:
+        ser.open()
+        break
+    except:
+        print " Waiting for serial connection on ",ser.port
+        time.sleep(1)
+        
+        
 pygame.init()
 modes=pygame.display.list_modes()
 
-dim_display=modes[0]
+full_screen=modes[0]
 
-print dim_display
-dim_display=(N,H)
+print full_screen
 
-display = pygame.display.set_mode(dim_display)
+dim_ecg=(full_screen[0],int(full_screen[1]*0.5))
+dim_bpm=(full_screen[0],full_screen[1]-dim_ecg[1])
+
+display = pygame.display.set_mode(full_screen)
 
 pygame.display.set_caption('(press escape to exit)')
 
-surf=pygame.Surface((N,H))
+ecg_surf=pygame.Surface(dim_ecg)
+bpm_surf=pygame.Surface(dim_ecg)
+
+def bpm2screen(t,bpm):
+    return (int(t*2),int(dim_ecg[1]-(bpm-45)*dim_ecg[1]/60.0))
+    
 
 clock=pygame.time.Clock()
 
-cnt=0
-maxMovAv=0.0
 
-x_points=numpy.zeros(N,dtype='i')
-y_points=numpy.zeros(N,dtype='i')
-s_points=numpy.zeros(N,dtype='i')
 
-"""
-static int y1 = 0, y2 = 0, x[26], n = 12;
-int y0;
-x[n] = x[n + 13] = data;
-y0 = (y1 << 1) - y2 + x[n] - (x[n + 6] << 1) + x[n + 12];
-y2 = y1;
-y1 = y0;
-y0 >>= 5;
-if(--n < 0)
-n = 12;
-return(y0);
-"""
-class LPF:
+N=dim_ecg[0]
+x_points=numpy.zeros(N,dtype='i')    #  time axis 
+y_points=numpy.zeros(N,dtype='i')    #  val of ECG
+s_points=numpy.zeros(N,dtype='i')    #  processed ECG
+
+#  x_axis  set to 1 pixel per sample
+for i in range(N):
+    x_points[i]=i
+
+
+class Analysis:
+
+    def __init__(self):    
+        self.RR=[]
+        self.BPM=[]
+        self.tlast=0.0
     
-    def __init__(self):
-        self.y1 = 0
-        self.y2 = 0
-        self.x=numpy.zeros(26)
-        self.n = 12
+    def process(self,t,y):
+        self.RR.append((t,y))
+        dt=t-self.tlast
+        bpm=60.0/dt
+        self.BPM.append((t,bpm))
+        self.tlast=t
+                
         
-    
-    def process(self,data):
-    
-        self.x[self.n] = self.x[self.n + 13] = data;
-        y0 = 2*self.y1 - self.y2 + self.x[self.n] - (2*self.x[self.n + 6]) + self.x[self.n + 12];
-        self.y2 = self.y1
-        self.y1 = y0
-        y0 *= 32
-        self.n -= 1
-        if self.n < 0:
-            self.n = 12
-        return y0
+class Peaker:
 
-"""
-static int y1 = 0, x[66], n = 32;
-int y0;
-x[n] = x[n + 33] = data;
-y0 = y1 + x[n] - x[n + 32];
-y1 = y0;
-if(--n < 0)
-n = 32;
-return(x[n + 16] - (y0 >> 5));
-}
-"""
+    def __init__(self,analysis):
+        self.state=0
+        self.thresh1=250.0
+        self.thresh2=self.thresh1/2
+        self.cnt=0
+        self.flast=0
+        self.analysis=analysis
         
-class HPF:
-    
-    def __init__(self):
-        self.y1 = 0
-        self.x=numpy.zeros(66)
-        self.n = 32
-    
-    def process(self,data):
-    
-        self.x[self.n] = self.x[self.n + 33] = data;
-        y0 = self.y1 + self.x[self.n] - self.x[self.n + 32]
-        self.y1 = y0;
-        self.n -=1
-        if self.n < 0:
-            self.n = 32
-        return self.x[self.n+16]-y0/32.0
+    def process(self,f,t):
 
-
-"""
-int Derivative(int data)
-{
-int y, i;
-static int x_derv[4];
-/*y = 1/8 (2x( nT) + x( nT - T) - x( nT - 3T) - 2x( nT -  4T))*/
-y = (data << 1) + x_derv[3] - x_derv[1] - ( x_derv[0] << 1);
-y >>= 3;
-for (i = 0; i < 3; i++)
-x_derv[i] = x_derv[i + 1];
-x_derv[3] = data;
-return(y);
-"""
-class Dervivative:
-    
-    def __init__(self):
-        self.y = 0
-        self.i = 0
-        self.x_derv=numpy.zeros(4)
-  
-    def process(self,data):
-    
-        y = 2*data + self.x_derv[3] -self.x_derv[1]- 2*self.x_derv[0]
-        y = y/8
-        self.x_derv[0]=self.x_derv[1]
-        self.x_derv[1]=self.x_derv[2]
-        self.x_derv[2]=self.x_derv[3]
-        self.x_derv[3]=data
-        return y
-
-"""
-static int x[32], ptr = 0;
-static long sum = 0;
-long ly;
-int y;
-if(++ptr == 32)
-ptr = 0;
-sum -= x[ptr];
-sum += data;
-x[ptr] = data;
-ly = sum >> 5;
-if(ly > 32400) /*check for register overflow*/
-y = 32400;
-else
-y = (int) ly;
-return(y);
-"""
-
-class MovingAverge:
-    
-    def __init__(self):
-        self.sum = 0
-        self.ptr = 0
-        self.x=numpy.zeros(32)
-  
-    def process(self,data):
-    
-        self.ptr+=1
-        if self.ptr== 32:
-            self.ptr=0
-        self.sum -= self.x[self.ptr]
-        self.sum += data
-        self.x[self.ptr]=data
+        if self.state == 0:          
+            if f > self.flast:
+                self.state=1
+                self.cnt=0         #  start counting
+                self.PEAKI=f
+                #print 'armed',f
+            
+        if self.state == 1:        #  we have detected a positive slope
+                      
+            if f > self.thresh1:   #   signal > thresh1 then here we go a QRS is detected
+                self.PEAKI = max(f,self.PEAKI)
+                self.peakTime=t
+                self.state=2
+                #print 'QRS'
+                
+            elif f > self.PEAKI:
+              self.PEAKI=max(f,self.PEAKI)  
+                
+            elif f< self.flast :  #   noise peak detected   
+            # Yes record and unarm noise peak detection
+                self.PEAKI=0.0
+                self.state=0
+                #print ' Noise '
+                    
+        if self.state == 2:  #  We are detecting a peak wait for f < peakVal
         
-        return self.sum/32.0
+            if f > self.PEAKI:
+                self.PEAKI = max(f,self.PEAKI)      # record max value
+               
+            elif f < self.thresh1:   #  peak detected  
+        
+                
+                self.analysis.process(self.peakTime,self.PEAKI)
+                
+                self.PEAKI=0.0
+                self.state=0
+                self.cnt=0
+                
+                #print 'waiting'
+                  
+        self.flast=f
+        
+class Processor:
 
-
-count=0
-valLast=0.0
-
-def read_ecg(arg):
+    def __init__(self,peaker,dt):
+        self.maxMvAv=3000
+        self.cnt=0
+        self.time=0
+        self.timeLeft=0
+        self.peaker=peaker
+        self.latency=dt*24
+        self.dt=dt
+        self.lpf=LPF()
+        self.hpf=HPF()
+        self.deriv=Dervivative()
+        self.aver=MovingAverge()
+        
+    def val2Screen(self,val):
+        # moving average to screen value 
+        return dim_ecg[1]*(1.0-val/self.maxMvAv)
+        
+    def process(self,val):
+        
+        global cnt,maxMvAv
+        
+        if self.cnt >= N:
+            self.cnt = 0
+            self.timeLeft = self.time
+                
+        valP=dim_ecg[1]*0.5*(1-val) 
+                  
+        y_points[self.cnt]=valP
+        val=self.lpf.process(val)
+        val=self.hpf.process(val)
+        val=self.deriv.process(val)
+        val=val*val
+        val=self.aver.process(val)
+        self.peaker.process(val,self.time-self.latency)
+        
+        s_points[self.cnt]=self.val2Screen(val)
+        self.cnt  += 1
+        self.time += self.dt
     
-    global cnt,x_points,s_points,maxMvAv,valLast,count
+    
+def read_ecg(processor):
+    global running
+    
+    # Maximium value for raw ECG stream    
+    fullScale=1024
+    
+    # dc should be half fullScale
+    ref=fullScale/2.0    
+    
+    
+    running=True
+    
+    count=0
+    valLast=0
+    processor.time1=0.0
     
     while (not ser.isOpen()):
         time.sleep(1)
         
-    while True:
+    while running:
         response = ser.readline()
         
         if response=="":
             continue
         
         fout.write(response)
-        if cnt >= N:
-            cnt = 0
-        
-#         try:    
-        if True:
+        try:
             raw=float(response)
-            val=(raw-ref)/fullScale  
-                       
-            if (count % 2) == 0:
-                val=(val+valLast)*0.5
-                count += 1
-            else:
-                valLast=val
-                count +=1
-                continue
-                
-            valP=H*0.5*(1-val)           
-            y_points[cnt]=valP
+        except:
+            print "error",response
+            continue
+
+        # map onto a -1  to +1 range            
+        val=(raw-ref)/fullScale  
+        
+        # crude down sampler  400 Hz --> 200 Hz
+        if (count % 2) == 0:
+            val=(val+valLast)*0.5
+            count += 1
+        else:
+            valLast=val
+            count +=1
+            continue
             
-            val=lpf.process(val)
-            val=hpf.process(val)
-            val=deriv.process(val)
-            val=val*val
-            val=aver.process(val)
-            maxMvAv = max(maxMvAv,val)
-            
-#             print val,maxMvAv
-            if maxMvAv > 0.0 :
-                 s_points[cnt]=H*(1.0-val/maxMvAv)
-            else:
-                 s_points[cnt]=0
-#                  
-#         except:
-#             print "error",response
-                
-        cnt += 1
-       
-
-ecg_reader=thread.start_new_thread(read_ecg,("ECG",))
-
-lpf=LPF()
-hpf=HPF()
-deriv=Dervivative()
-aver=MovingAverge()
+        processor.process(val)
 
 
+# -------------- MAIN BIT -------------------------
 
-for i in range(N):
-    x_points[i]=i
+
+analysis=Analysis()
+peaker=Peaker(analysis)
+processor=Processor(peaker,1./200.)
+ecg_reader=thread.start_new_thread(read_ecg,(processor,))
+
+peakerPtr=0
+peakerPtrStart=0
+
+windowTime=processor.dt*N
+
+bpmScreenPtLast=None
+bpmPtr=0
 
 while True:
     
     k = pygame.key.get_pressed()
     if k[pygame.K_ESCAPE] or pygame.event.peek(pygame.QUIT):
+        running=False
+        time.sleep(.5)
+        # ecg_reader.join()
         fout.close()
-        pygame.display.quit()
+        pygame.quit()
+        break
     
-    surf.fill((0,0,0))
+    ecg_surf.fill((0,0,0))
     
     points1=numpy.column_stack((x_points,y_points))
     points2=numpy.column_stack((x_points,s_points))
+    
+    threshSc=processor.val2Screen(peaker.thresh1)
+    thresh1=[[0,threshSc],[N-1,threshSc]]
 
-    if cnt > 2:
-        pygame.draw.lines(surf, (255,255,0), False, points1[:(cnt-1)])
-        pygame.draw.lines(surf, (0,255,255), False, points2[:(cnt-1)])
-       
-    display.blit(surf,(0,0))
+    cnt=processor.cnt
+    
+    if processor.cnt > 2:
+        pygame.draw.lines(ecg_surf, (0,255,0), False, points1[:(cnt-1)])
+        pygame.draw.lines(ecg_surf, (0,0,255), False, points2[:(cnt-1)])
+        pygame.draw.lines(ecg_surf, (150,0,0), False, thresh1[:(cnt-1)])
+
+    n=len(analysis.RR)
+    peakerPtr=peakerPtrStart
+    
+    while peakerPtr<n:
+        
+        t=analysis.RR[peakerPtr][0]
+        dTime=t - processor.timeLeft
+        
+        if dTime < 0:
+            peakerPtrStart += 1
+            peakerPtr += 1
+        elif dTime > windowTime:
+            break
+        else:
+            xi=int(dTime/processor.dt)
+            yi=processor.val2Screen(analysis.RR[peakerPtr][1])
+            pygame.draw.rect(ecg_surf,(255,0,255),(xi,yi,4,dim_ecg[1]-yi))
+            peakerPtr += 1
+        
+    while bpmPtr < len(analysis.BPM):
+        
+        bpmNew=analysis.BPM[bpmPtr][1]
+        timeNew=analysis.BPM[bpmPtr][0]
+        bpmScreenPtNew=bpm2screen(timeNew,bpmNew)
+        
+        if bpmScreenPtLast != None:
+            pygame.draw.line(bpm_surf,(255,255,0),bpmScreenPtLast,bpmScreenPtNew)
+    
+        bpmScreenPtLast=bpmScreenPtNew
+        bpmPtr += 1
+        
+        
+            
+        
+        
+    display.blit(ecg_surf,(0,0))
+    display.blit(bpm_surf,(0,dim_ecg[1]))
     pygame.display.flip()
     clock.tick(FPS)

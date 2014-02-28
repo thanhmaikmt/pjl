@@ -162,12 +162,12 @@ for f,tt in zip(y5,t):
     flast = f
     
     
-     
-plt.figure(1)     
-plt.vlines(peaksQRStime,0,peaksQRSval)
-plt.show()
+#      
+# plt.figure(1)     
+# plt.vlines(peaksQRStime,0,peaksQRSval)
+# plt.show()
 
-if False:
+if True:
     plt.figure(2)
     i1=0
     i2=len(t)
