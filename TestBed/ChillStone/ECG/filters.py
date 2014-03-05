@@ -1,5 +1,6 @@
 import numpy
-
+import util
+        
 """
 static int y1 = 0, y2 = 0, x[26], n = 12;
 int y0;
@@ -128,4 +129,61 @@ class MovingAverge:
         self.x[self.ptr]=data
         
         return self.sum/32.0
+
+
+class MovingAvergeN:
+    
+    def __init__(self,N):
+        self.sum = 0.0
+        self.ptr = 0
+        self.x=numpy.zeros(N)
+        self.N=N
+  
+    def process(self,data):
+    
+        self.ptr+=1
+        if self.ptr == self.N:
+            self.ptr=0
+        self.sum -= self.x[self.ptr]
+        self.sum += data
+        self.x[self.ptr]=data
+        
+        return self.sum/self.N
+
+class MovingDecayAverge:
+    
+    def __init__(self,N):
+        self.sum = 0.0
+        self.ptr = 0
+        self.fact1,self.fact2=util.halfLifeFactors(N)
+        
+  
+    def process(self,data):
+    
+        self.sum=self.sum*self.fact1+data*self.fact2
+        return self.sum
+    
+    
+class Delay:
+    
+    
+    def __init__(self,N):
+        
+        self.buff=numpy.zeros(N)
+        self.N=N
+        self.ptr=0
+        
+        
+    def process(self,data):
+        
+        ret=self.buff[self.ptr]
+        self.buff[self.ptr]=data
+        self.ptr+=1
+        
+        if self.ptr == self.N:
+            self.ptr=0
+            
+        return ret
+        
+    
 

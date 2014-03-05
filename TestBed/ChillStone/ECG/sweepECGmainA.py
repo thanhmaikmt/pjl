@@ -6,27 +6,42 @@ import numpy
 import sys
 from filters import *
 
-file_name="data/"+time.strftime("%b%d_%H_%M_%S")+".txt"
-fout=open(file_name,"w")
-
 FPS=30   # pygame frames per second refresh rate.
 
-ser = serial.Serial()
+if False:
+    Record=False
+    Replay=True
+    space_hit=False
+else:
+    Record=True
+    Replay=False
+ 
+  
+if Record:
+    file_name="data/"+time.strftime("%b%d_%H_%M_%S")+".txt"
+    fout=open(file_name,"w")
 
-# ser.port="/dev/tty.usbmodem1421"   #  LEFT on mac air
-ser.port="/dev/tty.usbmodem1411"     #  RIGHT on mac air
+if Replay:
+    file_name="data/lookAtMe.txt"
+    fin=open(file_name,"r")
 
-#ser.port = "/dev/ttyACM0"           # ubuntu 
-
-
-# wait for opening the serial connection.
-while True:    
-    try:
-        ser.open()
-        break
-    except:
-        print " Waiting for serial connection on ",ser.port
-        time.sleep(1)
+    
+else:
+    ser = serial.Serial()
+    
+    # ser.port="/dev/tty.usbmodem1421"   #  LEFT on mac air
+    ser.port="/dev/tty.usbmodem1411"     #  RIGHT on mac air
+    
+    #ser.port = "/dev/ttyACM0"           # ubuntu 
+ 
+    # wait for opening the serial connection.
+    while True:    
+        try:
+            ser.open()
+            break
+        except:
+            print " Waiting for serial connection on ",ser.port
+            time.sleep(1)
         
         
 pygame.init()
@@ -49,7 +64,13 @@ bpm_surf=pygame.Surface(dim_ecg)
 def bpm2screen(t,bpm):
     return (int(t*2),int(dim_ecg[1]-(bpm-45)*dim_ecg[1]/60.0))
     
+def f2screen(val):
+    return dim_ecg[1]*0.5*(1-val/640.0) 
 
+def ecg2screen(val):
+      return dim_ecg[1]*0.5*(1-val) 
+                  
+   
 clock=pygame.time.Clock()
 
 
@@ -57,7 +78,9 @@ clock=pygame.time.Clock()
 N=dim_ecg[0]
 x_points=numpy.zeros(N,dtype='i')    #  time axis 
 y_points=numpy.zeros(N,dtype='i')    #  val of ECG
+f_points=numpy.zeros(N,dtype='i')    #  filtered ECG
 s_points=numpy.zeros(N,dtype='i')    #  processed ECG
+a_points=numpy.zeros(N,dtype='i')    
 
 #  x_axis  set to 1 pixel per sample
 for i in range(N):
@@ -72,7 +95,7 @@ class Analysis:
         self.tlast=0.0
     
     def process(self,t,y):
-        self.RR.append((t,y))
+        self.RR.append((t,y,2*y))
         dt=t-self.tlast
         bpm=60.0/dt
         self.BPM.append((t,bpm))
@@ -83,14 +106,21 @@ class Peaker:
 
     def __init__(self,analysis):
         self.state=0
-        self.thresh1=250.0
-        self.thresh2=self.thresh1/2
+#         self.thresh1=250.0
+#         self.thresh2=self.thresh1/2
         self.cnt=0
         self.flast=0
         self.analysis=analysis
         
-    def process(self,f,t):
-
+    def process(self,f,t,thresh1):
+        """
+        f is th esignal value
+        t is the time
+        thresh1 is the preak detect threshold
+        """
+        
+        thresh2=thresh1*0.5  #  reset peak detect when signal is half the turnon value.
+        
         if self.state == 0:          
             if f > self.flast:
                 self.state=1
@@ -100,7 +130,7 @@ class Peaker:
             
         if self.state == 1:        #  we have detected a positive slope
                       
-            if f > self.thresh1:   #   signal > thresh1 then here we go a QRS is detected
+            if f > thresh1:   #   signal > thresh1 then here we go a QRS is detected
                 self.PEAKI = max(f,self.PEAKI)
                 self.peakTime=t
                 self.state=2
@@ -120,7 +150,7 @@ class Peaker:
             if f > self.PEAKI:
                 self.PEAKI = max(f,self.PEAKI)      # record max value
                
-            elif f < self.thresh1:   #  peak detected  
+            elif f < thresh1:   #  peak detected  
         
                 
                 self.analysis.process(self.peakTime,self.PEAKI)
@@ -147,30 +177,57 @@ class Processor:
         self.hpf=HPF()
         self.deriv=Dervivative()
         self.aver=MovingAverge()
-        
+        self.averN=MovingDecayAverge(int(0.3/dt))
+        self.delay=Delay(24)
+        self.threshLimit=self.maxMvAv*0.1
+
     def val2Screen(self,val):
         # moving average to screen value 
         return dim_ecg[1]*(1.0-val/self.maxMvAv)
         
     def process(self,val):
         
-        global cnt,maxMvAv
+        global cnt,maxMvAv,space_hit
         
         if self.cnt >= N:
+            if Replay:
+                while not space_hit:
+                    time.sleep(0.1)
+                space_hit=False
+            time.sleep(.5)
+                
             self.cnt = 0
             self.timeLeft = self.time
                 
+        
+                
         valP=dim_ecg[1]*0.5*(1-val) 
                   
-        y_points[self.cnt]=valP
+        y_points[self.cnt]=ecg2screen(val)
+        
         val=self.lpf.process(val)
+        f_points[self.cnt]=f2screen(val)
+        
         val=self.hpf.process(val)
+        
+        
+        
+        
         val=self.deriv.process(val)
         val=val*val
-        val=self.aver.process(val)
-        self.peaker.process(val,self.time-self.latency)
         
-        s_points[self.cnt]=self.val2Screen(val)
+        
+        val1=self.aver.process(val)
+    
+        self.thresh1 = self.delay.process(self.averN.process(min(val,self.threshLimit)*5.0))   
+        
+        a_points[self.cnt]=self.val2Screen(self.thresh1)
+        
+        self.peaker.process(val1,self.time-self.latency,self.thresh1)
+        
+        s_points[self.cnt]=self.val2Screen(val1)
+        
+        
         self.cnt  += 1
         self.time += self.dt
     
@@ -191,16 +248,20 @@ def read_ecg(processor):
     valLast=0
     processor.time1=0.0
     
-    while (not ser.isOpen()):
-        time.sleep(1)
-        
     while running:
-        response = ser.readline()
+        
+        if Replay:
+            response =fin.readline()
+            # time.sleep(1.0/200.0)
+        else:
+            response = ser.readline()
         
         if response=="":
             continue
         
-        fout.write(response)
+        if Record:
+            fout.write(response)
+            
         try:
             raw=float(response)
         except:
@@ -245,24 +306,31 @@ while True:
         running=False
         time.sleep(.5)
         # ecg_reader.join()
-        fout.close()
+        if Record:
+            fout.close()
         pygame.quit()
         break
+    
+    if k[pygame.K_SPACE]:
+        space_hit=True
+        
     
     ecg_surf.fill((0,0,0))
     
     points1=numpy.column_stack((x_points,y_points))
     points2=numpy.column_stack((x_points,s_points))
+    points3=numpy.column_stack((x_points,a_points))
+    points4=numpy.column_stack((x_points,f_points))
     
-    threshSc=processor.val2Screen(peaker.thresh1)
-    thresh1=[[0,threshSc],[N-1,threshSc]]
-
+    
     cnt=processor.cnt
     
     if processor.cnt > 2:
         pygame.draw.lines(ecg_surf, (0,255,0), False, points1[:(cnt-1)])
         pygame.draw.lines(ecg_surf, (0,0,255), False, points2[:(cnt-1)])
-        pygame.draw.lines(ecg_surf, (150,0,0), False, thresh1[:(cnt-1)])
+        #pygame.draw.lines(ecg_surf, (150,0,0), False, thresh1[:(cnt-1)])
+        pygame.draw.lines(ecg_surf, (255,0,255), False, points4[:(cnt-1)])
+        pygame.draw.lines(ecg_surf, (150,0,0), False, points3[:(cnt-1)])
 
     n=len(analysis.RR)
     peakerPtr=peakerPtrStart
