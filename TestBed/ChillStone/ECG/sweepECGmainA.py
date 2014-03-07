@@ -8,7 +8,9 @@ from filters import *
 
 FPS=30   # pygame frames per second refresh rate.
 
-if False:
+OFFLINE=True
+
+if OFFLINE:
     Record=False
     Replay=True
     space_hit=False
