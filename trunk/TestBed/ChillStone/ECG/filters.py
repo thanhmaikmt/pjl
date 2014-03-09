@@ -1,6 +1,34 @@
 import numpy
 import util
+  
+  
+  
+  
+class Median:
+    
+    def __init__(self,N):
+        self.N=N
+        self.x=numpy.zeros(N)
+        self.ptr=0
+        self.N_MED=N/2
         
+    def process(self,data):
+        
+        self.x[self.ptr]=data
+        
+        self.ptr += 1
+        
+        if self.ptr == self.N:
+            self.ptr=0
+       
+        return self
+   
+    def median_val(self): 
+        return  numpy.sort(self.x)[self.N_MED]
+        
+        
+        
+             
 """
 static int y1 = 0, y2 = 0, x[26], n = 12;
 int y0;
