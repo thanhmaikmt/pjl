@@ -62,13 +62,22 @@ Make a stream from a whole directory of files
 """
  
 class MultiFileStream:
-    def __init__(self,dir):
+    
+    def __init__(self,dir,file_name_client):
+    
         import glob
+        self.client=file_name_client
+        
         self.fn_iter=glob.glob(dir+"/*.txt").__iter__()
         self.next_file()
         
     def next_file(self):
+        
         self.file_name=self.fn_iter.next()
+        
+        if self.client:
+            self.client.notify(self.file_name)
+             
         if self.file_name:
             self.fin=open(self.file_name,"r")
         else:   
