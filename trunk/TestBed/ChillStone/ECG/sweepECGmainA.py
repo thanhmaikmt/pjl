@@ -5,6 +5,7 @@ import time
 import numpy
 import sys
 import threading
+import fontManager
 
 from filters import *
 from process import *
@@ -12,16 +13,26 @@ from process import *
         
         
 FPS=30   # pygame frames per second refresh rate.
+#        Display stuff
+pygame.init()
+modes=pygame.display.list_modes()
 
 
 mode=0        
 fout=None
 Record=False
          
-if mode == 0:        
-    source=MultiFileStream("test_data")
+if mode == 0:
+    class Client:
+        
+        def notify(self,name):
+            pygame.display.set_caption(name) 
+            
+                   
+    source=MultiFileStream("test_data",Client())
     Record=False
     Replay=True
+    
     
 elif mode == 1:
 
@@ -49,9 +60,6 @@ elif mode == 1:
                 time.sleep(1)
         
         print " Using USB serial input "
-#        Display stuff
-pygame.init()
-modes=pygame.display.list_modes()
 
 full_screen=modes[0]
 
@@ -61,7 +69,6 @@ dim_ecg=(full_screen[0],int(full_screen[1]*0.5))
 dim_bpm=(full_screen[0],full_screen[1]-dim_ecg[1])
 display = pygame.display.set_mode(full_screen)
 
-pygame.display.set_caption('(press escape to exit)')
 
 ecg_surf=pygame.Surface(dim_ecg)
 bpm_surf=pygame.Surface(dim_ecg)
