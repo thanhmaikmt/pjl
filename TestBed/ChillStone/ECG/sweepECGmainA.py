@@ -18,7 +18,7 @@ pygame.init()
 modes=pygame.display.list_modes()
 
 
-mode=0        
+mode=1       
 fout=None
 Record=False
          
