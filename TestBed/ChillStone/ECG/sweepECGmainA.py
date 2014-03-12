@@ -1,4 +1,4 @@
-import serial
+import serial,serial.tools.list_ports
 import pygame
 import thread
 import time
@@ -9,8 +9,23 @@ import fontManager
 
 from filters import *
 from process import *
+from IO import *
 
+mutex=threading.Lock()
+
+serial.tools.list_ports.main()
+
+
+# WINDOWS
+serial_port='COM3'
+
+# MAC
+# ser_port="/dev/tty.usbmodem1421"   #  LEFT on mac air
+#ser_port="/dev/tty.usbmodem1411"     #  RIGHT on mac air
         
+# ubuntu
+#ser_port = "/dev/ttyACM0"          
+            
         
 FPS=30   # pygame frames per second refresh rate.
 #        Display stuff
@@ -18,17 +33,22 @@ pygame.init()
 modes=pygame.display.list_modes()
 
 
-mode=1       
+#  mode 1 - OFFLINE scans all test_data  recordings
+#       0- online using USB to grab realtime data from arduino + SCG shild
+mode=0     
 fout=None
 Record=False
-         
+caption=" HIT ESCAPE TO QUIT"  
+
+
 if mode == 0:
+    
     class Client:
         
         def notify(self,name):
-            pygame.display.set_caption(name) 
-            
-                   
+            global caption
+            caption=name
+                    
     source=MultiFileStream("test_data",Client())
     Record=False
     Replay=True
@@ -43,20 +63,15 @@ elif mode == 1:
         fout=open(file_name,"w")    
         
     else:
-        ser = serial.Serial()
-        source=ser
-        # ser.port="/dev/tty.usbmodem1421"   #  LEFT on mac air
-        ser.port="/dev/tty.usbmodem1411"     #  RIGHT on mac air
+        source = serial.Serial(serial_port)
         
-        #ser.port = "/dev/ttyACM0"           # ubuntu 
-     
         # wait for opening the serial connection.
         while True:    
             try:
-                ser.open()
+                source.open()
                 break
             except:
-                print " Waiting for serial connection on ",ser.port
+                print " Waiting for serial connection on ",serial_port
                 time.sleep(1)
         
         print " Using USB serial input "
@@ -170,6 +185,7 @@ def read_ecg(processor):
    
         if cnt >= N:
             if Replay:
+             
                 print " Hit key to continue "
                 space_hit=False
                 while not space_hit:
@@ -216,7 +232,6 @@ peaker=Peaker(tachi,DT)
 processor=Processor(peaker,DT)
 ecg_reader=thread.start_new_thread(read_ecg,(processor,))
 
-mutex=threading.Lock()
   
 peakPtr=0
 peakPtrStart=0
@@ -235,6 +250,10 @@ bpm_surf.fill(bpm_background)
 
 while True:
     
+    if caption:
+        pygame.display.set_caption(caption)
+        caption=None
+         
     k = pygame.key.get_pressed()
     if k[pygame.K_ESCAPE] or pygame.event.peek(pygame.QUIT):
         running=False
