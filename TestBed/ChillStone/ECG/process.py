@@ -94,6 +94,18 @@ class Tachiometer:
         # default state of RR peak
         state=RRstate.new    
        
+       
+       
+        if True:   #   Hack to see what no processing does
+            ptNew=[t,y,RRstate.OK]    
+            
+            self.RR.append(ptNew)
+            self.bpm.process(ptNew)
+        #  TODO filter outliers 
+            self.RRmed.append((t,medRRmag))
+    
+            return
+            
         if y > medRRmag*OUTLIER_FACT:   # TO BIG then flag as outlier
             state=RRstate.outlier
             
