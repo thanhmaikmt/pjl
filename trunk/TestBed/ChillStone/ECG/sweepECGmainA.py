@@ -16,12 +16,12 @@ mutex=threading.Lock()
 serial.tools.list_ports.main()
 
 
-# WINDOWS
-serial_port='COM3'
+# WINDOWS      TODO 
+#serial_port='COM4'
 
 # MAC
-# ser_port="/dev/tty.usbmodem1421"   #  LEFT on mac air
-#ser_port="/dev/tty.usbmodem1411"     #  RIGHT on mac air
+# serial_port="/dev/tty.usbmodem1421"   #  LEFT on mac air
+serial_port="/dev/tty.usbmodem1411"     #  RIGHT on mac air
         
 # ubuntu
 #ser_port = "/dev/ttyACM0"          
@@ -35,9 +35,9 @@ modes=pygame.display.list_modes()
 
 #  mode 1 - OFFLINE scans all test_data  recordings
 #       0- online using USB to grab realtime data from arduino + SCG shild
-mode=0     
+mode=1
 fout=None
-Record=False
+Record=True
 caption=" HIT ESCAPE TO QUIT"  
 
 
@@ -62,37 +62,45 @@ elif mode == 1:
         file_name="data/"+time.strftime("%b%d_%H_%M_%S")+".txt"
         fout=open(file_name,"w")    
         
-    else:
-        source = serial.Serial(serial_port)
-        
-        # wait for opening the serial connection.
-        while True:    
-            try:
-                source.open()
-                break
-            except:
-                print " Waiting for serial connection on ",serial_port
-                time.sleep(1)
-        
-        print " Using USB serial input "
+
+    source = serial.Serial()
+    source.port=serial_port
+    # wait for opening the serial connection.
+    while True:    
+        try:
+            source.open()
+            break
+        except:
+            print " Waiting for serial connection on ",serial_port
+            time.sleep(1)
+    
+    print " Using USB serial input "
 
 full_screen=modes[0]
 
 print full_screen
 
-dim_ecg=(full_screen[0],int(full_screen[1]*0.5))
-dim_bpm=(full_screen[0],full_screen[1]-dim_ecg[1])
+halfH=int(full_screen[1]*0.5)
+print " halfH ", halfH
+dim_chaos=(halfH,halfH)
+
+dim_ecg=(full_screen[0],int(full_screen[1]-halfH))
+
+
+dim_bpm=(full_screen[0]-halfH,halfH)
+
 display = pygame.display.set_mode(full_screen)
 
 
 ecg_surf=pygame.Surface(dim_ecg)
-bpm_surf=pygame.Surface(dim_ecg)
+bpm_surf=pygame.Surface(dim_bpm)
+chaos_surf=pygame.Surface(dim_chaos,flags=pygame.SRCALPHA)
 
 xBPM_ref=0
 tBPMscale=10
 
 def bpm2screen(t,bpm):
-    return [int(t*tBPMscale)-xBPM_ref,int(dim_ecg[1]-(bpm-45)*dim_ecg[1]/60.0)]
+    return [int(t*tBPMscale)-xBPM_ref,int(dim_bpm[1]-(bpm-45)*dim_bpm[1]/60.0)]
     
 def f2screen(val):
     return dim_ecg[1]*0.5*(1-val/640.0) 
@@ -104,12 +112,30 @@ def val2Screen(val):
         # moving average to screen value 
         return dim_ecg[1]*(1.0-val/MAX_MV_AV)
    
+   
+breath_per_min=10.0
+
+# t*target_hrv_scale      should give 1 per breath
+breath_period = 60.0/breath_per_min 
+
+
+def chaos_color_at(t):
+    
+    i=(t/breath_period*512)%512
+    
+    if i > 256:
+        i=512-i
+        
+    return (i,0,256-i)
+    
+    
+    
 clock=pygame.time.Clock()
 
 
 #  N is number of samples in window  1 per pixel
 N=dim_ecg[0]
-xBPMright=int((N*5)/6)
+xBPMright=int((dim_bpm[0]*5)/6)
 
 x_points=numpy.zeros(N,dtype='i')    #  time axis 
 
@@ -203,7 +229,7 @@ def read_ecg(processor):
                 peakPtrStart=0
                 mutex.release()
             else:
-                print " RESETING CNT"
+               #  print " RESETING CNT"
                 mutex.acquire()
                 cnt=0
                 timeLeft=processor.time
@@ -248,6 +274,9 @@ bpm_background=(50,50,50)
 
 bpm_surf.fill(bpm_background)
 
+chaos_last=None
+chaos_new=None
+  
 while True:
     
     if caption:
@@ -316,7 +345,7 @@ while True:
     
          
     # PLOT the BPM based values ------------------------------------------------------------
-        
+    
     while bpmPtr < len(bpm.BPMraw):
         
         bpmNew=bpm.BPMraw[bpmPtr][1]
@@ -340,9 +369,20 @@ while True:
         if bpmScreenPtLast != None:
             pygame.draw.line(bpm_surf,(0,255,0),bpmScreenPtLast,bpmScreenPtNew,5)
             pygame.draw.line(bpm_surf,(100,100,100),medScreenPtLast,medScreenPtNew,1)
+            chaos_new=(bpmScreenPtLast[1],bpmScreenPtNew[1])
             
+        # print "----",chaos_last,chaos_new
+        
+        
+        if chaos_last != None:
+#             chaos_surf.fill((0,0,0,100),special_flags=0) # pygame.BLEND_SUB)
+            chaos_surf.fill((0,0,0,5),special_flags=0) # pygame.BLEND_SUB)
+            col=chaos_color_at(timeNew)
+            pygame.draw.line(chaos_surf,col,chaos_last,chaos_new,5)
+                    
         bpmScreenPtLast=bpmScreenPtNew
         medScreenPtLast=medScreenPtNew
+        chaos_last=chaos_new
         bpmPtr += 1
         
         
@@ -351,5 +391,7 @@ while True:
         
     display.blit(ecg_surf,(0,0))
     display.blit(bpm_surf,(0,dim_ecg[1]))
+    display.blit(chaos_surf,(dim_bpm[0],dim_ecg[1]))
+
     pygame.display.flip()
     clock.tick(FPS)
