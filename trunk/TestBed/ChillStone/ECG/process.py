@@ -1,22 +1,33 @@
 from filters import *
-
+from const import *
 
 OUTLIER_FACT=5.0
-DEFAULT_BPM=70.0      #  fall back BPM if we get stuck
-MAX_BPM=120.0
-MIN_BPM=40.0
-
-
 
 THRESH_HALF_LIFE=0.2   #  time for threshold to decay to half it's value 
 THRESH_SCALE=2.0       #  scale the threshold value (decrease to make more sensitive)
-N_MEDIAN=13
 MAX_MV_AV=3000         # Max scrren val for moving average
-     
+    
+  
+class FeedBack:
+    
+    
+    def __init__(self,target_hrv,srate):
+              
+        
+        self.biq=Biquad(Biquad.LOWPASS,freq=target_hrv,srate=srate,Q=2)
+        self.dc_block=DCBlock(.9)
+        self.val=0.0
+        self.dval=0.0
+           
+    def process(self,bpm):   
+        print bpm    
+        self.val=self.biq.process(bpm)
+        self.dval=self.dc_block.process(bpm)
+ 
 class Processor:
 
-    def __init__(self,peaker,dt):
-        self.peaker=peaker
+    def __init__(self,client,dt):
+        self.peaker=client
         self.latency=dt*24
         self.dt=dt
         self.lpf=LPF()
@@ -48,6 +59,7 @@ class Processor:
         self.peaker.process(val1,self.time-self.latency)
         self.time += self.dt
         
+        
 
 # Enum to classify RR pulses 
 class RRstate:
@@ -60,11 +72,11 @@ class RRstate:
         
 class Tachiometer:
 
-    def __init__(self,n_med,bpm_client):    
+    def __init__(self,median_filter_length,client):    
         self.RR=[]
         self.RRmed=[]
-        self.RRmedian=Median(n_med)
-        self.DTmedian=Median(n_med)
+        self.RRmedian=Median(median_filter_length)
+        self.DTmedian=Median(median_filter_length)
         self.tlast=0.0
         self.state=0    #  waiting for stability
         self.cnt=0
@@ -73,7 +85,7 @@ class Tachiometer:
         self.dtmax=60.0/MIN_BPM
         self.RR_state_ptr=0
         self.pt0,self.pt1,self.pt2=None,None,None
-        self.bpm=bpm_client
+        self.bpm=client
         
         
     def in_dt_range(self,dt):
@@ -177,24 +189,27 @@ class Tachiometer:
     
 """
   convert RR deltas to BPM
+  also maintains a median filtered version of the bpm
+  feeds the bpm values to a cleint (can be None)
 """
-class BPM:
+class RRtoBPM:
 
-    def __init__(self,n_med):    
+    def __init__(self,median_filter_length,client):    
         self.BPMraw=[]
         self.BPMmedian=[]
-        self.medianBPM=Median(n_med)
+        self.medianBPM=Median(median_filter_length)
         self.tlast=0
-    
+        self.client=client
     def process(self,pt):
         
         t=pt[0]
         dt=t-self.tlast
         bpm=60.0/dt
         bpm_med=self.medianBPM.process(bpm).median_val()
-        
-        self.BPMraw.append((t,bpm))
+        if self.client != None:
+            self.client.process(bpm,t,pt[1])
             
+        self.BPMraw.append((t,bpm))
         self.BPMmedian.append((t,bpm_med))         
                 
         self.tlast=t
@@ -207,12 +222,12 @@ Peaker takes the moving average filter output.
                         
 class Peaker:
 
-    def __init__(self,analysis,dt):
+    def __init__(self,client,dt):
         self.state=0
         self.cnt=0
         self.flast=0
-        self.analysis=analysis
-        self.averN=MovingDecayAverge(int(THRESH_HALF_LIFE/dt))
+        self.analysis=client
+        self.averN=MovingDecayAverge(int(THRESH_HALF_LIFE/dt),0.0)
         self.delay=Delay(24)
         self.threshLimit=MAX_MV_AV
         self.thresh1=0.0
