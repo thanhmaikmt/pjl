@@ -89,7 +89,7 @@ class cFontManager:
 def RunDemo():
     '''A simple demo of the use of the cFontManager class'''
     pygame.init()     
-    pygame.display.set_mode((640, 480))
+    display=pygame.display.set_mode((640, 480))
     screen = pygame.display.get_surface()
     clock = pygame.time.Clock()
  
@@ -133,5 +133,53 @@ def RunDemo():
     pygame.quit()
 
 
+def RunDemo2():
+    '''A simple demo of the use of the cFontManager class'''
+    pygame.init()     
+    display=pygame.display.set_mode((640, 480))
+    screen = pygame.Surface((640, 480))
+    clock = pygame.time.Clock()
+ 
+    # a font of None means to use the default font
+    fontMgr = cFontManager((('Courier New', 16), (None, 48), (None, 24), ('arial', 24)))
+    
+    doQuit = False
+    while not doQuit:
+        clock.tick(60) # run at 60 fps
+        screen.fill((0, 0, 0))
+ 
+        white = (255, 255, 255)
+        gray = (64, 64, 64)
+        fontMgr.Draw(screen, 'Courier New', 16, 'Default font, 48', (0, 50), white)
+        fontMgr.Draw(screen, None, 24, 'Default font, 24', (0, 0), white)
+ 
+        rect = pygame.Rect(0, 100, 640, 60)
+        pygame.draw.rect(screen, gray, rect)        
+        fontMgr.Draw(screen, 'arial', 24, 'Arial 24 top left', rect, white,
+            'left', 'top')
+        rect.top += 75
+        
+        pygame.draw.rect(screen, gray, rect)        
+        fontMgr.Draw(screen, 'arial', 24, 'Arial 24 centered', rect, white,
+            'center', 'center')
+        rect.top += 75
+ 
+        pygame.draw.rect(screen, gray, rect)        
+        fontMgr.Draw(screen, 'arial', 24, 'Arial 24 bottom right', rect,
+            white, 'right', 'bottom')
+        rect.top += 75
+ 
+        pygame.draw.rect(screen, gray, rect)        
+        fontMgr.Draw(screen, 'arial', 24, 'Arial 24 left center, anti-aliased',
+            rect, white, 'left', 'center', True)
+        rect.top += 75
+        
+        display.blit(screen,(0,0))
+        pygame.display.flip()
+        
+        if pygame.QUIT in [event.type for event in pygame.event.get()]:
+            doQuit = True
+    pygame.quit()
+
 if __name__ == "__main__":
-    RunDemo()
+    RunDemo2()
