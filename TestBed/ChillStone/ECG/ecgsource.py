@@ -9,12 +9,12 @@ Make a stream from a whole directory of files
  
 class MultiFileStream:
     
-    def __init__(self,dir,file_name_client,dt=0):
+    def __init__(self,data_files,file_name_client,dt=0):
     
         import glob
         self.client=file_name_client
         self.dt=dt
-        self.fn_iter=glob.glob(dir+"/*.txt").__iter__()
+        self.fn_iter=glob.glob(data_files).__iter__()
         self.fin=None
         self.next_file()
         
@@ -74,7 +74,7 @@ class EcgSource (threading.Thread):
     
     LIVE,LIVE_RECORD,FILE,FILE_LIVE=range(4)
     
-    def __init__(self,processor,mutex,mode,data_dir):
+    def __init__(self,processor,mutex,mode,data_files):
         
         threading.Thread.__init__(self)
 #         self.mode=mode
@@ -117,14 +117,14 @@ class EcgSource (threading.Thread):
                     caption=name
             
             if mode == EcgSource.FILE_LIVE:
-                dt=DT
+                dt=DT/2
                 self.Replay=False
           
             else:
                 dt=0
                 self.Replay=True
                          
-            source=MultiFileStream(data_dir,Client(),dt)
+            source=MultiFileStream(data_files,Client(),dt)
             self.file_mode=True
             
             
@@ -138,15 +138,13 @@ class EcgSource (threading.Thread):
             source = serial.Serial()
             source.port=serial_port
             # wait for opening the serial connection.
-            while True:    
-                try:
-                    source.open()
-                    break
-                except:
-                    print " Waiting for serial connection on ",serial_port
-                    time.sleep(1)
-            
-            print " Using USB serial input "
+            try:
+                source.open()
+            except:
+                print " Unable to open serial connection on ",serial_port
+                raise
+        
+            print " Using USB serial input ",serial_port
         
         self.source=source
        

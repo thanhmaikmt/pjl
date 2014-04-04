@@ -5,10 +5,14 @@ class CircularBuffer():
     """
     circular buffer.
     Uses an array of twice the maxium history so we always hacve a contiguous array to return.
+    
     """ 
     
     def __init__(self , n , dtype = 'd'):
-      
+        """
+            n maximum length of array need by analysis       
+        """
+        
         self.array = np.zeros(n*2 , dtype = dtype)
         self.tail=n
         self.N=n

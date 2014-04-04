@@ -5,144 +5,54 @@ from process import *
 from IO import *
 from const import *
 import ecgsource
+import sonify
+import spectral
+import classifier
 
 # import voicebowl1
 
 # SOURCE
 #  FILE or LIVE to chnge from recored to using device.
-data_dir="data_good"
+data_files="data_good/BAY_*"
+
+# LIVE,LIVE_RECORD,FILE,FILE_LIVE=range(4)
+  
 mode=ecgsource.EcgSource.LIVE
+
 
 # feedback=FeedBack(target_hrv=TARGET_HRV,srate=INTERPOLATOR_SRATE)
 # interpolator=Interpolator(srate=INTERPOLATOR_SRATE,client=None)
-sys.path.append('../../../MusicBox/src/MB')
-import MBmidi
-import MBmusic
-import atexit
 
-        
-class PingClient:
-    
-    def __init__(self):
-        
-        self.average=DEFAULT_BPM
-        
-        self.n_pad=10
-        self.pad_buf=numpy.zeros(self.n_pad,dtype='i')
-        self.pad_ptr=0
-        self.mid=MBmidi.MidiEngine()
-        self.seq=MBmusic.SequencerBPM()
-    
-        midi_out=self.mid.open_midi_out(["to ARGO Appli Fluidsynth v9 1","Synth input port (Qsynth1:0)","IAC Driver IAC Bus 1"])
-                  
-        self.inst=MBmidi.Instrument(midi_out.out,0)  
-        self.inst.set_instrument(10)
-        self.inst.set_reverb(127)
-        
-        
-        self.inst_pad=MBmidi.Instrument(midi_out.out,1)  
-        self.inst_pad.set_instrument(89)
-        self.inst_pad.set_reverb(127)
-        
-        
-        self.inst_drone=MBmidi.Instrument(midi_out.out,2)  
-        self.inst_drone.set_instrument(51)
-        
-        self.inst_drone.set_reverb(127)
-        
-        self.inst_drone.note_on(36,5)
-        self.inst_drone.note_on(48,4)
-        self.inst_drone.note_on(55,3)
-        
-        self.pitchLast=None
-        
-        atexit.register(self.quit)
-        
-        self.scale=[0,2,4,7,9]
-        
-        self.fact1=0.85
-        self.fact2=1.0-self.fact1
-        self.rptCnt=3
-        
-    def toScale(self,i):
-        
-        irem=i%5
-        ifloor=i/5
-        
-        ipitch=12*ifloor+self.scale[irem]
-        
-        return max(min(108,ipitch),12)
-        
-        
-    def process(self,bpm,t,val):
-        
-        print bpm
-        self.average = self.average*self.fact1+self.fact2*bpm
-        
-        dval = bpm-self.average
-        
-        print "val ,av" ,dval,self.average
-        
-        ii=int(30+dval*1.3)
-        
-        if (ii < 0):
-             return
+#  Signal flow
+#
+#  ECG at 200Hz  -->  
+#  processor    (filter and create moving average ) -->     (moving average, time)  
+#  peaker  ( identify RR peaks from processed ECG) -->      (peak_time,  magnitude)
+#  TODO next is a mess refactoring needed
+#  tachimeter  and   RRtoBPM ( convert intervals into BPM) --->             (bpm, peak_time)
 
-        ibpm=self.toScale(ii)
-        pit2=self.toScale(ii-15)
-        
-        vel=val/20
-        # print bpm,ibpm,vel
-        
-        
-        if self.pitchLast != None:
-            
-            self.inst.note_off(self.pitchLast)
-        
-            if self.pitchLast == ibpm:
-                self.rptCnt+=1
-            else:
-                self.rptCnt=1
-            
-        vel = int(vel * 1.0/self.rptCnt)
-        
-        vel=int(max(0,min(vel,120)))
-        
-#         print vel,self.rptCnt
-        
-        self.inst.note_on(ibpm,vel)
-        
-        
-        self.pad_ptr=(self.pad_ptr+1)%self.n_pad
-        pitNext=self.pad_buf[self.pad_ptr]
-        
-        if pitNext > 0:
-            self.inst_pad.note_off(pitNext)
-        
-        self.inst_pad.note_on(pit2,10)
-        self.pad_buf[self.pad_ptr]=pit2
-        
-        self.pitchLast=ibpm
-    
-    def quit(self):
-        
-        print " Shutting down midi "
-        
-        self.inst_pad.all_note_off()
-        self.inst_drone.all_note_off()     
-        self.mid.quit()
-        
-cl=None
 
-cl1=PingClient()
+# Clients must implement
+# process(bpm,t,val)
 
-rrtobpm=RRtoBPM(median_filter_length=5,client=cl1)
+pre_rr_samps=.4/DT
+post_rr_samps=0.5/DT
+
+qrs_collector=QRSCollector(pre_rr=pre_rr_samps,post_rr=post_rr_samps)
+
+clients=Clients()
+clients.add(sonify.PingClient2())
+
+spectralVarDT=spectral.SpectralVarDT(srate=3.2,nsamps=256)
+clients.add(spectralVarDT.interpolator)
+spectral=spectralVarDT.spectral
+
+bpmfilt=BPMFilter(client=clients)
+rrtobpm=RRtoBPM(median_filter_length=5,client=bpmfilt)
 tachi=Tachiometer(median_filter_length=5,client=rrtobpm)
 peaker=Peaker(client=tachi,dt=DT)
-processor=Processor(client=peaker,dt=DT)
+processor=Processor(client=peaker,classifier=classy,dt=DT)
 
-
-bpmAverage=MovingDecayAverge(samps_per_half_life=10,init_value=DEFAULT_BPM)
 
 #        Display stuff
 pygame.init()
@@ -154,14 +64,41 @@ caption=" HIT ESCAPE TO QUIT"
 
 # Allocate screen space.
 
-full=modes[0]
+# full=modes[0]
 # MAC puts puts screen below menu so take a bit off the height.
-dim_display=(full[0],full[1]-50)
+# dim_display=(full[0],full[1]-50)
 
-halfH=int(dim_display[1]*0.5)
-dim_chaos=(halfH,halfH)
-dim_ecg=(dim_display[0],int(dim_display[1]-halfH))
-dim_bpm=(dim_display[0]-halfH,halfH)
+
+height=720
+width=1280
+
+dim_display=(width,height)
+
+
+#----------  0
+#    ECG
+#----------  y1
+#
+#----------  y2
+#     BPM                        CHAOS
+#----------- height   ----    |              |
+#                             x1           width
+
+y1=int(height/4)
+y2=y1+int(height/6)
+
+y12=y2-y1
+y2h=height-y2
+
+x1=width-y2h
+x1w=y2h
+
+dim_chaos=(x1w,y2h)
+print dim_chaos
+
+dim_ecg=(width,y1)
+dim_bpm=(x1,y2h)
+dim_spect=(width,y12)
 
 display = pygame.display.set_mode(dim_display)
 
@@ -270,9 +207,9 @@ class ECGDisplay:
             points2=numpy.column_stack((self.x_points,self.s_points))
             points3=numpy.column_stack((self.x_points,self.a_points))
             points4=numpy.column_stack((self.x_points,self.f_points))
-            pygame.draw.lines(ecg_surf, (0,255,0), False, points1[:(cnt-1)])
+        #    pygame.draw.lines(ecg_surf, (0,255,0), False, points1[:(cnt-1)])
             pygame.draw.lines(ecg_surf, (0,0,255), False, points2[:(cnt-1)])
-            pygame.draw.lines(ecg_surf, (255,0,255), False, points4[:(cnt-1)])
+            pygame.draw.lines(ecg_surf, (255,0,255), False, points4[:(cnt-1)],3)
             pygame.draw.lines(ecg_surf, (150,0,0), False, points3[:(cnt-1)])
      
         n=len(tachi.RR)
@@ -280,7 +217,7 @@ class ECGDisplay:
         
         peakPtr=self.peakPtrStart
       
-        medPtLast=None
+        # medPtLast=None
         
         while peakPtr<n:
             
@@ -295,13 +232,13 @@ class ECGDisplay:
             else:
                 xi=int(dTime/processor.dt)
                 yi=self.val2Screen(tachi.RR[peakPtr][1])
-                med=self.val2Screen(tachi.RRmed[peakPtr][1])
+                #med=self.val2Screen(tachi.RRmed[peakPtr][1])
                 col=RRstate.color[tachi.RR[peakPtr][2]]
                 
-                if medPtLast != None:
-                    pygame.draw.line(ecg_surf,(255,255,255),medPtLast,(xi,med))
+                #if medPtLast != None:
+                #    pygame.draw.line(ecg_surf,(255,255,255),medPtLast,(xi,med))
                     
-                medPtLast=(xi,med)
+                #medPtLast=(xi,med)
                 pygame.draw.rect(ecg_surf,col,(xi,yi,4,dim_ecg[1]-yi))
                 peakPtr += 1
         
@@ -400,8 +337,7 @@ class BPMDisplay:
         while self.bpmPtr < len(rrtobpm.BPMraw):
             
             bpmNew=rrtobpm.BPMraw[self.bpmPtr][1]
-            bpmAverage.process(bpmNew)
-            medNew=rrtobpm.BPMmedian[self.bpmPtr][1]
+          #  medNew=rrtobpm.BPMmedian[self.bpmPtr][1]
             timeNew=rrtobpm.BPMraw[self.bpmPtr][0]
             
             xNew,tmp=self.bpm2screen(timeNew,bpmNew)
@@ -413,19 +349,18 @@ class BPMDisplay:
                 bpm_surf.scroll(-xOver)
                 pygame.draw.rect(self.surf_bpm,self.bpm_background,(self.xBPMright-xOver+1,0,xOver,self.surf_bpm.get_height()))
                 self.bpmScreenPtLast[0] -= xOver
-                self.medScreenPtLast[0] -= xOver
+             #   self.medScreenPtLast[0] -= xOver
                 
                 
             self.draw_bpm_key(bpmNew)
              
             
             bpmScreenPtNew=self.bpm2screen(timeNew,bpmNew)
-            medScreenPtNew=self.bpm2screen(timeNew,bpmAverage.get_value())
             chaos_new=None
             
             if self.bpmScreenPtLast != None:
                 pygame.draw.line(bpm_surf,(0,255,0),self.bpmScreenPtLast,bpmScreenPtNew,5)
-                pygame.draw.line(bpm_surf,(100,100,100),self.medScreenPtLast,medScreenPtNew,4)
+             #   pygame.draw.line(bpm_surf,(100,100,100),self.medScreenPtLast,medScreenPtNew,4)
                 chaos_new=(self.bpmScreenPtLast[1],bpmScreenPtNew[1])
                 
             # print "----",chaos_last,chaos_new
@@ -433,17 +368,17 @@ class BPMDisplay:
             
             if self.chaos_last != None:
     #             chaos_surf.fill((0,0,0,100),special_flags=0) # pygame.BLEND_SUB)
-                chaos_surf.fill((0,0,0,5),special_flags=0) # pygame.BLEND_SUB)
+                chaos_surf.fill((250,250,250),special_flags=pygame.BLEND_MULT)
                 col=self.chaos_color_at(timeNew)
-                pygame.draw.line(chaos_surf,col,self.chaos_last,chaos_new,5)
+                print " DRAW CHAOS",self.chaos_last,chaos_new,col
+                pygame.draw.line(chaos_surf,col,self.chaos_last,chaos_new,15)
                         
             self.bpmScreenPtLast=bpmScreenPtNew
-            self.medScreenPtLast=medScreenPtNew
             self.chaos_last=chaos_new
             self.bpmPtr += 1
    
 
-    def chaos_color_at(self,t):
+    def chaos_color_at2(self,t):
         """
         Modulate the colour of chaos line
         """
@@ -455,9 +390,66 @@ class BPMDisplay:
         return (i,0,256-i)
     
   
+    def chaos_color_at(self,t):
+        """
+        Modulate the colour of chaos line
+        """
+        
+        
+        hue=int(t*7)%360
+        col=pygame.Color(255,255,255)
+        col.hsva=(hue,100,100,100)
+        return col
+    
                  
+  
+class SpectralDisplay:
+    
+    
+    def __init__(self,surf,spectral):
+        self.surf=surf
+        self.spectral=spectral
+        
+        
+    def draw(self):
+        if self.spectral.XX == None:
+            return
+           
        
-       
+        self.surf.fill((0,0,0))
+        
+        
+        
+        n=self.surf.get_height()
+        wid=self.surf.get_width()
+          
+        cnt=0
+        fact=0.5
+        XX=self.spectral.XX
+        freqs=self.spectral.freqBin
+        
+        cnt=0
+        WID=10
+        str=""
+        for xx in XX:
+            
+            val=abs(xx)
+            val=val*fact
+    #         print val
+            if self.spectral.freqBin[cnt]< RESFREQ_MIN:
+                col=(0,0,255)
+            elif self.spectral.freqBin[cnt] > RESFREQ_MAX:
+                col=(200,0,100)
+            else:
+                str+= "%3.2f "      % (spectral.freqs[cnt]*60)
+      
+                col=(255,255,0)
+                
+            pygame.draw.line(self.surf,col,(cnt*WID,n-1),(cnt*WID,n-val),WID-1)
+        
+            fontMgr.Draw(self.surf, 'Courier New', 16, str, (wid-200,0), (60,255,255))
+            cnt+=1
+            
 #  GUI stuff ---------------------------------------------------------
 
 
@@ -467,6 +459,9 @@ ecg_display=ECGDisplay(ecg_surf)
 chaos_surf=pygame.Surface(dim_chaos,flags=pygame.SRCALPHA)
 bpm_surf=pygame.Surface(dim_bpm)
 bpm_display=BPMDisplay(bpm_surf,chaos_surf)
+
+spect_surf=pygame.Surface(dim_spect)
+spect_display=SpectralDisplay(spect_surf,spectral)
          
 #  read ecg on a seperate thread feeding into the processor
 #  DON'T DO ANY GUI STUFF ON THIS THREAD
@@ -475,7 +470,7 @@ mutex=threading.Lock()
  
 read_client=ReadClient(processor,mutex)
 
-ecg_src=ecgsource.EcgSource(read_client,mutex,mode=mode,data_dir=data_dir)
+ecg_src=ecgsource.EcgSource(read_client,mutex,mode=mode,data_files=data_files)
 
 ecg_src.start()
  
@@ -511,13 +506,15 @@ while True:
     
     ecg_display.draw()
     bpm_display.draw()     
-
+    spect_display.draw()
+    
     ecg_src.mutex.release()
    
     
     display.blit(ecg_display.surf,(0,0))
-    display.blit(bpm_surf,(0,dim_ecg[1]))
-    display.blit(chaos_surf,(dim_bpm[0],dim_ecg[1]))
+    display.blit(bpm_surf,(0,y2))
+    display.blit(chaos_surf,(x1,y2))
+    display.blit(spect_surf,(0,y1))
 
     pygame.display.flip()
     clock.tick(FPS)
