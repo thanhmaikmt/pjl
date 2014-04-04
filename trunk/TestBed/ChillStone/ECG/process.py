@@ -41,7 +41,7 @@ class FeedBack:
  
 class Processor:
 
-    def __init__(self,peak_client,collector=collector,dt):
+    def __init__(self,peak_client,collector,dt):
         self.peak_client=peak_client
         self.latency=dt*24
         self.dt=dt
@@ -72,7 +72,7 @@ class Processor:
         self.s_val=val1
         
    # feed moving average into the peak detector adjust time for processing latency
-        peak=self.peaker.process(val1,self.time-self.latency)
+        peak=self.peak_client.process(val1,self.time-self.latency)
         self.collector.process(ecg_val=self.f_val,peak=peak)
         self.time += self.dt
         
@@ -259,11 +259,11 @@ Peaker takes the moving average filter output.
                         
 class Peaker:
 
-    def __init__(self,peak_client,dt):
+    def __init__(self,client,dt):
         self.state=0
         self.cnt=0
         self.flast=0
-        self.peak_client=client
+        self.client=client
         self.averN=MovingDecayAverge(int(THRESH_HALF_LIFE/dt),0.0)
         self.delay=Delay(24)
         self.threshLimit=MAX_MV_AV
@@ -314,7 +314,7 @@ class Peaker:
             elif f < thresh1:   #  peak detected  
         
                 
-                self.peak_client.process(self.peakTime,self.PEAKI)
+                self.client.process(self.peakTime,self.PEAKI)
                 
                 self.PEAKI=0.0
                 self.state=0
