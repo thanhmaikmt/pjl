@@ -38,7 +38,7 @@ class Interpolator:
         self.tLast=None
         self.client=client
         
-    def process(self,bpm,tNow):
+    def process(self,bpm,tNow,val=0):
     
     
         if self.tLast == None:
@@ -81,7 +81,7 @@ class DCBlock:
         self.yLast=0
         self.xLast=0
         
-    def process(self,x):
+    def process(self,x,*args):
         
         y=x-self.xLast+self.yLast*self.R
         
