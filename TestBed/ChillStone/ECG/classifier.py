@@ -4,14 +4,12 @@ import circbuf
 class QRSCollector:
     
     
-    def __init__(self,pre_rr,post_rr,file_name,latency):
+    def __init__(self,pre_rr,post_rr,file_name):
         self.fout=open(file_name,"w")
         self.pre_rr=pre_rr;
         self.post_rr=post_rr;
         
         n = pre_rr+post_rr;
-        
-        self.latency=latency
         
         self.buff=circbuf.CircularBuffer(n);
         self.state=0
@@ -20,7 +18,8 @@ class QRSCollector:
     def save(self):
         
         xx=self.buff.get_window()
-        self.fout.writeln(str(xx))
+        self.fout.write(str(xx))
+        self.fout.write("\n")
         
         
     def process(self,ecg_val,peak):
@@ -30,12 +29,12 @@ class QRSCollector:
         peak is true if we are on a RR peak. (not strictly true due to latency)
         """
         
-        self.buff.add(ecg_val)
+        self.buff.append(ecg_val)
         
         if self.state == 0 :   # RESET
         
-            cnt_L=0
-            cnt_R=0
+            self.cnt_L=0
+            self.cnt_R=0
             self.state=1
             
         elif self.state == 1:   # WAIT FOR PRE_RR to fill   /   RESET if there is a peak

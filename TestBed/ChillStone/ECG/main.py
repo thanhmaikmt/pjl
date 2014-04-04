@@ -17,7 +17,7 @@ data_files="data_good/BAY_*"
 
 # LIVE,LIVE_RECORD,FILE,FILE_LIVE=range(4)
   
-mode=ecgsource.EcgSource.LIVE
+mode=ecgsource.EcgSource.FILE
 
 
 # feedback=FeedBack(target_hrv=TARGET_HRV,srate=INTERPOLATOR_SRATE)
@@ -38,7 +38,7 @@ mode=ecgsource.EcgSource.LIVE
 pre_rr_samps=.4/DT
 post_rr_samps=0.5/DT
 
-qrs_collector=QRSCollector(pre_rr=pre_rr_samps,post_rr=post_rr_samps)
+qrs_collector=classifier.QRSCollector(pre_rr=pre_rr_samps,post_rr=post_rr_samps,file_name="QRS.txt")
 
 clients=Clients()
 clients.add(sonify.PingClient2())
@@ -51,7 +51,7 @@ bpmfilt=BPMFilter(client=clients)
 rrtobpm=RRtoBPM(median_filter_length=5,client=bpmfilt)
 tachi=Tachiometer(median_filter_length=5,client=rrtobpm)
 peaker=Peaker(client=tachi,dt=DT)
-processor=Processor(client=peaker,classifier=classy,dt=DT)
+processor=Processor(peak_client=peaker,collector=qrs_collector,dt=DT)
 
 
 #        Display stuff
@@ -447,7 +447,7 @@ class SpectralDisplay:
                 
             pygame.draw.line(self.surf,col,(cnt*WID,n-1),(cnt*WID,n-val),WID-1)
         
-            fontMgr.Draw(self.surf, 'Courier New', 16, str, (wid-200,0), (60,255,255))
+            fontMgr.Draw(self.surf, 'Courier New', 16, str, (wid-400,0), (60,255,255))
             cnt+=1
             
 #  GUI stuff ---------------------------------------------------------
