@@ -218,7 +218,7 @@ class Player:
      
             # beat=band.seq.get_beat()
             # print "STOMP",self.stamp
-            if self.beat_client:
+            if self.beat_client and vel > 0:
                 self.beat_client.stomp(stamp)
         
         def set_instrument(self,name):

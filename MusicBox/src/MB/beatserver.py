@@ -21,7 +21,12 @@
             
         
 # to do a beat 
-            self.pipe.write("stomper.add_event("+str(time_stamp)+",1.0)")    
+            self.pipe.write("stomper.add_event("+str(time_stamp)+",1.0)") 
+            
+            the beat is inserted into the circular buffer and we do an autcorrelation on the buffer.
+            Some processing is done to find the peaks in the autocorreleation.
+            For each event sent to the server it returns a list of  [time,peak]  pairs via the pipe.
+            
 """
 
 
@@ -33,10 +38,19 @@ import math
 import plotter
 
 class Stomper:
+    """
+    Kepps a history of events in a quatized circular buffer
     
-    def __init__(self,buf,dt):
+    
+    
+    """
+    
+    def __init__(self,dt,dur):
+        
+        assert dur > dt
         self.events=[]
-        self.buf=buf
+        n=(int)(dur/dt+1)
+        self.buf=circularbuffer.CircularBuffer(n)
         self.dt=dt;
         self.time=0
         
@@ -69,15 +83,18 @@ class Analysis:
         self.stomper=stomper 
         dt=stomper.dt
         self.n=stomper.buf.N
-        self.t=numpy.linspace(0, (n-1)*dt,num=self.n)
-        if graph:
-            self.plot=plotter.Plotter(self.t)
+        self.t=numpy.linspace(0, (self.n-1)*dt,num=self.n)
+        self.plot=None
             
         self.win=numpy.bartlett(nspread)
         
     def doit(self):
         #print "DOIT",self.stomper.buf.get_window()
-        
+   
+        if graph and (self.plot == None):
+            self.plot=plotter.Plotter(self.t)
+            # print "   Initing a graph "
+                 
         x=self.stomper.buf.get_window()
        # X=numpy.fft.rfft(x)
         z1=numpy.correlate(x, x, mode="full")
@@ -204,8 +221,10 @@ def stomp(time):
 import getopt
 
 import sys
+
 graph=False
-test_me=False
+test_me=True
+
 for arg in sys.argv[1:]:
     if arg =='-g':
         graph=True
@@ -227,30 +246,10 @@ periodMin=60.0/bpmMax
 nnMax=int(periodMax/dt)
 nnMin=int(periodMin/dt)
 
-
-n=int(T/dt)
-buf=circularbuffer.CircularBuffer(n)
-stomper= Stomper(buf,dt)
+stomper= Stomper(dt,T)
 analysis=Analysis(stomper)
 
 
-## --- test code 
-if test_me:
-    tt=0.0
-    
-    scat=0.03
-    probs=[.9,.2,.6,.6]
-    
-    cnt=0
-    import random
-    for _ in range(100):
-        time.sleep(1)
-        if probs[cnt]> random.random():
-            stomper.add_event(tt+random.random()*scat,1.0)
-            
-        analysis.doit()
-        tt+=0.2
-        cnt = (cnt+1)%4
-        
+
     
     

@@ -2,11 +2,14 @@ import pygame.midi
 import threading
 import time
 import atexit
-import MBsetup
+# import MBsetup
 
 
 NOTEON=9
 NOTEOFF=8
+REVERB=91
+
+DEBUGGING=False
 
 class Device:
     
@@ -193,7 +196,7 @@ class Instrument:
         Turn a note on in the output stream.  The note must already
         be off for this to work correctly.
         """
-        if MBsetup.DEBUGGING:
+        if DEBUGGING:
             print self.channel,note,velocity
             
         self.midi_out.write_short(0x90+self.channel, note, velocity)
@@ -231,7 +234,9 @@ class Instrument:
         self.midi_out.write_short(0xb0+self.channel,cc,val)
         
             
-    
+    def set_reverb(self,val):
+        self.set_cc(REVERB,val)
+        
     def all_note_off(self):
         
         #evts=[[[0b1011 0000,120,0],0]]
@@ -259,3 +264,26 @@ class MidiError(Exception):
     def __str__(self):
         return self.get_message()                 
     
+
+
+if __name__ == "__main__":
+    
+
+    mid=MidiEngine()
+    
+    midi_out=mid.open_midi_out(["to ARGO Appli Fluidsynth v9 1","Synth input port (Qsynth1:0)","IAC Driver IAC Bus 1"])
+      
+                
+    inst=Instrument(midi_out.out,0)  
+    for idp in range(11,12):
+           
+        inst.set_instrument(idp)
+        for pitch in range(64,76):
+            inst.note_on(pitch, 120)
+            time.sleep(.2)
+            inst.note_off(pitch)
+            
+        
+    time.sleep(1)    
+    mid.quit()
+  

@@ -14,7 +14,7 @@ midi_out=mid.open_midi_out(MBsetup.MIDI_OUT_NAMES)
   
             
 inst=MBmidi.Instrument(midi_out.out,0)     
-
+inst.set_reverb(80)
  
 NRPN_MSB_CC=99
 NRPN_LSB_CC=98

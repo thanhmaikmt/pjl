@@ -2,7 +2,7 @@ from pyo import *
 
 pm_list_devices()
 
-num=5
+num=1
 # num = input("Enter your Midi interface number : ")
 
 

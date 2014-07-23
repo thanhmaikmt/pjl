@@ -4,7 +4,8 @@ import MB
 
 class Client:
     """
-    Users side of the beat detection system.
+    The Client is the Users side of the beat detection system.
+    The Client init start s server in a subprocess.
     This client sends beats to the server.
     It reads the servers output which should send estimates of the tempo
     e.g.
@@ -14,12 +15,18 @@ class Client:
     """
  
     
-    def __init__(self,debug=False,t_min=0.5,t_max=1.5):
+    def __init__(self,debug=False,graph=False,t_min=0.5,t_max=1.5):
         
         self.debug=debug
         self.proc=None
       
-        self.proc=subprocess.Popen([MB.PYTHON_CMD+" -i ../MB/beatserver.py -g"],shell=True,
+        if graph:
+            cmd=MB.PYTHON_CMD+" -i ../MB/beatserver.py -g"
+        else:
+            cmd=MB.PYTHON_CMD+" -i ../MB/beatserver.py"
+            
+    
+        self.proc=subprocess.Popen([cmd],shell=True,
                                    stdin=subprocess.PIPE,
                                   stdout=subprocess.PIPE)
         
@@ -36,8 +43,8 @@ class Client:
             
         self.hist=[]     
          
-        self.beat_len=1.0
-        self.bar_len=4.0
+        self.beat_len=None
+        self.bar_len=None
         self.t_max=t_max
         self.t_min=t_min
         self.obsevers=[]
@@ -143,7 +150,7 @@ class Client:
  
 if __name__ == "__main__":
      
-    c=Client(debug=False)
+    c=Client(debug=False,graph=False)
     
    
     t1=time.time()
@@ -159,6 +166,14 @@ if __name__ == "__main__":
         tt=time.time()-t1
         
         c.stomp(tt)
+        bl=c.get_beatlength()
+        if bl != None:
+            barl2=bl*4
+        else:
+            barl2=None
+            
+        print tt,c.get_barlength(),barl2
+        
 #         text="stomper.add_event("+str(tt)+",1.0)"
 #         #print text
 #             
